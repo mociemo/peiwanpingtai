@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: playmate-backend
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/playmate_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 3000ms
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+logging:
+  level:
+    com.playmate: DEBUG
+    org.springframework.security: DEBUG
