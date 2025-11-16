@@ -30,9 +30,7 @@ class ShareService {
   Future<Map<String, dynamic>> getSharedContent(String shareId) async {
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/api/share/$shareId'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
@@ -66,9 +64,7 @@ class ShareService {
   Future<ShareStats> getShareStats(String userId) async {
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/api/share/stats/$userId'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {

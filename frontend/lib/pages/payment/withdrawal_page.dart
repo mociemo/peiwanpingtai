@@ -40,7 +40,10 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
   }
 
   Future<void> _loadData() async {
-    final withdrawalProvider = Provider.of<WithdrawalProvider>(context, listen: false);
+    final withdrawalProvider = Provider.of<WithdrawalProvider>(
+      context,
+      listen: false,
+    );
     await Future.wait([
       withdrawalProvider.getAvailableBalance(),
       withdrawalProvider.getWithdrawalRules(),
@@ -67,9 +70,12 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
   }
 
   Future<void> _createWithdrawalApplication() async {
-    final withdrawalProvider = Provider.of<WithdrawalProvider>(context, listen: false);
+    final withdrawalProvider = Provider.of<WithdrawalProvider>(
+      context,
+      listen: false,
+    );
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    
+
     if (userProvider.currentUser == null) {
       ToastUtil.showError('请先登录');
       return;
@@ -89,7 +95,8 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
 
     // 如果是添加新账户，检查表单
     if (_showAddAccountForm) {
-      if (_accountNameController.text.isEmpty || _accountInfoController.text.isEmpty) {
+      if (_accountNameController.text.isEmpty ||
+          _accountInfoController.text.isEmpty) {
         ToastUtil.showError('请填写完整的账户信息');
         return;
       }
@@ -98,12 +105,12 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
     final success = await withdrawalProvider.createWithdrawalApplication(
       amount: _selectedAmount,
       accountType: _selectedAccountType,
-      accountInfo: _showAddAccountForm 
-        ? _accountInfoController.text 
-        : _selectedAccount!['accountInfo'],
-      accountName: _showAddAccountForm 
-        ? _accountNameController.text 
-        : _selectedAccount!['accountName'],
+      accountInfo: _showAddAccountForm
+          ? _accountInfoController.text
+          : _selectedAccount!['accountInfo'],
+      accountName: _showAddAccountForm
+          ? _accountNameController.text
+          : _selectedAccount!['accountName'],
     );
 
     if (success) {
@@ -147,7 +154,8 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
       ),
       body: Consumer<WithdrawalProvider>(
         builder: (context, withdrawalProvider, child) {
-          if (withdrawalProvider.isLoading && withdrawalProvider.availableBalance == 0) {
+          if (withdrawalProvider.isLoading &&
+              withdrawalProvider.availableBalance == 0) {
             return const LoadingWidget();
           }
 
@@ -174,9 +182,8 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                       const SizedBox(height: 8),
                       Text(
                         '¥${withdrawalProvider.availableBalance.toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       if (withdrawalProvider.withdrawalRules.isNotEmpty) ...[
                         const SizedBox(height: 8),
@@ -188,16 +195,13 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // 提现金额选择
-                Text(
-                  '选择提现金额',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('选择提现金额', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
-                
+
                 // 预设金额选项
                 GridView.builder(
                   shrinkWrap: true,
@@ -212,32 +216,35 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                   itemBuilder: (context, index) {
                     final amount = _amountOptions[index];
                     final isSelected = _selectedAmount == amount;
-                    final isAvailable = amount <= withdrawalProvider.availableBalance;
-                    
+                    final isAvailable =
+                        amount <= withdrawalProvider.availableBalance;
+
                     return GestureDetector(
                       onTap: isAvailable ? () => _selectAmount(amount) : null,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isSelected 
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.surface,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: isSelected 
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.outline,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.outline,
                           ),
                         ),
                         child: Center(
                           child: Text(
                             '¥$amount',
                             style: TextStyle(
-                              color: isSelected 
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : isAvailable
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : isAvailable
                                   ? Theme.of(context).colorScheme.onSurface
                                   : Colors.grey,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -245,9 +252,9 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                     );
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // 自定义金额输入
                 TextField(
                   controller: _customAmountController,
@@ -264,21 +271,19 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                   onChanged: _onCustomAmountChanged,
                   onTap: () {
                     // 点击"全部提现"文本
-                    if (_customAmountController.selection.baseOffset == _customAmountController.text.length) {
+                    if (_customAmountController.selection.baseOffset ==
+                        _customAmountController.text.length) {
                       _selectAmount(withdrawalProvider.availableBalance);
                     }
                   },
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // 提现账户选择
-                Text(
-                  '选择提现账户',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('选择提现账户', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
-                
+
                 // 账户类型选择
                 Row(
                   children: [
@@ -289,16 +294,20 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                     _buildAccountTypeOption('wechat', '微信'),
                   ],
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // 账户选择或添加
-                if (!_showAddAccountForm && withdrawalProvider.userAccounts.isNotEmpty) ...[
+                if (!_showAddAccountForm &&
+                    withdrawalProvider.userAccounts.isNotEmpty) ...[
                   // 已有账户列表
                   ...withdrawalProvider.userAccounts
-                    .where((account) => account['accountType'] == _selectedAccountType)
-                    .map((account) => _buildAccountOption(account)),
-                  
+                      .where(
+                        (account) =>
+                            account['accountType'] == _selectedAccountType,
+                      )
+                      .map((account) => _buildAccountOption(account)),
+
                   // 添加新账户按钮
                   Container(
                     width: double.infinity,
@@ -410,24 +419,24 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                     ),
                   ),
                 ],
-                
+
                 const SizedBox(height: 32),
-                
+
                 // 提现按钮
                 CustomButton(
                   text: '提现 ¥${_selectedAmount.toStringAsFixed(2)}',
                   onPressed: _createWithdrawalApplication,
                   isLoading: withdrawalProvider.isLoading,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // 提现说明
                 Text(
                   '提现说明：\n1. 提现将在1-3个工作日内到账\n2. 提现手续费按平台规定收取\n3. 如有疑问请联系客服',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -439,7 +448,7 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
 
   Widget _buildAccountTypeOption(String type, String title) {
     final isSelected = _selectedAccountType == type;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -451,22 +460,22 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected 
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.surface,
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected 
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.outline,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline,
           ),
         ),
         child: Text(
           title,
           style: TextStyle(
-            color: isSelected 
-              ? Theme.of(context).colorScheme.onPrimary
-              : Theme.of(context).colorScheme.onSurface,
+            color: isSelected
+                ? Theme.of(context).colorScheme.onPrimary
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -476,7 +485,7 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
 
   Widget _buildAccountOption(Map<String, dynamic> account) {
     final isSelected = _selectedAccount?['id'] == account['id'];
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -491,9 +500,9 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected 
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.outline,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline,
           ),
         ),
         child: Row(
@@ -506,14 +515,11 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(
-                _getAccountIcon(),
-                size: 24,
-              ),
+              child: Icon(_getAccountIcon(), size: 24),
             ),
-            
+
             const SizedBox(width: 16),
-            
+
             // 账户信息
             Expanded(
               child: Column(
@@ -526,20 +532,24 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
                   const SizedBox(height: 4),
                   Text(
                     _maskAccountInfo(account['accountInfo'] ?? ''),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                   ),
                 ],
               ),
             ),
-            
+
             // 选择状态
             Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: isSelected 
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ],
         ),
@@ -601,7 +611,7 @@ class _WithdrawalPageState extends State<WithdrawalPage> {
 
   String _maskAccountInfo(String accountInfo) {
     if (accountInfo.length <= 4) return accountInfo;
-    
+
     switch (_selectedAccountType) {
       case 'bank':
         // 银行卡号显示前4位和后4位，中间用*代替

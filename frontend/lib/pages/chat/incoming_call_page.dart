@@ -36,16 +36,13 @@ class _IncomingCallPageState extends State<IncomingCallPage>
       vsync: this,
     )..repeat();
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     // 获取callId
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     _callId = args?['callId'];
 
     // 自动拒绝通话（30秒后）
@@ -126,7 +123,11 @@ class _IncomingCallPageState extends State<IncomingCallPage>
                               ? NetworkImage(widget.participantAvatar)
                               : null,
                           child: widget.participantAvatar.isEmpty
-                              ? const Icon(Icons.person, size: 80, color: Colors.white)
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 80,
+                                  color: Colors.white,
+                                )
                               : null,
                         ),
                       ),
@@ -151,10 +152,7 @@ class _IncomingCallPageState extends State<IncomingCallPage>
                 // 通话状态
                 const Text(
                   '来电中...',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
 
                 const SizedBox(height: 40),

@@ -51,9 +51,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载动态详情失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('加载动态详情失败: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -94,9 +94,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载评论失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('加载评论失败: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -115,9 +115,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (!userProvider.isLoggedIn) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('请先登录')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('请先登录')));
       }
       return;
     }
@@ -132,23 +132,21 @@ class _PostDetailPageState extends State<PostDetailPage> {
       setState(() {
         _comments.insert(0, newComment);
         if (_post != null) {
-          _post = _post!.copyWith(
-            commentCount: _post!.commentCount + 1,
-          );
+          _post = _post!.copyWith(commentCount: _post!.commentCount + 1);
         }
       });
 
       _commentController.clear();
-      
+
       // 收起键盘
       if (mounted) {
         FocusScope.of(context).unfocus();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('评论失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('评论失败: ${e.toString()}')));
       }
     }
   }
@@ -162,18 +160,20 @@ class _PostDetailPageState extends State<PostDetailPage> {
       } else {
         await PostService.likePost(_post!.id);
       }
-      
+
       setState(() {
         _post = _post!.copyWith(
           isLiked: !_post!.isLiked,
-          likeCount: _post!.isLiked ? _post!.likeCount - 1 : _post!.likeCount + 1,
+          likeCount: _post!.isLiked
+              ? _post!.likeCount - 1
+              : _post!.likeCount + 1,
         );
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('操作失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('操作失败: ${e.toString()}')));
       }
     }
   }
@@ -186,7 +186,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       } else {
         await CommentService.likeComment(commentIdNum);
       }
-      
+
       setState(() {
         final index = _comments.indexWhere((c) => c.id == commentId);
         if (index != -1) {
@@ -199,9 +199,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('操作失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('操作失败: ${e.toString()}')));
       }
     }
   }
@@ -209,9 +209,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('动态详情'),
-      ),
+      appBar: AppBar(title: Text('动态详情')),
       body: _isLoading
           ? Center(child: LoadingWidget())
           : Column(
@@ -232,7 +230,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                               );
                             },
                           ),
-                        
+
                         // 评论列表
                         Padding(
                           padding: EdgeInsets.all(16),
@@ -244,14 +242,23 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               SizedBox(height: 16),
-                              
+
                               if (_comments.isEmpty && !_isLoadingComments)
                                 Center(
                                   child: Column(
                                     children: [
-                                      Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey),
+                                      Icon(
+                                        Icons.chat_bubble_outline,
+                                        size: 64,
+                                        color: Colors.grey,
+                                      ),
                                       SizedBox(height: 8),
-                                      Text('暂无评论', style: Theme.of(context).textTheme.bodyMedium),
+                                      Text(
+                                        '暂无评论',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
                                     ],
                                   ),
                                 )
@@ -259,16 +266,25 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                 ListView.builder(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
-                                  itemCount: _comments.length + (_hasMoreComments ? 1 : 0),
+                                  itemCount:
+                                      _comments.length +
+                                      (_hasMoreComments ? 1 : 0),
                                   itemBuilder: (context, index) {
                                     if (index < _comments.length) {
                                       final comment = _comments[index];
                                       return CommentItem(
                                         comment: comment,
-                                        onLike: () => _handleLikeComment(comment.id, comment.isLiked),
+                                        onLike: () => _handleLikeComment(
+                                          comment.id,
+                                          comment.isLiked,
+                                        ),
                                         onReply: () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('回复功能开发中')),
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('回复功能开发中'),
+                                            ),
                                           );
                                         },
                                       );
@@ -289,13 +305,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     ),
                   ),
                 ),
-                
+
                 // 评论输入框
                 Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    border: Border(top: BorderSide(color: Colors.grey.shade300)),
+                    border: Border(
+                      top: BorderSide(color: Colors.grey.shade300),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -307,7 +325,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                             ),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                           maxLines: 3,
                           minLines: 1,

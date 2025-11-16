@@ -37,9 +37,13 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: (isLoading || !enabled) ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.primary,
-          foregroundColor: foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
-          padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          backgroundColor:
+              backgroundColor ?? Theme.of(context).colorScheme.primary,
+          foregroundColor:
+              foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
+          padding:
+              padding ??
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius ?? 8),
           ),
@@ -57,13 +61,10 @@ class CustomButton extends StatelessWidget {
                 ),
               )
             : child ??
-                Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                  Text(
+                    text,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                ),
       ),
     );
   }

@@ -27,12 +27,12 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     
-    public Page<CommentResponse> getCommentsByPostId(Long postId, Pageable pageable) {
+    public Page<CommentResponse> getCommentsByPostId(String postId, Pageable pageable) {
         Page<Comment> comments = commentRepository.findByPostIdAndParentIdAndStatusOrderByCreateTimeDesc(postId, null, CommentStatus.PUBLISHED, pageable);
         return comments.map(comment -> convertToResponse(comment, true));
     }
     
-    public Page<CommentResponse> getRepliesByCommentId(Long commentId, CommentStatus status, Pageable pageable) {
+    public Page<CommentResponse> getRepliesByCommentId(String commentId, CommentStatus status, Pageable pageable) {
         Optional<Comment> parentComment = commentRepository.findById(commentId);
         if (parentComment.isEmpty()) {
             throw new RuntimeException("评论不存在");
@@ -43,13 +43,13 @@ public class CommentService {
         return replies.map(comment -> convertToResponse(comment, false));
     }
     
-    public Page<CommentResponse> getUserComments(Long userId, CommentStatus status, Pageable pageable) {
+    public Page<CommentResponse> getUserComments(String userId, CommentStatus status, Pageable pageable) {
         Page<Comment> comments = commentRepository.findByUserIdAndStatusOrderByCreateTimeDesc(userId, status, pageable);
         return comments.map(comment -> convertToResponse(comment, true));
     }
     
     @Transactional
-    public CommentResponse createComment(Long userId, Long postId, CommentRequest request) {
+    public CommentResponse createComment(String userId, String postId, CommentRequest request) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new RuntimeException("动态不存在");
@@ -75,7 +75,7 @@ public class CommentService {
     }
     
     @Transactional
-    public CommentResponse updateComment(Long commentId, Long userId, CommentRequest request) {
+    public CommentResponse updateComment(String commentId, String userId, CommentRequest request) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RuntimeException("评论不存在");
@@ -92,7 +92,7 @@ public class CommentService {
     }
     
     @Transactional
-    public void deleteComment(Long commentId, Long userId) {
+    public void deleteComment(String commentId, String userId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RuntimeException("评论不存在");
@@ -115,7 +115,7 @@ public class CommentService {
     }
     
     @Transactional
-    public void likeComment(Long commentId, Long userId) {
+    public void likeComment(String commentId, String userId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RuntimeException("评论不存在");
@@ -127,7 +127,7 @@ public class CommentService {
     }
     
     @Transactional
-    public void unlikeComment(Long commentId, Long userId) {
+    public void unlikeComment(String commentId, String userId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RuntimeException("评论不存在");
@@ -140,7 +140,7 @@ public class CommentService {
         }
     }
     
-    public CommentResponse getCommentById(Long commentId) {
+    public CommentResponse getCommentById(String commentId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RuntimeException("评论不存在");
@@ -156,23 +156,33 @@ public class CommentService {
         response.setPostId(comment.getPostId());
         
         // 设置用户信息
-        userRepository.findById(comment.getUserId()).ifPresent(user -> {
-            CommentResponse.UserInfo userInfo = new CommentResponse.UserInfo();
-            userInfo.setId(user.getId());
-            userInfo.setUsername(user.getUsername());
-            userInfo.setAvatar(user.getAvatar());
-            response.setUser(userInfo);
-        });
+        try {
+            Long userId = Long.valueOf(comment.getUserId());
+            userRepository.findById(userId).ifPresent(user -> {
+                CommentResponse.UserInfo userInfo = new CommentResponse.UserInfo();
+                userInfo.setId(user.getId());
+                userInfo.setUsername(user.getUsername());
+                userInfo.setAvatar(user.getAvatar());
+                response.setUser(userInfo);
+            });
+        } catch (NumberFormatException e) {
+            // 如果userId不是有效的Long格式，跳过用户信息设置
+        }
         
         // 设置回复用户信息
         if (comment.getReplyToUserId() != null) {
-            userRepository.findById(comment.getReplyToUserId()).ifPresent(user -> {
-                CommentResponse.UserInfo replyToUserInfo = new CommentResponse.UserInfo();
-                replyToUserInfo.setId(user.getId());
-                replyToUserInfo.setUsername(user.getUsername());
-                replyToUserInfo.setAvatar(user.getAvatar());
-                response.setReplyToUser(replyToUserInfo);
-            });
+            try {
+                Long replyToUserId = Long.valueOf(comment.getReplyToUserId());
+                userRepository.findById(replyToUserId).ifPresent(user -> {
+                    CommentResponse.UserInfo replyToUserInfo = new CommentResponse.UserInfo();
+                    replyToUserInfo.setId(user.getId());
+                    replyToUserInfo.setUsername(user.getUsername());
+                    replyToUserInfo.setAvatar(user.getAvatar());
+                    response.setReplyToUser(replyToUserInfo);
+                });
+            } catch (NumberFormatException e) {
+                // 如果replyToUserId不是有效的Long格式，跳过回复用户信息设置
+            }
         }
         
         response.setContent(comment.getContent());

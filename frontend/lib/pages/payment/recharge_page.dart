@@ -36,10 +36,11 @@ class _RechargePageState extends State<RechargePage> {
   }
 
   Future<void> _loadData() async {
-    final paymentProvider = Provider.of<PaymentProvider>(context, listen: false);
-    await Future.wait([
-      paymentProvider.getRechargeDiscounts(),
-    ]);
+    final paymentProvider = Provider.of<PaymentProvider>(
+      context,
+      listen: false,
+    );
+    await Future.wait([paymentProvider.getRechargeDiscounts()]);
   }
 
   void _selectAmount(double amount) {
@@ -61,9 +62,12 @@ class _RechargePageState extends State<RechargePage> {
   }
 
   Future<void> _createRechargeOrder() async {
-    final paymentProvider = Provider.of<PaymentProvider>(context, listen: false);
+    final paymentProvider = Provider.of<PaymentProvider>(
+      context,
+      listen: false,
+    );
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    
+
     if (userProvider.currentUser == null) {
       ToastUtil.showError('请先登录');
       return;
@@ -132,25 +136,21 @@ class _RechargePageState extends State<RechargePage> {
                         builder: (context, userProvider, child) {
                           return Text(
                             '¥${(userProvider.currentUser?['balance'] ?? 0.0).toStringAsFixed(2)}',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           );
                         },
                       ),
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // 充值金额选择
-                Text(
-                  '选择充值金额',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('选择充值金额', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
-                
+
                 // 预设金额选项
                 GridView.builder(
                   shrinkWrap: true,
@@ -165,29 +165,31 @@ class _RechargePageState extends State<RechargePage> {
                   itemBuilder: (context, index) {
                     final amount = _amountOptions[index];
                     final isSelected = _selectedAmount == amount;
-                    
+
                     return GestureDetector(
                       onTap: () => _selectAmount(amount),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isSelected 
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.surface,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: isSelected 
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.outline,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.outline,
                           ),
                         ),
                         child: Center(
                           child: Text(
                             '¥$amount',
                             style: TextStyle(
-                              color: isSelected 
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).colorScheme.onSurface,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : Theme.of(context).colorScheme.onSurface,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -195,9 +197,9 @@ class _RechargePageState extends State<RechargePage> {
                     );
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // 自定义金额输入
                 TextField(
                   controller: _customAmountController,
@@ -209,17 +211,14 @@ class _RechargePageState extends State<RechargePage> {
                   ),
                   onChanged: _onCustomAmountChanged,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // 优惠券选择
                 if (paymentProvider.discounts.isNotEmpty) ...[
-                  Text(
-                    '选择优惠券',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('选择优惠券', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 12),
-                  
+
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
@@ -234,36 +233,38 @@ class _RechargePageState extends State<RechargePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          _selectedDiscount != null 
-                            ? '${_selectedDiscount!['name']} -¥${_selectedDiscount!['amount']}'
-                            : '不使用优惠券',
+                          _selectedDiscount != null
+                              ? '${_selectedDiscount!['name']} -¥${_selectedDiscount!['amount']}'
+                              : '不使用优惠券',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         TextButton(
-                          onPressed: () => _showDiscountSelector(paymentProvider),
+                          onPressed: () =>
+                              _showDiscountSelector(paymentProvider),
                           child: const Text('选择'),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
                 ],
-                
+
                 // 支付方式选择
-                Text(
-                  '选择支付方式',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('选择支付方式', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
-                
+
                 // 支付方式选项
-                _buildPaymentOption('wechat', '微信支付', 'assets/icons/wechat_pay.png'),
+                _buildPaymentOption(
+                  'wechat',
+                  '微信支付',
+                  'assets/icons/wechat_pay.png',
+                ),
                 _buildPaymentOption('alipay', '支付宝', 'assets/icons/alipay.png'),
                 _buildPaymentOption('bank', '银行卡', 'assets/icons/bank.png'),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // 充值按钮
                 CustomButton(
                   text: '充值 ¥${_selectedAmount.toStringAsFixed(2)}',
@@ -280,7 +281,7 @@ class _RechargePageState extends State<RechargePage> {
 
   Widget _buildPaymentOption(String method, String title, String iconPath) {
     final isSelected = _selectedPaymentMethod == method;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -294,9 +295,9 @@ class _RechargePageState extends State<RechargePage> {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected 
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.outline,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline,
           ),
         ),
         child: Row(
@@ -311,23 +312,24 @@ class _RechargePageState extends State<RechargePage> {
               ),
               child: const Icon(Icons.payment, size: 24),
             ),
-            
+
             const SizedBox(width: 16),
-            
+
             // 支付方式名称
             Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              child: Text(title, style: Theme.of(context).textTheme.bodyLarge),
             ),
-            
+
             // 选择状态
             Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: isSelected 
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ],
         ),
@@ -345,18 +347,18 @@ class _RechargePageState extends State<RechargePage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '选择优惠券',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text('选择优惠券', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 16),
-              
+
               // 不使用优惠券选项
               ListTile(
                 title: const Text('不使用优惠券'),
-                trailing: _selectedDiscount == null 
-                  ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
-                  : null,
+                trailing: _selectedDiscount == null
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
                 onTap: () {
                   setState(() {
                     _selectedDiscount = null;
@@ -364,25 +366,31 @@ class _RechargePageState extends State<RechargePage> {
                   Navigator.of(context).pop();
                 },
               ),
-              
+
               // 优惠券列表
               ...paymentProvider.discounts.map((discount) {
-                final isAvailable = _selectedAmount >= (discount['minAmount'] ?? 0);
-                
+                final isAvailable =
+                    _selectedAmount >= (discount['minAmount'] ?? 0);
+
                 return ListTile(
                   title: Text(discount['name'] ?? ''),
                   subtitle: Text('满${discount['minAmount']}可用'),
-                  trailing: isAvailable 
-                    ? (_selectedDiscount?['id'] == discount['id']
-                        ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
-                        : null)
-                    : Text('不可用', style: TextStyle(color: Colors.grey[500])),
-                  onTap: isAvailable ? () {
-                    setState(() {
-                      _selectedDiscount = discount;
-                    });
-                    Navigator.of(context).pop();
-                  } : null,
+                  trailing: isAvailable
+                      ? (_selectedDiscount?['id'] == discount['id']
+                            ? Icon(
+                                Icons.check,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                            : null)
+                      : Text('不可用', style: TextStyle(color: Colors.grey[500])),
+                  onTap: isAvailable
+                      ? () {
+                          setState(() {
+                            _selectedDiscount = discount;
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      : null,
                 );
               }),
             ],

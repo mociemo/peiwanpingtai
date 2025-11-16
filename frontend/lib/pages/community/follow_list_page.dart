@@ -136,22 +136,24 @@ class _FollowListPageState extends State<FollowListPage> {
                 delegate: SliverChildBuilderDelegate((context, index) {
                   if (index < _follows.length) {
                     final follow = _follows[index];
-                    
+
                     // 根据关注类型确定用户信息
                     final userInfo = widget.isFollowers
                         ? {
                             'id': follow.followerId,
                             'name': follow.followerName,
                             'avatar': follow.followerAvatar,
-                            'isFollowing': follow.status == FollowStatus.following,
+                            'isFollowing':
+                                follow.status == FollowStatus.following,
                           }
                         : {
                             'id': follow.followingId,
                             'name': follow.followingName,
                             'avatar': follow.followingAvatar,
-                            'isFollowing': follow.status == FollowStatus.following,
+                            'isFollowing':
+                                follow.status == FollowStatus.following,
                           };
-                    
+
                     return UserCard(
                       user: userInfo,
                       showFollowButton:

@@ -8,29 +8,27 @@ class HomeService {
   Future<List<HomeContent>> getFeaturedContent() async {
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/api/home/featured'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List<dynamic> contentsJson = data['data'];
-      return contentsJson
-          .map((json) => HomeContent.fromJson(json))
-          .toList();
+      return contentsJson.map((json) => HomeContent.fromJson(json)).toList();
     } else {
       final errorData = jsonDecode(response.body);
       throw Exception(errorData['message'] ?? '获取首页置顶内容失败');
     }
   }
 
-  Future<List<RecommendedPlayer>> getRecommendedPlayers({int limit = 10}) async {
+  Future<List<RecommendedPlayer>> getRecommendedPlayers({
+    int limit = 10,
+  }) async {
     final response = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/api/home/recommended-players?limit=$limit'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      Uri.parse(
+        '${ApiConfig.baseUrl}/api/home/recommended-players?limit=$limit',
+      ),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
@@ -48,17 +46,13 @@ class HomeService {
   Future<List<HotPost>> getHotPosts({int limit = 10}) async {
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/api/home/hot-posts?limit=$limit'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List<dynamic> postsJson = data['data'];
-      return postsJson
-          .map((json) => HotPost.fromJson(json))
-          .toList();
+      return postsJson.map((json) => HotPost.fromJson(json)).toList();
     } else {
       final errorData = jsonDecode(response.body);
       throw Exception(errorData['message'] ?? '获取热门动态失败');

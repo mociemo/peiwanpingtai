@@ -44,8 +44,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
           shareType: 'post',
           shareId: post.id,
           title: '精彩动态分享',
-          description: post.content.length > 50 
-              ? '${post.content.substring(0, 50)}...' 
+          description: post.content.length > 50
+              ? '${post.content.substring(0, 50)}...'
               : post.content,
           imageUrl: post.images.isNotEmpty ? post.images[0] : '',
         ),
@@ -55,7 +55,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   void _shareUserProfile() {
     if (_user == null) return;
-    
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => SharePage(
@@ -73,7 +73,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
     try {
       await Future.delayed(const Duration(milliseconds: 500));
 
-      final stats = await FollowService.getUserStats(userId: int.parse(widget.userId));
+      final stats = await FollowService.getUserStats(
+        userId: int.parse(widget.userId),
+      );
 
       setState(() {
         _userStats = stats as UserStats?;
@@ -148,7 +150,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
     try {
       if (_user!.isFollowing) {
-        await FollowService.unfollowUser(targetUserId: int.parse(widget.userId));
+        await FollowService.unfollowUser(
+          targetUserId: int.parse(widget.userId),
+        );
       } else {
         await FollowService.followUser(targetUserId: int.parse(widget.userId));
       }
@@ -206,11 +210,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onPressed: () => _shareUserProfile(),
             ),
           if (isCurrentUser)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-              },
-            ),
+            IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
         ],
       ),
       body: _isLoading
@@ -235,7 +235,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         children: [
                           CircleAvatar(
                             radius: 40,
-                            backgroundImage: _user != null && _user!.avatar.isNotEmpty
+                            backgroundImage:
+                                _user != null && _user!.avatar.isNotEmpty
                                 ? NetworkImage(_user!.avatar)
                                 : const AssetImage(
                                         'assets/images/default_avatar.png',
@@ -274,12 +275,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ElevatedButton(
                               onPressed: _handleFollowUser,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    _user?.isFollowing ?? false
+                                backgroundColor: _user?.isFollowing ?? false
                                     ? Colors.grey.shade300
                                     : Theme.of(context).colorScheme.primary,
-                                foregroundColor:
-                                    _user?.isFollowing ?? false
+                                foregroundColor: _user?.isFollowing ?? false
                                     ? Theme.of(context).colorScheme.onSurface
                                     : Colors.white,
                                 shape: RoundedRectangleBorder(

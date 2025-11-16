@@ -4,29 +4,27 @@ import '../models/follow_model.dart';
 class UserStatsCard extends StatelessWidget {
   final UserStats stats;
 
-  const UserStatsCard({
-    super.key,
-    required this.stats,
-  });
+  const UserStatsCard({super.key, required this.stats});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           // 关注数
           GestureDetector(
-            onTap: () {
-            },
+            onTap: () {},
             child: Column(
               children: [
                 Text(
@@ -45,11 +43,10 @@ class UserStatsCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // 粉丝数
           GestureDetector(
-            onTap: () {
-            },
+            onTap: () {},
             child: Column(
               children: [
                 Text(
@@ -68,11 +65,10 @@ class UserStatsCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // 动态数
           GestureDetector(
-            onTap: () {
-            },
+            onTap: () {},
             child: Column(
               children: [
                 Text(
@@ -91,7 +87,7 @@ class UserStatsCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // 点赞数
           Column(
             children: [

@@ -33,15 +33,17 @@ class Conversation {
       participantName: json['participantName'] ?? '',
       participantAvatar: json['participantAvatar'] ?? '',
       lastMessage: json['lastMessage'],
-      lastMessageTime: json['lastMessageTime'] != null 
-          ? DateTime.parse(json['lastMessageTime']) 
+      lastMessageTime: json['lastMessageTime'] != null
+          ? DateTime.parse(json['lastMessageTime'])
           : null,
       unreadCount: json['unreadCount'] ?? 0,
       isOnline: json['isOnline'] ?? false,
-      lastOnlineTime: json['lastOnlineTime'] != null 
-          ? DateTime.parse(json['lastOnlineTime']) 
+      lastOnlineTime: json['lastOnlineTime'] != null
+          ? DateTime.parse(json['lastOnlineTime'])
           : null,
-      createTime: DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
+      createTime: DateTime.parse(
+        json['createTime'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 
@@ -93,17 +95,17 @@ class Conversation {
     if (lastMessage == null || lastMessage!.isEmpty) {
       return '暂无消息';
     }
-    return lastMessage!.length > 30 
-        ? '${lastMessage!.substring(0, 30)}...' 
+    return lastMessage!.length > 30
+        ? '${lastMessage!.substring(0, 30)}...'
         : lastMessage!;
   }
 
   String get lastTimeDisplay {
     if (lastMessageTime == null) return '';
-    
+
     final now = DateTime.now();
     final diff = now.difference(lastMessageTime!);
-    
+
     if (diff.inDays > 0) {
       return '${lastMessageTime!.month}/${lastMessageTime!.day}';
     } else if (diff.inHours > 0) {

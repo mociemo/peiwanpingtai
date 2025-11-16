@@ -37,7 +37,8 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
   }
 
   void _getArguments() {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null) {
       _orderId = args['orderId'] as String?;
       _amount = args['amount'] as double?;
@@ -59,15 +60,18 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
     });
 
     try {
-      final paymentProvider = Provider.of<PaymentProvider>(context, listen: false);
-      
+      final paymentProvider = Provider.of<PaymentProvider>(
+        context,
+        listen: false,
+      );
+
       // 获取支付参数
       final paymentParams = await paymentProvider.getPaymentParams(_orderId!);
-      
+
       if (paymentParams != null) {
         // 根据支付方式调用相应的支付SDK
         await _callPaymentSDK(_paymentMethod!, paymentParams);
-        
+
         // 启动状态检查定时器
         _startStatusCheck();
       } else {
@@ -86,10 +90,13 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
     }
   }
 
-  Future<void> _callPaymentSDK(String paymentMethod, Map<String, dynamic> params) async {
+  Future<void> _callPaymentSDK(
+    String paymentMethod,
+    Map<String, dynamic> params,
+  ) async {
     // 这里应该调用相应的支付SDK
     // 由于是示例，我们只是模拟支付过程
-    
+
     switch (paymentMethod) {
       case 'wechat':
         // 调用微信支付SDK
@@ -111,10 +118,10 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
   Future<void> _simulateWechatPay(Map<String, dynamic> params) async {
     // 模拟微信支付
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // 这里应该调用微信支付SDK
     // 例如：fluwx或flutter_wechat_kit
-    
+
     // 模拟支付结果
     // 在实际应用中，支付结果会通过SDK回调返回
     // 这里我们模拟支付成功
@@ -123,10 +130,10 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
   Future<void> _simulateAlipay(Map<String, dynamic> params) async {
     // 模拟支付宝支付
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // 这里应该调用支付宝SDK
     // 例如：flutter_alipay
-    
+
     // 模拟支付结果
     // 在实际应用中，支付结果会通过SDK回调返回
     // 这里我们模拟支付成功
@@ -135,9 +142,9 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
   Future<void> _simulateBankPay(Map<String, dynamic> params) async {
     // 模拟银行卡支付
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // 这里应该调用银行卡支付SDK或跳转到银行支付页面
-    
+
     // 模拟支付结果
     // 在实际应用中，支付结果会通过SDK回调返回
     // 这里我们模拟支付成功
@@ -152,14 +159,17 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
 
   Future<void> _checkPaymentStatus() async {
     if (_orderId == null) return;
-    
+
     try {
-      final paymentProvider = Provider.of<PaymentProvider>(context, listen: false);
+      final paymentProvider = Provider.of<PaymentProvider>(
+        context,
+        listen: false,
+      );
       final success = await paymentProvider.getRechargeOrderDetail(_orderId!);
-      
+
       if (success && paymentProvider.currentOrder != null) {
         final order = paymentProvider.currentOrder!;
-        
+
         if (order.isPaid) {
           // 支付成功
           _statusCheckTimer?.cancel();
@@ -185,7 +195,9 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
   void _onBackPressed() {
     if (_isCompleted) {
       // 支付成功，返回到充值页面并刷新
-      Navigator.of(context).popUntil((route) => route.settings.name == '/recharge');
+      Navigator.of(
+        context,
+      ).popUntil((route) => route.settings.name == '/recharge');
     } else {
       // 支付失败或进行中，直接返回
       Navigator.of(context).pop();
@@ -198,17 +210,16 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
       _isFailed = false;
       _errorMessage = null;
     });
-    
+
     // 重新开始支付
     _startPayment();
   }
 
   void _viewOrderDetail() {
     if (_orderId != null) {
-      Navigator.of(context).pushNamed(
-        '/payment/order/detail',
-        arguments: {'orderId': _orderId},
-      );
+      Navigator.of(
+        context,
+      ).pushNamed('/payment/order/detail', arguments: {'orderId': _orderId});
     }
   }
 
@@ -280,47 +291,44 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // 支付金额
           Text(
             '¥${_amount?.toStringAsFixed(2) ?? '0.00'}',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 支付状态
-          Text(
-            '正在支付...',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          
+          Text('正在支付...', style: Theme.of(context).textTheme.bodyLarge),
+
           const SizedBox(height: 32),
-          
+
           // 加载动画
           const LoadingWidget(),
-          
+
           const SizedBox(height: 32),
-          
+
           // 提示信息
           Text(
             '请在${_getPaymentTitle()}中完成支付',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Text(
             '支付完成后将自动返回',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
           ),
         ],
       ),
@@ -347,9 +355,9 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
               color: Colors.green,
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // 支付成功
           Text(
             '支付成功',
@@ -358,38 +366,40 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
               color: Colors.green,
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 支付金额
           Text(
             '¥${_amount?.toStringAsFixed(2) ?? '0.00'}',
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // 支付方式
           Text(
             _getPaymentTitle(),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // 操作按钮
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => Navigator.of(context).popUntil((route) => route.settings.name == '/recharge'),
+              onPressed: () => Navigator.of(
+                context,
+              ).popUntil((route) => route.settings.name == '/recharge'),
               child: const Text('返回充值'),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
@@ -416,15 +426,11 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
               color: Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(40),
             ),
-            child: const Icon(
-              Icons.error,
-              size: 40,
-              color: Colors.red,
-            ),
+            child: const Icon(Icons.error, size: 40, color: Colors.red),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // 支付失败
           Text(
             '支付失败',
@@ -433,21 +439,21 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
               color: Colors.red,
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 错误信息
           if (_errorMessage != null)
             Text(
               _errorMessage!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
-          
+
           const SizedBox(height: 32),
-          
+
           // 操作按钮
           SizedBox(
             width: double.infinity,
@@ -456,9 +462,9 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
               child: const Text('重新支付'),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(

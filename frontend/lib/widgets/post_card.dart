@@ -19,13 +19,11 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       margin: EdgeInsets.all(8.0),
       elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -38,7 +36,8 @@ class PostCard extends StatelessWidget {
                   radius: 20,
                   backgroundImage: post.userAvatar.isNotEmpty
                       ? NetworkImage(post.userAvatar)
-                      : AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                      : AssetImage('assets/images/default_avatar.png')
+                            as ImageProvider,
                 ),
                 SizedBox(width: 12),
                 Expanded(
@@ -54,7 +53,9 @@ class PostCard extends StatelessWidget {
                       Text(
                         TimeUtils.formatRelativeTime(post.createTime),
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                       ),
                     ],
@@ -78,21 +79,17 @@ class PostCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 16),
-            
+
             // 动态内容
             if (post.content.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(bottom: 12),
-                child: Text(
-                  post.content,
-                  style: theme.textTheme.bodyLarge,
-                ),
+                child: Text(post.content, style: theme.textTheme.bodyLarge),
               ),
-            
+
             // 图片
-            if (post.images.isNotEmpty)
-              _buildImages(post.images),
-            
+            if (post.images.isNotEmpty) _buildImages(post.images),
+
             // 互动按钮
             Padding(
               padding: EdgeInsets.only(top: 12),
@@ -102,7 +99,9 @@ class PostCard extends StatelessWidget {
                   _buildInteractionButton(
                     icon: post.isLiked ? Icons.favorite : Icons.favorite_border,
                     label: '${post.likeCount}',
-                    color: post.isLiked ? Colors.red : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: post.isLiked
+                        ? Colors.red
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     onPressed: onLike,
                     context: context,
                   ),
@@ -204,7 +203,7 @@ class PostCard extends StatelessWidget {
     required BuildContext context,
   }) {
     final theme = Theme.of(context);
-    
+
     return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(

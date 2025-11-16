@@ -58,13 +58,19 @@ class Order {
       ),
       requirements: json['requirements'] ?? '',
       contactInfo: json['contactInfo'] ?? '',
-      createTime: DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
-      startTime: json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
+      createTime: DateTime.parse(
+        json['createTime'] ?? DateTime.now().toIso8601String(),
+      ),
+      startTime: json['startTime'] != null
+          ? DateTime.parse(json['startTime'])
+          : null,
       endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
       cancelReason: json['cancelReason'],
       rating: (json['rating'] as num?)?.toDouble(),
       comment: json['comment'],
-      commentTime: json['commentTime'] != null ? DateTime.parse(json['commentTime']) : null,
+      commentTime: json['commentTime'] != null
+          ? DateTime.parse(json['commentTime'])
+          : null,
     );
   }
 
@@ -125,17 +131,17 @@ class Order {
 }
 
 enum OrderStatus {
-  pending,        // 待接单
-  accepted,       // 已接单
-  inProgress,     // 进行中
-  completed,      // 已完成
-  cancelled,      // 已取消
-  refunded        // 已退款
+  pending, // 待接单
+  accepted, // 已接单
+  inProgress, // 进行中
+  completed, // 已完成
+  cancelled, // 已取消
+  refunded, // 已退款
 }
 
 enum ServiceType {
-  voice,          // 语音陪玩
-  video,          // 视频陪玩
-  gameGuide,      // 游戏指导
-  entertainment   // 娱乐陪玩
+  voice, // 语音陪玩
+  video, // 视频陪玩
+  gameGuide, // 游戏指导
+  entertainment, // 娱乐陪玩
 }

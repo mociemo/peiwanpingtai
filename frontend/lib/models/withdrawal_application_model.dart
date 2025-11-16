@@ -2,52 +2,52 @@
 class WithdrawalApplication {
   /// 申请ID
   final String id;
-  
+
   /// 用户ID
   final String userId;
-  
+
   /// 提现金额
   final double amount;
-  
+
   /// 账户类型：bank-银行卡，alipay-支付宝，wechat-微信
   final String accountType;
-  
+
   /// 账户信息（银行卡号、支付宝账号等）
   final String accountInfo;
-  
+
   /// 账户名称（银行卡开户名、支付宝姓名等）
   final String accountName;
-  
+
   /// 申请状态：pending-待审核，approved-已通过，rejected-已拒绝，completed-已完成
   final String status;
-  
+
   /// 创建时间
   final DateTime createTime;
-  
+
   /// 处理时间
   final DateTime? processTime;
-  
+
   /// 备注（拒绝原因等）
   final String? remark;
-  
+
   /// 处理人ID（管理员）
   final String? processorId;
-  
+
   /// 手续费
   final double? fee;
-  
+
   /// 实际到账金额
   double get actualAmount => amount - (fee ?? 0);
-  
+
   /// 是否待审核
   bool get isPending => status == 'pending';
-  
+
   /// 是否已通过
   bool get isApproved => status == 'approved';
-  
+
   /// 是否已拒绝
   bool get isRejected => status == 'rejected';
-  
+
   /// 是否已完成
   bool get isCompleted => status == 'completed';
 
@@ -77,7 +77,9 @@ class WithdrawalApplication {
       accountName: json['accountName'] as String,
       status: json['status'] as String,
       createTime: DateTime.parse(json['createTime'] as String),
-      processTime: json['processTime'] != null ? DateTime.parse(json['processTime'] as String) : null,
+      processTime: json['processTime'] != null
+          ? DateTime.parse(json['processTime'] as String)
+          : null,
       remark: json['remark'] as String?,
       processorId: json['processorId'] as String?,
       fee: json['fee'] != null ? (json['fee'] as num).toDouble() : null,

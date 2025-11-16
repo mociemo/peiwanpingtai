@@ -59,10 +59,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 children: [
                   Text('加载失败: ${chatProvider.error}'),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _loadData,
-                    child: const Text('重试'),
-                  ),
+                  ElevatedButton(onPressed: _loadData, child: const Text('重试')),
                 ],
               ),
             );
@@ -81,10 +78,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
                   const SizedBox(height: 16),
                   Text(
                     '暂无消息',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -147,20 +141,14 @@ class _ConversationsPageState extends State<ConversationsPage> {
           Expanded(
             child: Text(
               conversation.participantName,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           Text(
             conversation.lastTimeDisplay,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -169,10 +157,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
           Expanded(
             child: Text(
               conversation.lastMessageDisplay,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -185,16 +170,12 @@ class _ConversationsPageState extends State<ConversationsPage> {
                 color: Theme.of(context).colorScheme.primary,
                 shape: BoxShape.circle,
               ),
-              constraints: const BoxConstraints(
-                minWidth: 20,
-                minHeight: 20,
-              ),
+              constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
               child: Text(
-                conversation.unreadCount > 99 ? '99+' : conversation.unreadCount.toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
+                conversation.unreadCount > 99
+                    ? '99+'
+                    : conversation.unreadCount.toString(),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
                 textAlign: TextAlign.center,
               ),
             ),

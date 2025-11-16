@@ -2,46 +2,46 @@
 class RechargeOrder {
   /// 订单ID
   final String id;
-  
+
   /// 用户ID
   final String userId;
-  
+
   /// 充值金额
   final double amount;
-  
+
   /// 支付方式：wechat-微信，alipay-支付宝，bank-银行卡
   final String paymentMethod;
-  
+
   /// 订单状态：pending-待支付，paid-已支付，failed-支付失败，cancelled-已取消
   final String status;
-  
+
   /// 创建时间
   final DateTime createTime;
-  
+
   /// 支付时间
   final DateTime? payTime;
-  
+
   /// 第三方交易ID
   final String? transactionId;
-  
+
   /// 优惠金额
   final double? discountAmount;
-  
+
   /// 优惠券ID
   final String? discountId;
-  
+
   /// 实际支付金额
   double get actualAmount => amount - (discountAmount ?? 0);
-  
+
   /// 是否已支付
   bool get isPaid => status == 'paid';
-  
+
   /// 是否待支付
   bool get isPending => status == 'pending';
-  
+
   /// 是否支付失败
   bool get isFailed => status == 'failed';
-  
+
   /// 是否已取消
   bool get isCancelled => status == 'cancelled';
 
@@ -67,9 +67,13 @@ class RechargeOrder {
       paymentMethod: json['paymentMethod'] as String,
       status: json['status'] as String,
       createTime: DateTime.parse(json['createTime'] as String),
-      payTime: json['payTime'] != null ? DateTime.parse(json['payTime'] as String) : null,
+      payTime: json['payTime'] != null
+          ? DateTime.parse(json['payTime'] as String)
+          : null,
       transactionId: json['transactionId'] as String?,
-      discountAmount: json['discountAmount'] != null ? (json['discountAmount'] as num).toDouble() : null,
+      discountAmount: json['discountAmount'] != null
+          ? (json['discountAmount'] as num).toDouble()
+          : null,
       discountId: json['discountId'] as String?,
     );
   }

@@ -16,11 +16,18 @@ class WithdrawalRecordsPage extends StatefulWidget {
   State<WithdrawalRecordsPage> createState() => _WithdrawalRecordsPageState();
 }
 
-class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with SingleTickerProviderStateMixin {
+class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   final List<String> _tabTitles = ['全部', '待审核', '已通过', '已拒绝', '已完成'];
-  final List<String?> _tabStatuses = [null, 'pending', 'approved', 'rejected', 'completed'];
+  final List<String?> _tabStatuses = [
+    null,
+    'pending',
+    'approved',
+    'rejected',
+    'completed',
+  ];
 
   @override
   void initState() {
@@ -44,7 +51,8 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       _loadWithdrawalApplications();
     }
   }
@@ -54,8 +62,11 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
   }
 
   Future<void> _loadWithdrawalApplications({bool refresh = false}) async {
-    final withdrawalProvider = Provider.of<WithdrawalProvider>(context, listen: false);
-    
+    final withdrawalProvider = Provider.of<WithdrawalProvider>(
+      context,
+      listen: false,
+    );
+
     await withdrawalProvider.getWithdrawalApplications(
       refresh: refresh,
       status: _tabStatuses[_tabController.index],
@@ -63,10 +74,15 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
   }
 
   Future<void> _cancelWithdrawal(String applicationId) async {
-    final withdrawalProvider = Provider.of<WithdrawalProvider>(context, listen: false);
-    
-    final success = await withdrawalProvider.cancelWithdrawalApplication(applicationId);
-    
+    final withdrawalProvider = Provider.of<WithdrawalProvider>(
+      context,
+      listen: false,
+    );
+
+    final success = await withdrawalProvider.cancelWithdrawalApplication(
+      applicationId,
+    );
+
     if (success) {
       ToastUtil.showSuccess('提现申请已取消');
     } else if (withdrawalProvider.errorMessage != null) {
@@ -93,24 +109,23 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '提现详情',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('提现详情', style: Theme.of(context).textTheme.titleLarge),
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(application.status).withAlpha((255 * 0.1).round()),
+                  color: _getStatusColor(
+                    application.status,
+                  ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -130,28 +145,54 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
-              _buildDetailItem('提现金额', '¥${application.amount.toStringAsFixed(2)}'),
-              _buildDetailItem('手续费', '¥${(application.fee ?? 0).toStringAsFixed(2)}'),
-              _buildDetailItem('实际到账', '¥${application.actualAmount.toStringAsFixed(2)}'),
-              _buildDetailItem('账户类型', _getAccountTypeText(application.accountType)),
+
+              _buildDetailItem(
+                '提现金额',
+                '¥${application.amount.toStringAsFixed(2)}',
+              ),
+              _buildDetailItem(
+                '手续费',
+                '¥${(application.fee ?? 0).toStringAsFixed(2)}',
+              ),
+              _buildDetailItem(
+                '实际到账',
+                '¥${application.actualAmount.toStringAsFixed(2)}',
+              ),
+              _buildDetailItem(
+                '账户类型',
+                _getAccountTypeText(application.accountType),
+              ),
               _buildDetailItem('账户姓名', application.accountName),
-              _buildDetailItem('账户信息', _maskAccountInfo(application.accountInfo, application.accountType)),
-              
-              const SizedBox(height: 16),
-              
-              _buildDetailItem('申请时间', DateFormat('yyyy-MM-dd HH:mm:ss').format(application.createTime)),
-              if (application.processTime != null)
-                _buildDetailItem('处理时间', DateFormat('yyyy-MM-dd HH:mm:ss').format(application.processTime!)),
-              
-              if (application.remark != null && application.remark!.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Text(
-                  '备注',
-                  style: Theme.of(context).textTheme.titleMedium,
+              _buildDetailItem(
+                '账户信息',
+                _maskAccountInfo(
+                  application.accountInfo,
+                  application.accountType,
                 ),
+              ),
+
+              const SizedBox(height: 16),
+
+              _buildDetailItem(
+                '申请时间',
+                DateFormat(
+                  'yyyy-MM-dd HH:mm:ss',
+                ).format(application.createTime),
+              ),
+              if (application.processTime != null)
+                _buildDetailItem(
+                  '处理时间',
+                  DateFormat(
+                    'yyyy-MM-dd HH:mm:ss',
+                  ).format(application.processTime!),
+                ),
+
+              if (application.remark != null &&
+                  application.remark!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Text('备注', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Container(
                   width: double.infinity,
@@ -159,14 +200,16 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Theme.of(context).colorScheme.outline),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                   child: Text(application.remark!),
                 ),
               ],
-              
+
               const SizedBox(height: 24),
-              
+
               if (application.isPending)
                 SizedBox(
                   width: double.infinity,
@@ -182,7 +225,7 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
                     child: const Text('取消提现'),
                   ),
                 ),
-              
+
               const SizedBox(height: 16),
             ],
           ),
@@ -201,16 +244,13 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
             width: 80,
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
           ),
         ],
       ),
@@ -283,7 +323,7 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
 
   String _maskAccountInfo(String accountInfo, String accountType) {
     if (accountInfo.length <= 4) return accountInfo;
-    
+
     switch (accountType) {
       case 'bank':
         return '${accountInfo.substring(0, 4)} **** **** ${accountInfo.substring(accountInfo.length - 4)}';
@@ -313,9 +353,11 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
                 isScrollable: true,
                 indicatorColor: Theme.of(context).colorScheme.primary,
                 labelColor: Theme.of(context).colorScheme.primary,
-                unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withAlpha((255 * 0.6).round()),
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
-              
+
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
@@ -332,11 +374,13 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
   }
 
   Widget _buildWithdrawalList(WithdrawalProvider withdrawalProvider) {
-    if (withdrawalProvider.isLoading && withdrawalProvider.withdrawalApplications.isEmpty) {
+    if (withdrawalProvider.isLoading &&
+        withdrawalProvider.withdrawalApplications.isEmpty) {
       return const LoadingWidget();
     }
 
-    if (withdrawalProvider.withdrawalApplications.isEmpty && !withdrawalProvider.isLoading) {
+    if (withdrawalProvider.withdrawalApplications.isEmpty &&
+        !withdrawalProvider.isLoading) {
       return const EmptyWidget(
         message: '暂无提现记录',
         icon: Icons.account_balance_wallet,
@@ -350,7 +394,9 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
       child: ListView.builder(
         controller: _scrollController,
         padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: withdrawalProvider.withdrawalApplications.length + (withdrawalProvider.hasMore ? 1 : 0),
+        itemCount:
+            withdrawalProvider.withdrawalApplications.length +
+            (withdrawalProvider.hasMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == withdrawalProvider.withdrawalApplications.length) {
             return const Center(
@@ -377,7 +423,7 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha((255 * 0.05).round()),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -395,24 +441,36 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: _getAccountTypeColor(application.accountType).withAlpha((255 * 0.1).round()),
+                            color: _getAccountTypeColor(
+                              application.accountType,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             _getAccountTypeText(application.accountType),
                             style: TextStyle(
-                              color: _getAccountTypeColor(application.accountType),
+                              color: _getAccountTypeColor(
+                                application.accountType,
+                              ),
                               fontSize: 12,
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: _getStatusColor(application.status).withAlpha((255 * 0.1).round()),
+                            color: _getStatusColor(
+                              application.status,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -432,15 +490,18 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _maskAccountInfo(application.accountInfo, application.accountType),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                      _maskAccountInfo(
+                        application.accountInfo,
+                        application.accountType,
                       ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                     ),
                   ],
                 ),
               ),
-              
+
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -454,25 +515,25 @@ class _WithdrawalRecordsPageState extends State<WithdrawalRecordsPage> with Sing
                   if (application.fee != null && application.fee! > 0)
                     Text(
                       '手续费: ¥${application.fee!.toStringAsFixed(2)}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                     ),
                 ],
               ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 DateFormat('yyyy-MM-dd HH:mm').format(application.createTime),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
               ),
               TextButton(
                 style: TextButton.styleFrom(

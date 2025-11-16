@@ -12,10 +12,10 @@ class CommentService {
     int size = 20,
   }) async {
     try {
-      final response = await _dio.get('/comments/post/$postId', queryParameters: {
-        'page': page,
-        'size': size,
-      });
+      final response = await _dio.get(
+        '/comments/post/$postId',
+        queryParameters: {'page': page, 'size': size},
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];
@@ -35,10 +35,10 @@ class CommentService {
     int size = 20,
   }) async {
     try {
-      final response = await _dio.get('/comments/user/$userId', queryParameters: {
-        'page': page,
-        'size': size,
-      });
+      final response = await _dio.get(
+        '/comments/user/$userId',
+        queryParameters: {'page': page, 'size': size},
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];
@@ -58,11 +58,14 @@ class CommentService {
     int? parentCommentId,
   }) async {
     try {
-      final response = await _dio.post('/comments', data: {
-        'postId': postId,
-        'content': content,
-        'parentCommentId': parentCommentId,
-      });
+      final response = await _dio.post(
+        '/comments',
+        data: {
+          'postId': postId,
+          'content': content,
+          'parentCommentId': parentCommentId,
+        },
+      );
 
       if (response.data['success'] == true) {
         return Comment.fromJson(response.data['data']);
@@ -80,9 +83,10 @@ class CommentService {
     required String content,
   }) async {
     try {
-      final response = await _dio.put('/comments/$commentId', data: {
-        'content': content,
-      });
+      final response = await _dio.put(
+        '/comments/$commentId',
+        data: {'content': content},
+      );
 
       if (response.data['success'] == true) {
         return Comment.fromJson(response.data['data']);

@@ -14,9 +14,7 @@ class HttpUtil {
         baseUrl: 'https://api.example.com', // 替换为实际的API地址
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
       ),
     );
 

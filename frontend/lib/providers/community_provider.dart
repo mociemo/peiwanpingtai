@@ -9,21 +9,20 @@ import '../services/comment_service.dart';
 import '../services/follow_service.dart';
 
 class CommunityProvider with ChangeNotifier {
-
   // 动态相关状态
   final List<Post> _posts = [];
   bool _isLoadingPosts = false;
   bool _hasMorePosts = true;
   int _currentPage = 1;
-  
+
   // 单个动态状态
   Post? _currentPost;
   bool _isLoadingPostDetail = false;
-  
+
   // 评论相关状态
   final Map<String, List<Comment>> _postComments = {};
   final Map<String, bool> _isLoadingComments = {};
-  
+
   // 关注相关状态
   List<FollowRelationship> _followers = [];
   List<FollowRelationship> _following = [];
@@ -43,21 +42,21 @@ class CommunityProvider with ChangeNotifier {
   // 获取动态列表
   Future<void> loadPosts({bool refresh = false}) async {
     if (_isLoadingPosts) return;
-    
+
     if (refresh) {
       _currentPage = 1;
       _posts.clear();
     }
-    
+
     _isLoadingPosts = true;
     notifyListeners();
-    
+
     try {
       final posts = await PostService.getPosts(
         page: _currentPage - 1,
         size: 20,
       );
-      
+
       _posts.addAll(posts);
       _hasMorePosts = posts.length == 20;
       _currentPage++;
@@ -73,7 +72,7 @@ class CommunityProvider with ChangeNotifier {
   Future<void> loadPostDetail(String postId) async {
     _isLoadingPostDetail = true;
     notifyListeners();
-    
+
     try {
       _currentPost = await PostService.getPostById(postId);
     } catch (e) {
@@ -94,9 +93,13 @@ class CommunityProvider with ChangeNotifier {
       await PostService.createPost(
         content: content,
         imageUrls: images?.join(','),
-        postType: video != null ? 'VIDEO' : images != null ? 'IMAGE' : 'TEXT',
+        postType: video != null
+            ? 'VIDEO'
+            : images != null
+            ? 'IMAGE'
+            : 'TEXT',
       );
-      
+
       // 发布成功后重新加载第一页
       await loadPosts(refresh: true);
       return true;
@@ -117,27 +120,27 @@ class CommunityProvider with ChangeNotifier {
         } else {
           await PostService.likePost(postId);
         }
-        
+
         // 更新本地状态
         _posts[index] = post.copyWith(
           isLiked: !post.isLiked,
           likeCount: post.likeCount + (post.isLiked ? -1 : 1),
         );
       }
-      
+
       if (_currentPost?.id == postId) {
         if (_currentPost!.isLiked) {
           await PostService.unlikePost(postId);
         } else {
           await PostService.likePost(postId);
         }
-        
+
         _currentPost = _currentPost!.copyWith(
           isLiked: !_currentPost!.isLiked,
           likeCount: _currentPost!.likeCount + (_currentPost!.isLiked ? -1 : 1),
         );
       }
-      
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -150,7 +153,7 @@ class CommunityProvider with ChangeNotifier {
   Future<void> loadComments(String postId) async {
     _isLoadingComments[postId] = true;
     notifyListeners();
-    
+
     try {
       final postIdNum = int.tryParse(postId) ?? 0;
       _postComments[postId] = await CommentService.getCommentsByPostId(
@@ -169,11 +172,8 @@ class CommunityProvider with ChangeNotifier {
   Future<bool> createComment(String postId, String content) async {
     try {
       final postIdNum = int.tryParse(postId) ?? 0;
-      await CommentService.createComment(
-        postId: postIdNum,
-        content: content,
-      );
-      
+      await CommentService.createComment(postId: postIdNum, content: content);
+
       // 重新加载评论
       await loadComments(postId);
       return true;
@@ -192,7 +192,7 @@ class CommunityProvider with ChangeNotifier {
       } else {
         await FollowService.followUser(targetUserId: userIdNum);
       }
-      
+
       _userFollowStatus[userId] = !(_userFollowStatus[userId] ?? false);
       notifyListeners();
       return true;
@@ -211,7 +211,7 @@ class CommunityProvider with ChangeNotifier {
   Future<void> loadFollows(String type, String userId) async {
     _isLoadingFollows = true;
     notifyListeners();
-    
+
     try {
       final userIdNum = int.tryParse(userId) ?? 0;
       if (type == 'followers') {

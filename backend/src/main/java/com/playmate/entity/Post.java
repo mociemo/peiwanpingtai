@@ -1,72 +1,124 @@
 package com.playmate.entity;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "posts")
-@Data
+@Document(collection = "posts")
 public class Post {
-    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column(nullable = false)
-    private Long userId;
-    
-    @Column(nullable = false, length = 500)
+    private String id;
+    private String userId;
     private String content;
-    
-    @ElementCollection
-    @CollectionTable(name = "post_images", joinColumns = @JoinColumn(name = "post_id"))
-    @Column(name = "image_url")
-    private List<String> images;
-    
-    @ElementCollection
-    @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
-    @Column(name = "tag")
-    private List<String> tags;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    private String[] mediaUrls;
     private PostType type;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PostStatus status = PostStatus.PUBLISHED;
-    
-    @Column(nullable = false)
-    private LocalDateTime createTime;
-    
-    private LocalDateTime updateTime;
-    
-    @Column(nullable = false)
+    private PostStatus status;
     private Integer likeCount = 0;
-    
-    @Column(nullable = false)
     private Integer commentCount = 0;
-    
-    @Column(nullable = false)
     private Integer shareCount = 0;
-    
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
     private Boolean isPinned = false;
-    
-    private String location;
-    
-    private String gameName;
-    
-    private String videoUrl;
-    
-    @PrePersist
-    protected void onCreate() {
-        createTime = LocalDateTime.now();
+
+    public String getId() {
+        return id;
     }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        updateTime = LocalDateTime.now();
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String[] getMediaUrls() {
+        return mediaUrls;
+    }
+
+    public void setMediaUrls(String[] mediaUrls) {
+        this.mediaUrls = mediaUrls;
+    }
+
+    public List<String> getImages() {
+        return mediaUrls != null ? java.util.Arrays.asList(mediaUrls) : new java.util.ArrayList<>();
+    }
+
+    public PostType getType() {
+        return type;
+    }
+
+    public void setType(PostType type) {
+        this.type = type;
+    }
+
+    public PostStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PostStatus status) {
+        this.status = status;
+    }
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Integer getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(Integer commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    public Integer getShareCount() {
+        return shareCount;
+    }
+
+    public void setShareCount(Integer shareCount) {
+        this.shareCount = shareCount;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Boolean getIsPinned() {
+        return isPinned;
+    }
+
+    public void setIsPinned(Boolean isPinned) {
+        this.isPinned = isPinned;
     }
 }

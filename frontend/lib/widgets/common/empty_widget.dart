@@ -6,12 +6,7 @@ class EmptyWidget extends StatelessWidget {
   final IconData? icon;
   final Widget? action;
 
-  const EmptyWidget({
-    super.key,
-    required this.message,
-    this.icon,
-    this.action,
-  });
+  const EmptyWidget({super.key, required this.message, this.icon, this.action});
 
   @override
   Widget build(BuildContext context) {
@@ -24,20 +19,21 @@ class EmptyWidget extends StatelessWidget {
             Icon(
               icon ?? Icons.inbox_outlined,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
               message,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
-            if (action != null) ...[
-              const SizedBox(height: 24),
-              action!,
-            ],
+            if (action != null) ...[const SizedBox(height: 24), action!],
           ],
         ),
       ),

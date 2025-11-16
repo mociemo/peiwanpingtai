@@ -14,13 +14,16 @@ class PostService {
     String direction = 'desc',
   }) async {
     try {
-      final response = await _dio.get('/posts', queryParameters: {
-        'page': page,
-        'size': size,
-        'status': status,
-        'sort': sort,
-        'direction': direction,
-      });
+      final response = await _dio.get(
+        '/posts',
+        queryParameters: {
+          'page': page,
+          'size': size,
+          'status': status,
+          'sort': sort,
+          'direction': direction,
+        },
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];
@@ -41,11 +44,10 @@ class PostService {
     String status = 'PUBLISHED',
   }) async {
     try {
-      final response = await _dio.get('/posts/user/$userId', queryParameters: {
-        'page': page,
-        'size': size,
-        'status': status,
-      });
+      final response = await _dio.get(
+        '/posts/user/$userId',
+        queryParameters: {'page': page, 'size': size, 'status': status},
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];
@@ -66,12 +68,15 @@ class PostService {
     String status = 'PUBLISHED',
   }) async {
     try {
-      final response = await _dio.get('/posts/search', queryParameters: {
-        'keyword': keyword,
-        'page': page,
-        'size': size,
-        'status': status,
-      });
+      final response = await _dio.get(
+        '/posts/search',
+        queryParameters: {
+          'keyword': keyword,
+          'page': page,
+          'size': size,
+          'status': status,
+        },
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];
@@ -92,12 +97,15 @@ class PostService {
     String? gameName,
   }) async {
     try {
-      final response = await _dio.post('/posts', data: {
-        'content': content,
-        'imageUrls': imageUrls,
-        'postType': postType,
-        'gameName': gameName,
-      });
+      final response = await _dio.post(
+        '/posts',
+        data: {
+          'content': content,
+          'imageUrls': imageUrls,
+          'postType': postType,
+          'gameName': gameName,
+        },
+      );
 
       if (response.data['success'] == true) {
         return Post.fromJson(response.data['data']);
@@ -117,11 +125,14 @@ class PostService {
     String? gameName,
   }) async {
     try {
-      final response = await _dio.put('/posts/$postId', data: {
-        'content': content,
-        'imageUrls': imageUrls,
-        'gameName': gameName,
-      });
+      final response = await _dio.put(
+        '/posts/$postId',
+        data: {
+          'content': content,
+          'imageUrls': imageUrls,
+          'gameName': gameName,
+        },
+      );
 
       if (response.data['success'] == true) {
         return Post.fromJson(response.data['data']);
@@ -201,12 +212,15 @@ class PostService {
     String status = 'PUBLISHED',
   }) async {
     try {
-      final response = await _dio.get('/posts/following', queryParameters: {
-        'userIds': userIds.join(','),
-        'page': page,
-        'size': size,
-        'status': status,
-      });
+      final response = await _dio.get(
+        '/posts/following',
+        queryParameters: {
+          'userIds': userIds.join(','),
+          'page': page,
+          'size': size,
+          'status': status,
+        },
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];

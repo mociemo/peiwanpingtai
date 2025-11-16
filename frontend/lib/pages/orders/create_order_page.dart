@@ -17,7 +17,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
   final _formKey = GlobalKey<FormState>();
   final _requirementsController = TextEditingController();
   final _contactInfoController = TextEditingController();
-  
+
   ServiceType _selectedServiceType = ServiceType.gameGuide;
   int _selectedDuration = 60; // 默认1小时
   bool _isLoading = false;
@@ -45,7 +45,6 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     });
 
     try {
-      
       final orderData = {
         'playerId': widget.player['id'],
         'serviceType': _selectedServiceType.name,
@@ -55,12 +54,12 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       };
 
       final response = await ApiService.createOrder(orderData);
-      
+
       if (response['success'] == true) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('订单创建成功！')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('订单创建成功！')));
           Navigator.of(context).pop(true);
         }
       } else {
@@ -68,9 +67,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('创建订单失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('创建订单失败: $e')));
       }
     } finally {
       if (mounted) {
@@ -83,7 +82,8 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
 
   double _calculateTotalAmount() {
     final priceText = widget.player['price'] ?? '0元/小时';
-    final price = double.tryParse(priceText.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
+    final price =
+        double.tryParse(priceText.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0.0;
     return price * (_selectedDuration / 60);
   }
 
@@ -93,10 +93,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
     final totalAmount = _calculateTotalAmount();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('创建订单'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('创建订单'), elevation: 0),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -113,7 +110,7 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                       CircleAvatar(
                         radius: 30,
                         backgroundImage: NetworkImage(player['avatar'] ?? ''),
-                        child: player['avatar'] == null 
+                        child: player['avatar'] == null
                             ? const Icon(Icons.person, size: 30)
                             : null,
                       ),
@@ -124,24 +121,25 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                           children: [
                             Text(
                               player['name'] ?? '未知用户',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               player['game'] ?? '游戏达人',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey.shade600,
-                              ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.grey.shade600),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               player['price'] ?? '0元/小时',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
@@ -150,15 +148,15 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 服务类型选择
               Text(
                 '服务类型',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -174,23 +172,25 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                         _selectedServiceType = type;
                       });
                     },
-                    backgroundColor: isSelected 
-                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                    backgroundColor: isSelected
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.1)
                         : null,
                     selectedColor: Theme.of(context).colorScheme.primary,
                     checkmarkColor: Colors.white,
                   );
                 }).toList(),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 时长选择
               Text(
                 '服务时长',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -207,17 +207,19 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                         _selectedDuration = duration;
                       });
                     },
-                    backgroundColor: isSelected 
-                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                    backgroundColor: isSelected
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.1)
                         : null,
                     selectedColor: Theme.of(context).colorScheme.primary,
                     checkmarkColor: Colors.white,
                   );
                 }).toList(),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 需求描述
               CustomTextField(
                 controller: _requirementsController,
@@ -231,9 +233,9 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // 联系方式
               CustomTextField(
                 controller: _contactInfoController,
@@ -246,14 +248,16 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // 费用总计
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -267,17 +271,18 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                     ),
                     Text(
                       '¥${totalAmount.toStringAsFixed(2)}',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // 提交按钮
               SizedBox(
                 width: double.infinity,
@@ -297,7 +302,10 @@ class _CreateOrderPageState extends State<CreateOrderPage> {
                         )
                       : const Text(
                           '确认下单',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                 ),
               ),

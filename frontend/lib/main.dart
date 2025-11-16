@@ -16,7 +16,7 @@ import 'utils/toast_util.dart';
 void main() {
   // 初始化API服务
   initApiService();
-  
+
   runApp(
     MultiProvider(
       providers: [
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GoRouter router = AppRouter.router;
-    
+
     return MaterialApp.router(
       title: '陪玩伴侣',
       theme: AppTheme.lightTheme,

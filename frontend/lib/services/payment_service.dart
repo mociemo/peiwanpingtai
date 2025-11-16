@@ -48,9 +48,7 @@ class PaymentService {
   /// 获取充值订单详情
   Future<RechargeOrder> getRechargeOrderDetail(String orderId) async {
     try {
-      final response = await _httpUtil.get(
-        '/api/payment/recharge/$orderId',
-      );
+      final response = await _httpUtil.get('/api/payment/recharge/$orderId');
 
       if (response.statusCode == 200) {
         final data = response.data?['data'] as Map<String, dynamic>?;
@@ -77,11 +75,8 @@ class PaymentService {
     String? status,
   }) async {
     try {
-      final Map<String, dynamic> queryParams = {
-        'page': page,
-        'size': size,
-      };
-      
+      final Map<String, dynamic> queryParams = {'page': page, 'size': size};
+
       if (status != null) {
         queryParams['status'] = status;
       }
@@ -92,10 +87,13 @@ class PaymentService {
       );
 
       if (response.statusCode == 200) {
-        final dataList = response.data?['data']?['list'] as List<dynamic>? ?? [];
+        final dataList =
+            response.data?['data']?['list'] as List<dynamic>? ?? [];
         return dataList.map((item) {
           final itemMap = item as Map<String, dynamic>?;
-          return itemMap != null ? RechargeOrder.fromJson(itemMap) : RechargeOrder.empty();
+          return itemMap != null
+              ? RechargeOrder.fromJson(itemMap)
+              : RechargeOrder.empty();
         }).toList();
       } else {
         final message = response.data?['message'] ?? '未知错误';
@@ -132,9 +130,7 @@ class PaymentService {
   /// 获取支付参数（用于调用第三方支付）
   Future<Map<String, dynamic>> getPaymentParams(String orderId) async {
     try {
-      final response = await _httpUtil.get(
-        '/api/payment/params/$orderId',
-      );
+      final response = await _httpUtil.get('/api/payment/params/$orderId');
 
       if (response.statusCode == 200) {
         final data = response.data?['data'] as Map<String, dynamic>?;
@@ -176,9 +172,7 @@ class PaymentService {
   /// 获取充值优惠列表
   Future<List<Map<String, dynamic>>> getRechargeDiscounts() async {
     try {
-      final response = await _httpUtil.get(
-        '/api/payment/discounts',
-      );
+      final response = await _httpUtil.get('/api/payment/discounts');
 
       if (response.statusCode == 200) {
         final dataList = response.data?['data'] as List<dynamic>? ?? [];
@@ -198,14 +192,14 @@ class PaymentService {
   }
 
   /// 验证优惠券是否可用
-  Future<Map<String, dynamic>> validateDiscount(String discountId, double amount) async {
+  Future<Map<String, dynamic>> validateDiscount(
+    String discountId,
+    double amount,
+  ) async {
     try {
       final response = await _httpUtil.post(
         '/api/payment/discount/validate',
-        data: {
-          'discountId': discountId,
-          'amount': amount,
-        },
+        data: {'discountId': discountId, 'amount': amount},
       );
 
       if (response.statusCode == 200) {

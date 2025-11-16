@@ -20,7 +20,10 @@ class CallService {
   Duration get callDuration => _callDuration;
 
   // 发起语音通话
-  Future<void> startVoiceCall(String conversationId, String participantId) async {
+  Future<void> startVoiceCall(
+    String conversationId,
+    String participantId,
+  ) async {
     if (_isInCall) {
       debugPrint('已经在通话中，无法发起新的通话');
       return;
@@ -37,7 +40,10 @@ class CallService {
   }
 
   // 发起视频通话
-  Future<void> startVideoCall(String conversationId, String participantId) async {
+  Future<void> startVideoCall(
+    String conversationId,
+    String participantId,
+  ) async {
     if (_isInCall) {
       debugPrint('已经在通话中，无法发起新的通话');
       return;
@@ -54,7 +60,11 @@ class CallService {
   }
 
   // 接受通话
-  Future<void> acceptCall(String conversationId, String callId, bool isVideo) async {
+  Future<void> acceptCall(
+    String conversationId,
+    String callId,
+    bool isVideo,
+  ) async {
     if (_isInCall) {
       debugPrint('已经在通话中，无法接受新的通话');
       return;
@@ -90,7 +100,10 @@ class CallService {
 
     // 发送结束通话响应
     if (_currentCallId != null && _currentConversationId != null) {
-      WebSocketService.instance.endCall(_currentConversationId!, _currentCallId!);
+      WebSocketService.instance.endCall(
+        _currentConversationId!,
+        _currentCallId!,
+      );
     }
 
     // 停止计时器

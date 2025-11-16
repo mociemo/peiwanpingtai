@@ -11,10 +11,10 @@ class ChatService {
     int size = 20,
   }) async {
     try {
-      final response = await _dio.get('/chat/conversations', queryParameters: {
-        'page': page,
-        'size': size,
-      });
+      final response = await _dio.get(
+        '/chat/conversations',
+        queryParameters: {'page': page, 'size': size},
+      );
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -22,7 +22,9 @@ class ChatService {
   }
 
   // 获取会话详情
-  static Future<Map<String, dynamic>> getConversationById(String conversationId) async {
+  static Future<Map<String, dynamic>> getConversationById(
+    String conversationId,
+  ) async {
     try {
       final response = await _dio.get('/chat/conversations/$conversationId');
       return response.data;
@@ -32,11 +34,14 @@ class ChatService {
   }
 
   // 创建会话
-  static Future<Map<String, dynamic>> createConversation(String participantId) async {
+  static Future<Map<String, dynamic>> createConversation(
+    String participantId,
+  ) async {
     try {
-      final response = await _dio.post('/chat/conversations', data: {
-        'participantId': participantId,
-      });
+      final response = await _dio.post(
+        '/chat/conversations',
+        data: {'participantId': participantId},
+      );
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -51,11 +56,14 @@ class ChatService {
     String? beforeMessageId,
   }) async {
     try {
-      final response = await _dio.get('/chat/conversations/$conversationId/messages', queryParameters: {
-        'page': page,
-        'size': size,
-        if (beforeMessageId != null) 'beforeMessageId': beforeMessageId,
-      });
+      final response = await _dio.get(
+        '/chat/conversations/$conversationId/messages',
+        queryParameters: {
+          'page': page,
+          'size': size,
+          if (beforeMessageId != null) 'beforeMessageId': beforeMessageId,
+        },
+      );
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -68,10 +76,10 @@ class ChatService {
     String content,
   ) async {
     try {
-      final response = await _dio.post('/chat/conversations/$conversationId/messages', data: {
-        'type': MessageType.text.name,
-        'content': content,
-      });
+      final response = await _dio.post(
+        '/chat/conversations/$conversationId/messages',
+        data: {'type': MessageType.text.name, 'content': content},
+      );
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -88,7 +96,7 @@ class ChatService {
         'type': MessageType.image.name,
         'image': await MultipartFile.fromFile(imagePath),
       });
-      
+
       final response = await _dio.post(
         '/chat/conversations/$conversationId/messages',
         data: formData,
@@ -111,7 +119,7 @@ class ChatService {
         'voice': await MultipartFile.fromFile(voicePath),
         'duration': duration,
       });
-      
+
       final response = await _dio.post(
         '/chat/conversations/$conversationId/messages',
         data: formData,
@@ -143,9 +151,13 @@ class ChatService {
   }
 
   // 标记消息为已读
-  static Future<Map<String, dynamic>> markMessagesAsRead(String conversationId) async {
+  static Future<Map<String, dynamic>> markMessagesAsRead(
+    String conversationId,
+  ) async {
     try {
-      final response = await _dio.put('/chat/conversations/$conversationId/read');
+      final response = await _dio.put(
+        '/chat/conversations/$conversationId/read',
+      );
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -153,9 +165,13 @@ class ChatService {
   }
 
   // 清空聊天记录
-  static Future<Map<String, dynamic>> clearChatHistory(String conversationId) async {
+  static Future<Map<String, dynamic>> clearChatHistory(
+    String conversationId,
+  ) async {
     try {
-      final response = await _dio.delete('/chat/conversations/$conversationId/messages');
+      final response = await _dio.delete(
+        '/chat/conversations/$conversationId/messages',
+      );
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -178,7 +194,7 @@ class ChatService {
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(filePath),
       });
-      
+
       final response = await _dio.post('/upload', data: formData);
       return response.data;
     } catch (e) {

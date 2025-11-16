@@ -14,10 +14,7 @@ import '../../widgets/custom_text_field.dart';
 class RatingPage extends StatefulWidget {
   final String orderId;
 
-  const RatingPage({
-    super.key,
-    required this.orderId,
-  });
+  const RatingPage({super.key, required this.orderId});
 
   @override
   State<RatingPage> createState() => _RatingPageState();
@@ -26,7 +23,7 @@ class RatingPage extends StatefulWidget {
 class _RatingPageState extends State<RatingPage> {
   final RatingService _ratingService = RatingService();
   final TextEditingController _commentController = TextEditingController();
-  
+
   Order? _order;
   int _rating = 5;
   final List<String> _selectedTags = [];
@@ -69,9 +66,9 @@ class _RatingPageState extends State<RatingPage> {
         _isLoading = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载订单详情失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('加载订单详情失败: ${e.toString()}')));
       }
     }
   }
@@ -92,22 +89,19 @@ class _RatingPageState extends State<RatingPage> {
         tags: _selectedTags,
       );
 
-      await _ratingService.createRating(
-        authProvider.token!,
-        ratingRequest,
-      );
+      await _ratingService.createRating(authProvider.token!, ratingRequest);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('评价提交成功')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('评价提交成功')));
         context.pop();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('提交评价失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('提交评价失败: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -131,30 +125,28 @@ class _RatingPageState extends State<RatingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('评价订单'),
-      ),
+      appBar: AppBar(title: const Text('评价订单')),
       body: _isLoading
           ? const LoadingWidget()
           : _order == null
-              ? const Center(child: Text('订单不存在'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildOrderInfo(),
-                      const SizedBox(height: 24),
-                      _buildRatingSection(),
-                      const SizedBox(height: 24),
-                      _buildTagsSection(),
-                      const SizedBox(height: 24),
-                      _buildCommentSection(),
-                      const Spacer(),
-                      _buildSubmitButton(),
-                    ],
-                  ),
-                ),
+          ? const Center(child: Text('订单不存在'))
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildOrderInfo(),
+                  const SizedBox(height: 24),
+                  _buildRatingSection(),
+                  const SizedBox(height: 24),
+                  _buildTagsSection(),
+                  const SizedBox(height: 24),
+                  _buildCommentSection(),
+                  const Spacer(),
+                  _buildSubmitButton(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -186,9 +178,7 @@ class _RatingPageState extends State<RatingPage> {
                 const SizedBox(height: 4),
                 Text(
                   '${_order!.serviceType} · ${_order!.duration}小时',
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -204,10 +194,7 @@ class _RatingPageState extends State<RatingPage> {
       children: [
         const Text(
           '服务评分',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Row(
@@ -231,10 +218,7 @@ class _RatingPageState extends State<RatingPage> {
         Center(
           child: Text(
             _getRatingText(_rating),
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
         ),
       ],
@@ -247,10 +231,7 @@ class _RatingPageState extends State<RatingPage> {
       children: [
         const Text(
           '服务标签',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -263,7 +244,9 @@ class _RatingPageState extends State<RatingPage> {
               selected: isSelected,
               onSelected: (_) => _toggleTag(tag),
               backgroundColor: Colors.grey.withValues(alpha: 0.1),
-              selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+              selectedColor: Theme.of(
+                context,
+              ).primaryColor.withValues(alpha: 0.2),
               checkmarkColor: Theme.of(context).primaryColor,
             );
           }).toList(),
@@ -278,10 +261,7 @@ class _RatingPageState extends State<RatingPage> {
       children: [
         const Text(
           '详细评价',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         CustomTextField(

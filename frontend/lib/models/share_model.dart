@@ -64,7 +64,7 @@ class ShareStats {
   factory ShareStats.fromJson(Map<String, dynamic> json) {
     final shareTypeStats = <String, int>{};
     final statsMap = json['shareTypeStats'] as Map<String, dynamic>;
-    
+
     statsMap.forEach((key, value) {
       shareTypeStats[key] = value as int;
     });

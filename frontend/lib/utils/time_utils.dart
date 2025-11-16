@@ -4,7 +4,7 @@ class TimeUtils {
   static String formatRelativeTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 365) {
       return '${(difference.inDays / 365).floor()}年前';
     } else if (difference.inDays > 30) {
@@ -19,24 +19,24 @@ class TimeUtils {
       return '刚刚';
     }
   }
-  
+
   static String formatFullTime(DateTime dateTime) {
     return DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
   }
-  
+
   static String formatDate(DateTime dateTime) {
     return DateFormat('yyyy-MM-dd').format(dateTime);
   }
-  
+
   static String formatTime(DateTime dateTime) {
     return DateFormat('HH:mm').format(dateTime);
   }
-  
+
   static String formatChatTime(DateTime dateTime) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    
+
     if (dateTime.isAfter(today)) {
       return formatTime(dateTime);
     } else if (dateTime.isAfter(yesterday)) {

@@ -9,7 +9,7 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> {
   int _selectedTab = 0;
-  
+
   final List<String> _tabTitles = ['全部', '订单', '系统', '活动'];
 
   @override
@@ -41,7 +41,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
               itemCount: _tabTitles.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 12,
+                  ),
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
@@ -49,14 +52,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       });
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: _selectedTab == index 
+                        color: _selectedTab == index
                             ? Theme.of(context).colorScheme.primary
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: _selectedTab == index 
+                          color: _selectedTab == index
                               ? Theme.of(context).colorScheme.primary
                               : Colors.grey.shade300,
                         ),
@@ -64,8 +70,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       child: Text(
                         _tabTitles[index],
                         style: TextStyle(
-                          color: _selectedTab == index 
-                              ? Colors.white 
+                          color: _selectedTab == index
+                              ? Colors.white
                               : Colors.grey.shade600,
                           fontWeight: FontWeight.w500,
                         ),
@@ -76,7 +82,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               },
             ),
           ),
-          
+
           // 通知列表
           Expanded(
             child: ListView.builder(
@@ -91,7 +97,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       ),
     );
   }
-  
+
   List<Map<String, dynamic>> _getNotifications() {
     // 模拟通知数据
     return [
@@ -137,7 +143,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       },
     ];
   }
-  
+
   Widget _buildNotificationItem(Map<String, dynamic> notification, int index) {
     return Dismissible(
       key: Key(notification['id'].toString()),
@@ -153,7 +159,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        color: notification['read'] ? null : Color.alphaBlend(Theme.of(context).colorScheme.primary.withAlpha(10), Colors.transparent),
+        color: notification['read']
+            ? null
+            : Color.alphaBlend(
+                Theme.of(context).colorScheme.primary.withAlpha(10),
+                Colors.transparent,
+              ),
         child: ListTile(
           leading: Container(
             width: 40,
@@ -171,7 +182,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
           title: Text(
             notification['title'],
             style: TextStyle(
-              fontWeight: notification['read'] ? FontWeight.normal : FontWeight.bold,
+              fontWeight: notification['read']
+                  ? FontWeight.normal
+                  : FontWeight.bold,
             ),
           ),
           subtitle: Column(
@@ -181,14 +194,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
               const SizedBox(height: 4),
               Text(
                 notification['time'],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade500,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
               ),
             ],
           ),
-          trailing: !notification['read'] 
+          trailing: !notification['read']
               ? Container(
                   width: 8,
                   height: 8,
@@ -206,28 +216,25 @@ class _NotificationsPageState extends State<NotificationsPage> {
       ),
     );
   }
-  
+
   void _markAsRead(int notificationId) {
-    setState(() {
-    });
+    setState(() {});
   }
-  
+
   void _markAllAsRead() {
-    setState(() {
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('全部通知已标记为已读')),
-    );
+    setState(() {});
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('全部通知已标记为已读')));
   }
-  
+
   void _deleteNotification(int notificationId) {
-    setState(() {
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('通知已删除')),
-    );
+    setState(() {});
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('通知已删除')));
   }
-  
+
   void _clearAll() {
     showDialog(
       context: context,
@@ -242,11 +249,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              setState(() {
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('所有通知已清空')),
-              );
+              setState(() {});
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('所有通知已清空')));
             },
             child: const Text('确定'),
           ),
@@ -254,7 +260,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       ),
     );
   }
-  
+
   void _handleNotificationTap(Map<String, dynamic> notification) {
     switch (notification['type']) {
       case 'order':

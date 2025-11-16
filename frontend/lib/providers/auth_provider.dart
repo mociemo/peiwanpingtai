@@ -22,7 +22,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> _loadAuthData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    
+
     if (token != null) {
       _token = token;
       _isAuthenticated = true;
@@ -38,14 +38,14 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final response = await ApiService.login(username, password);
-      
+
       if (response['success']) {
         _token = response['data']['token'];
         _isAuthenticated = true;
-        
+
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', _token!);
-        
+
         await _loadUserInfo();
       }
     } catch (e) {
@@ -56,13 +56,23 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> register(String username, String password, String email, String phone) async {
+  Future<void> register(
+    String username,
+    String password,
+    String email,
+    String phone,
+  ) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await ApiService.register(username, password, email, phone);
-      
+      final response = await ApiService.register(
+        username,
+        password,
+        email,
+        phone,
+      );
+
       if (response['success']) {
         // 注册成功后自动登录
         await login(username, password);
@@ -78,11 +88,11 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
-    
+
     _token = null;
     _isAuthenticated = false;
     _userInfo = null;
-    
+
     notifyListeners();
   }
 

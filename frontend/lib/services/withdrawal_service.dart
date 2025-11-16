@@ -31,7 +31,9 @@ class WithdrawalService {
 
       if (response.statusCode == 200) {
         final data = response.data?['data'] as Map<String, dynamic>?;
-        return data != null ? WithdrawalApplication.fromJson(data) : WithdrawalApplication.empty();
+        return data != null
+            ? WithdrawalApplication.fromJson(data)
+            : WithdrawalApplication.empty();
       } else {
         final message = response.data?['message'] ?? '未知错误';
         throw Exception('创建提现申请失败: $message');
@@ -44,15 +46,17 @@ class WithdrawalService {
   }
 
   /// 获取提现申请详情
-  Future<WithdrawalApplication> getWithdrawalApplicationDetail(String applicationId) async {
+  Future<WithdrawalApplication> getWithdrawalApplicationDetail(
+    String applicationId,
+  ) async {
     try {
-      final response = await _httpUtil.get(
-        '/api/withdrawal/$applicationId',
-      );
+      final response = await _httpUtil.get('/api/withdrawal/$applicationId');
 
       if (response.statusCode == 200) {
         final data = response.data?['data'] as Map<String, dynamic>?;
-        return data != null ? WithdrawalApplication.fromJson(data) : WithdrawalApplication.empty();
+        return data != null
+            ? WithdrawalApplication.fromJson(data)
+            : WithdrawalApplication.empty();
       } else {
         final message = response.data?['message'] ?? '未知错误';
         throw Exception('获取提现申请详情失败: $message');
@@ -71,11 +75,8 @@ class WithdrawalService {
     String? status,
   }) async {
     try {
-      final Map<String, dynamic> queryParams = {
-        'page': page,
-        'size': size,
-      };
-      
+      final Map<String, dynamic> queryParams = {'page': page, 'size': size};
+
       if (status != null) {
         queryParams['status'] = status;
       }
@@ -86,10 +87,13 @@ class WithdrawalService {
       );
 
       if (response.statusCode == 200) {
-        final dataList = response.data?['data']?['list'] as List<dynamic>? ?? [];
+        final dataList =
+            response.data?['data']?['list'] as List<dynamic>? ?? [];
         return dataList.map((item) {
           final itemMap = item as Map<String, dynamic>?;
-          return itemMap != null ? WithdrawalApplication.fromJson(itemMap) : WithdrawalApplication.empty();
+          return itemMap != null
+              ? WithdrawalApplication.fromJson(itemMap)
+              : WithdrawalApplication.empty();
         }).toList();
       } else {
         final message = response.data?['message'] ?? '未知错误';
@@ -126,9 +130,7 @@ class WithdrawalService {
   /// 获取用户可提现余额
   Future<double> getAvailableBalance() async {
     try {
-      final response = await _httpUtil.get(
-        '/api/withdrawal/balance',
-      );
+      final response = await _httpUtil.get('/api/withdrawal/balance');
 
       if (response.statusCode == 200) {
         return (response.data?['data'] as num?)?.toDouble() ?? 0.0;
@@ -146,9 +148,7 @@ class WithdrawalService {
   /// 获取提现规则
   Future<Map<String, dynamic>> getWithdrawalRules() async {
     try {
-      final response = await _httpUtil.get(
-        '/api/withdrawal/rules',
-      );
+      final response = await _httpUtil.get('/api/withdrawal/rules');
 
       if (response.statusCode == 200) {
         return response.data?['data'] as Map<String, dynamic>? ?? {};
@@ -168,9 +168,7 @@ class WithdrawalService {
     try {
       final response = await _httpUtil.post(
         '/api/withdrawal/fee',
-        data: {
-          'amount': amount,
-        },
+        data: {'amount': amount},
       );
 
       if (response.statusCode == 200) {
@@ -189,9 +187,7 @@ class WithdrawalService {
   /// 获取用户提现账户列表
   Future<List<Map<String, dynamic>>> getUserWithdrawalAccounts() async {
     try {
-      final response = await _httpUtil.get(
-        '/api/withdrawal/accounts',
-      );
+      final response = await _httpUtil.get('/api/withdrawal/accounts');
 
       if (response.statusCode == 200) {
         final dataList = response.data?['data'] as List<dynamic>? ?? [];

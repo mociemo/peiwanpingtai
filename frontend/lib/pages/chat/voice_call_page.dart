@@ -114,8 +114,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.person_add, color: Colors.white),
-                    onPressed: () {
-                    },
+                    onPressed: () {},
                   ),
                 ],
               ),
@@ -136,7 +135,11 @@ class _VoiceCallPageState extends State<VoiceCallPage> {
                         ? NetworkImage(widget.participantAvatar)
                         : null,
                     child: widget.participantAvatar.isEmpty
-                        ? const Icon(Icons.person, size: 80, color: Colors.white)
+                        ? const Icon(
+                            Icons.person,
+                            size: 80,
+                            color: Colors.white,
+                          )
                         : null,
                   ),
                 ),
@@ -158,10 +161,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> {
                 // 通话状态
                 Text(
                   _isConnected ? _formatDuration(_callDuration) : '连接中...',
-                  style: TextStyle(
-                    color: Colors.grey.shade300,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade300, fontSize: 16),
                 ),
 
                 const SizedBox(height: 40),
@@ -188,11 +188,7 @@ class _VoiceCallPageState extends State<VoiceCallPage> {
                     ),
                   )
                 else if (_isMuted)
-                  const Icon(
-                    Icons.mic_off,
-                    color: Colors.white,
-                    size: 40,
-                  ),
+                  const Icon(Icons.mic_off, color: Colors.white, size: 40),
               ],
             ),
           ),
@@ -208,7 +204,9 @@ class _VoiceCallPageState extends State<VoiceCallPage> {
                   FloatingActionButton(
                     heroTag: "mute",
                     onPressed: _toggleMute,
-                    backgroundColor: _isMuted ? Colors.red : Colors.grey.shade700,
+                    backgroundColor: _isMuted
+                        ? Colors.red
+                        : Colors.grey.shade700,
                     child: Icon(
                       _isMuted ? Icons.mic_off : Icons.mic,
                       color: Colors.white,
@@ -219,7 +217,9 @@ class _VoiceCallPageState extends State<VoiceCallPage> {
                   FloatingActionButton(
                     heroTag: "speaker",
                     onPressed: _toggleSpeaker,
-                    backgroundColor: _isSpeakerOn ? Colors.grey.shade700 : Colors.grey.shade700,
+                    backgroundColor: _isSpeakerOn
+                        ? Colors.grey.shade700
+                        : Colors.grey.shade700,
                     child: Icon(
                       _isSpeakerOn ? Icons.volume_up : Icons.volume_down,
                       color: Colors.white,

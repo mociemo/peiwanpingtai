@@ -13,6 +13,7 @@ import '../chat/conversations_page.dart';
 import '../search/search_page.dart';
 import '../../models/home_content_model.dart';
 import '../../services/home_service.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final featuredContent = await _homeService.getFeaturedContent();
       final recommendedPlayers = await _homeService.getRecommendedPlayers();
-      
+
       setState(() {
         _featuredContent = featuredContent;
         _recommendedPlayers = recommendedPlayers;
@@ -48,9 +49,9 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载数据失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('加载数据失败: ${e.toString()}')));
       }
     }
   }
@@ -94,8 +95,8 @@ class _HomePageState extends State<HomePage> {
                           minHeight: 16,
                         ),
                         child: Text(
-                          chatProvider.totalUnreadCount > 99 
-                              ? '99+' 
+                          chatProvider.totalUnreadCount > 99
+                              ? '99+'
                               : chatProvider.totalUnreadCount.toString(),
                           style: const TextStyle(
                             color: Colors.white,
@@ -207,8 +208,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
 }
 
 class _HomeTab extends StatelessWidget {
@@ -314,9 +313,9 @@ class _HomeTab extends StatelessWidget {
       children: [
         Text(
           '精选内容',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 12),
         SizedBox(
@@ -343,8 +342,7 @@ class _HomeTab extends StatelessWidget {
   Widget _buildFilterChip(String label) {
     return FilterChip(
       label: Text(label),
-      onSelected: (selected) {
-      },
+      onSelected: (selected) {},
       selected: false,
     );
   }
@@ -362,11 +360,7 @@ class _HomeTab extends StatelessWidget {
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
-            TextButton(
-              onPressed: () {
-              },
-              child: const Text('查看全部'),
-            ),
+            TextButton(onPressed: () {}, child: const Text('查看全部')),
           ],
         ),
         const SizedBox(height: 12),
@@ -375,7 +369,9 @@ class _HomeTab extends StatelessWidget {
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: recommendedPlayers.length > 5 ? 5 : recommendedPlayers.length,
+          itemCount: recommendedPlayers.length > 5
+              ? 5
+              : recommendedPlayers.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final player = recommendedPlayers[index];
@@ -393,10 +389,6 @@ class _HomeTab extends StatelessWidget {
       ],
     );
   }
-
-
-
-
 }
 
 class _SearchTab extends StatelessWidget {
@@ -409,8 +401,6 @@ class _SearchTab extends StatelessWidget {
       child: const CommunityTab(),
     );
   }
-
-
 }
 
 class CommunityTab extends StatefulWidget {
@@ -432,22 +422,28 @@ class _CommunityTabState extends State<CommunityTab> {
   void _loadInitialData() async {
     await Future.delayed(const Duration(milliseconds: 100));
     if (mounted) {
-      _communityProvider = Provider.of<CommunityProvider>(context, listen: false);
+      _communityProvider = Provider.of<CommunityProvider>(
+        context,
+        listen: false,
+      );
       await _communityProvider.loadPosts(refresh: true);
     }
   }
 
   void _sharePost(dynamic post, BuildContext context) {
     // 导航到分享页面
-    context.push('/share', extra: {
-      'shareType': 'post',
-      'shareId': post.id,
-      'title': '精彩动态分享',
-      'description': post.content.length > 50 
-          ? '${post.content.substring(0, 50)}...' 
-          : post.content,
-      'imageUrl': post.images.isNotEmpty ? post.images[0] : '',
-    });
+    context.push(
+      '/share',
+      extra: {
+        'shareType': 'post',
+        'shareId': post.id,
+        'title': '精彩动态分享',
+        'description': post.content.length > 50
+            ? '${post.content.substring(0, 50)}...'
+            : post.content,
+        'imageUrl': post.images.isNotEmpty ? post.images[0] : '',
+      },
+    );
   }
 
   @override
@@ -466,7 +462,8 @@ class _CommunityTabState extends State<CommunityTab> {
       ),
       body: Consumer<CommunityProvider>(
         builder: (context, communityProvider, child) {
-          if (communityProvider.isLoadingPosts && communityProvider.posts.isEmpty) {
+          if (communityProvider.isLoadingPosts &&
+              communityProvider.posts.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -520,8 +517,6 @@ class _CommunityTabState extends State<CommunityTab> {
       ),
     );
   }
-
-
 }
 
 class _OrdersTab extends StatelessWidget {
@@ -563,6 +558,4 @@ class _ProfileTab extends StatelessWidget {
       ),
     );
   }
-
-
 }

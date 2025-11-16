@@ -54,7 +54,7 @@ public class OrderController {
     }
     
     @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable Long orderId) {
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable String orderId) {
         try {
             OrderResponse order = orderService.getOrderById(orderId);
             return ResponseEntity.ok(ApiResponse.success("获取订单详情成功", order));
@@ -65,7 +65,7 @@ public class OrderController {
     
     @PostMapping("/{orderId}/accept")
     public ResponseEntity<ApiResponse<OrderResponse>> acceptOrder(
-            @PathVariable Long orderId,
+            @PathVariable String orderId,
             Authentication authentication) {
         try {
             Long playerId = Long.valueOf(authentication.getName());
@@ -78,7 +78,7 @@ public class OrderController {
     
     @PostMapping("/{orderId}/start")
     public ResponseEntity<ApiResponse<OrderResponse>> startOrder(
-            @PathVariable Long orderId,
+            @PathVariable String orderId,
             Authentication authentication) {
         try {
             Long playerId = Long.valueOf(authentication.getName());
@@ -91,7 +91,7 @@ public class OrderController {
     
     @PostMapping("/{orderId}/complete")
     public ResponseEntity<ApiResponse<OrderResponse>> completeOrder(
-            @PathVariable Long orderId,
+            @PathVariable String orderId,
             Authentication authentication) {
         try {
             Long playerId = Long.valueOf(authentication.getName());
@@ -104,7 +104,7 @@ public class OrderController {
     
     @PostMapping("/{orderId}/cancel")
     public ResponseEntity<ApiResponse<OrderResponse>> cancelOrder(
-            @PathVariable Long orderId,
+            @PathVariable String orderId,
             @RequestParam String reason,
             Authentication authentication) {
         try {
@@ -118,7 +118,7 @@ public class OrderController {
     
     @PostMapping("/{orderId}/rate")
     public ResponseEntity<ApiResponse<OrderResponse>> rateOrder(
-            @PathVariable Long orderId,
+            @PathVariable String orderId,
             @RequestParam String rating,
             @RequestParam(required = false) String comment,
             Authentication authentication) {

@@ -17,8 +17,10 @@ class WebSocketService {
   WebSocketChannel? _channel;
   bool _isConnected = false;
   Timer? _heartbeatTimer;
-  final StreamController<Message> _messageController = StreamController<Message>.broadcast();
-  final StreamController<Map<String, dynamic>> _eventController = StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<Message> _messageController =
+      StreamController<Message>.broadcast();
+  final StreamController<Map<String, dynamic>> _eventController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   Stream<Message> get messageStream => _messageController.stream;
   Stream<Map<String, dynamic>> get eventStream => _eventController.stream;
@@ -37,7 +39,9 @@ class WebSocketService {
       }
 
       // 连接WebSocket服务器
-      final uri = Uri.parse('ws://localhost:8080/ws?token=$token&userId=$userId');
+      final uri = Uri.parse(
+        'ws://localhost:8080/ws?token=$token&userId=$userId',
+      );
       _channel = WebSocketChannel.connect(uri);
 
       // 监听消息
@@ -66,7 +70,7 @@ class WebSocketService {
   void _handleMessage(dynamic message) {
     try {
       final data = jsonDecode(message);
-      
+
       if (data['type'] == 'message') {
         final messageData = data['data'];
         final msg = Message.fromJson(messageData);
@@ -85,7 +89,7 @@ class WebSocketService {
     if (kDebugMode) print('WebSocket连接错误: $error');
     _isConnected = false;
     _stopHeartbeat();
-    
+
     // 可以在这里添加重连逻辑
     _scheduleReconnect();
   }
@@ -94,7 +98,7 @@ class WebSocketService {
     if (kDebugMode) print('WebSocket连接关闭');
     _isConnected = false;
     _stopHeartbeat();
-    
+
     // 可以在这里添加重连逻辑
     _scheduleReconnect();
   }
@@ -129,10 +133,7 @@ class WebSocketService {
   }
 
   void sendMessage(Message message) {
-    _sendEvent({
-      'type': 'message',
-      'data': message.toJson(),
-    });
+    _sendEvent({'type': 'message', 'data': message.toJson()});
   }
 
   // 发起语音通话

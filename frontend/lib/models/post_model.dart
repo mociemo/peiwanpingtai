@@ -60,8 +60,12 @@ class Post {
         (e) => e.name == json['status'],
         orElse: () => PostStatus.published,
       ),
-      createTime: DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
-      updateTime: json['updateTime'] != null ? DateTime.parse(json['updateTime']) : null,
+      createTime: DateTime.parse(
+        json['createTime'] ?? DateTime.now().toIso8601String(),
+      ),
+      updateTime: json['updateTime'] != null
+          ? DateTime.parse(json['updateTime'])
+          : null,
       likeCount: json['likeCount'] ?? 0,
       commentCount: json['commentCount'] ?? 0,
       shareCount: json['shareCount'] ?? 0,
@@ -132,7 +136,7 @@ class Post {
   String get timeAgo {
     final now = DateTime.now();
     final difference = now.difference(createTime);
-    
+
     if (difference.inDays > 365) {
       return '${(difference.inDays / 365).floor()}年前';
     } else if (difference.inDays > 30) {
@@ -213,17 +217,17 @@ class Post {
 }
 
 enum PostType {
-  text,      // 文字动态
-  image,     // 图片动态
-  video,     // 视频动态
-  game       // 游戏动态
+  text, // 文字动态
+  image, // 图片动态
+  video, // 视频动态
+  game, // 游戏动态
 }
 
 enum PostStatus {
-  draft,      // 草稿
-  published,  // 已发布
-  private,    // 私密
-  deleted,    // 已删除
-  pending,    // 审核中
-  rejected    // 审核失败
+  draft, // 草稿
+  published, // 已发布
+  private, // 私密
+  deleted, // 已删除
+  pending, // 审核中
+  rejected, // 审核失败
 }

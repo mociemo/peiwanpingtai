@@ -6,7 +6,7 @@ import '../../providers/auth_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   final String? userId;
-  
+
   const ProfilePage({super.key, this.userId});
 
   @override
@@ -36,18 +36,24 @@ class _ProfilePageState extends State<ProfilePage> {
           final nickname = userInfo['nickname'] ?? username;
           final avatar = userInfo['avatar'];
           final signature = userInfo['signature'] ?? '这个人很懒，什么都没有留下~';
-          
+
           return ListView(
             children: [
               // 用户信息卡片
-              _buildUserInfoCard(context, username, nickname, avatar, signature),
-              
+              _buildUserInfoCard(
+                context,
+                username,
+                nickname,
+                avatar,
+                signature,
+              ),
+
               // 统计信息
               _buildStatsSection(),
-              
+
               // 功能菜单
               _buildMenuSection(context, authProvider),
-              
+
               // 退出登录
               _buildLogoutSection(context, authProvider),
             ],
@@ -56,8 +62,14 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
-  Widget _buildUserInfoCard(BuildContext context, String username, String nickname, String? avatar, String signature) {
+
+  Widget _buildUserInfoCard(
+    BuildContext context,
+    String username,
+    String nickname,
+    String? avatar,
+    String signature,
+  ) {
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -69,9 +81,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 // 头像
                 CircleAvatar(
                   radius: 32,
-                  backgroundColor: Color.alphaBlend(Theme.of(context).colorScheme.primary.withAlpha(26), Colors.transparent),
+                  backgroundColor: Color.alphaBlend(
+                    Theme.of(context).colorScheme.primary.withAlpha(26),
+                    Colors.transparent,
+                  ),
                   backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-                  child: avatar == null 
+                  child: avatar == null
                       ? Icon(
                           Icons.person,
                           color: Theme.of(context).colorScheme.primary,
@@ -79,9 +94,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         )
                       : null,
                 ),
-                
+
                 const SizedBox(width: 16),
-                
+
                 // 用户信息
                 Expanded(
                   child: Column(
@@ -112,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-                
+
                 // 编辑按钮
                 IconButton(
                   onPressed: () {
@@ -123,9 +138,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 操作按钮
             Row(
               children: [
@@ -155,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
+
   Widget _buildStatsSection() {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -173,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
+
   Widget _buildStatItem(String label, String value) {
     return Column(
       children: [
@@ -188,19 +203,16 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 4),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
         ),
       ],
     );
   }
-  
+
   Widget _buildMenuSection(BuildContext context, AuthProvider authProvider) {
     final userInfo = authProvider.userInfo ?? {};
     final userType = userInfo['userType'] ?? 'USER';
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -254,7 +266,7 @@ class _ProfilePageState extends State<ProfilePage> {
             '向我们提出建议',
             () => context.push('/feedback'),
           ),
-          
+
           if (userType == 'USER')
             _buildMenuItem(
               context,
@@ -263,7 +275,7 @@ class _ProfilePageState extends State<ProfilePage> {
               '开始你的陪玩之旅',
               () => _applyForPlayer(context, authProvider),
             ),
-          
+
           if (userType == 'PLAYER')
             _buildMenuItem(
               context,
@@ -276,14 +288,23 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
-  Widget _buildMenuItem(BuildContext context, IconData icon, String title, String subtitle, VoidCallback onTap) {
+
+  Widget _buildMenuItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String subtitle,
+    VoidCallback onTap,
+  ) {
     return ListTile(
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: Color.alphaBlend(Theme.of(context).colorScheme.primary.withAlpha(26), Colors.transparent),
+          color: Color.alphaBlend(
+            Theme.of(context).colorScheme.primary.withAlpha(26),
+            Colors.transparent,
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -295,16 +316,13 @@ class _ProfilePageState extends State<ProfilePage> {
       title: Text(title),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          fontSize: 12,
-          color: Colors.grey.shade600,
-        ),
+        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
       ),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );
   }
-  
+
   Widget _buildLogoutSection(BuildContext context, AuthProvider authProvider) {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -320,7 +338,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
+
   void _showEditProfileDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -336,7 +354,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
+
   void _applyForPlayer(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,
@@ -351,9 +369,9 @@ class _ProfilePageState extends State<ProfilePage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('申请已提交，等待审核')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('申请已提交，等待审核')));
             },
             child: const Text('确定申请'),
           ),
@@ -361,7 +379,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  
+
   void _showLogoutDialog(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,

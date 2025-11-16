@@ -12,10 +12,10 @@ class FollowService {
     int size = 20,
   }) async {
     try {
-      final response = await _dio.get('/follows/followers/$userId', queryParameters: {
-        'page': page,
-        'size': size,
-      });
+      final response = await _dio.get(
+        '/follows/followers/$userId',
+        queryParameters: {'page': page, 'size': size},
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];
@@ -35,10 +35,10 @@ class FollowService {
     int size = 20,
   }) async {
     try {
-      final response = await _dio.get('/follows/following/$userId', queryParameters: {
-        'page': page,
-        'size': size,
-      });
+      final response = await _dio.get(
+        '/follows/following/$userId',
+        queryParameters: {'page': page, 'size': size},
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];
@@ -52,9 +52,7 @@ class FollowService {
   }
 
   /// 检查是否关注
-  static Future<bool> isFollowing({
-    required int targetUserId,
-  }) async {
+  static Future<bool> isFollowing({required int targetUserId}) async {
     try {
       final response = await _dio.get('/follows/is-following/$targetUserId');
 
@@ -73,9 +71,10 @@ class FollowService {
     required int targetUserId,
   }) async {
     try {
-      final response = await _dio.post('/follows', data: {
-        'targetUserId': targetUserId,
-      });
+      final response = await _dio.post(
+        '/follows',
+        data: {'targetUserId': targetUserId},
+      );
 
       if (response.data['success'] == true) {
         return FollowRelationship.fromJson(response.data['data']);
@@ -88,9 +87,7 @@ class FollowService {
   }
 
   /// 取消关注
-  static Future<void> unfollowUser({
-    required int targetUserId,
-  }) async {
+  static Future<void> unfollowUser({required int targetUserId}) async {
     try {
       final response = await _dio.delete('/follows/$targetUserId');
 
@@ -105,9 +102,7 @@ class FollowService {
   }
 
   /// 获取用户统计数据
-  static Future<UserStats> getUserStats({
-    required int userId,
-  }) async {
+  static Future<UserStats> getUserStats({required int userId}) async {
     try {
       final response = await _dio.get('/follows/stats/$userId');
 
@@ -128,10 +123,10 @@ class FollowService {
     int size = 20,
   }) async {
     try {
-      final response = await _dio.get('/follows/mutual-followers/$targetUserId', queryParameters: {
-        'page': page,
-        'size': size,
-      });
+      final response = await _dio.get(
+        '/follows/mutual-followers/$targetUserId',
+        queryParameters: {'page': page, 'size': size},
+      );
 
       if (response.data['success'] == true) {
         final List<dynamic> data = response.data['data']['content'];

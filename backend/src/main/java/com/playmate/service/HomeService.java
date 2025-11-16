@@ -2,9 +2,11 @@ package com.playmate.service;
 
 import com.playmate.entity.HomeContent;
 import com.playmate.entity.User;
+import com.playmate.entity.Player;
 import com.playmate.entity.Post;
 import com.playmate.repository.HomeContentRepository;
 import com.playmate.repository.UserRepository;
+import com.playmate.repository.PlayerRepository;
 import com.playmate.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -25,6 +27,9 @@ public class HomeService {
     private UserRepository userRepository;
 
     @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
     private PostRepository postRepository;
 
     /**
@@ -42,20 +47,21 @@ public class HomeService {
     public List<Object> getRecommendedPlayers(int limit) {
         // 这里可以根据评分、订单量、活跃度等指标推荐陪玩人员
         // 暂时返回评分最高的陪玩人员
-        List<User> players = userRepository.findByRoleOrderByRatingDesc("player");
+        List<Player> players = playerRepository.findAllByOrderByRatingDesc();
         
         return players.stream()
                 .limit(limit)
                 .map(player -> {
+                    User user = player.getUser();
                     // 转换为前端需要的格式
                     Map<String, Object> playerInfo = Map.of(
-                        "id", player.getId(),
-                        "nickname", player.getNickname(),
-                        "avatar", player.getAvatar(),
-                        "rating", player.getRating() != null ? player.getRating() : 0.0,
-                        "gameTypes", player.getGameTypes(),
-                        "price", player.getPrice() != null ? player.getPrice() : 0.0,
-                        "intro", player.getIntro() != null ? player.getIntro() : ""
+                        "id", user.getId(),
+                        "nickname", user.getNickname(),
+                        "avatar", user.getAvatar(),
+                        "rating", player.getRating() != null ? player.getRating().doubleValue() : 0.0,
+                        "gameTypes", player.getSkillTags() != null ? player.getSkillTags() : "",
+                        "price", player.getServicePrice() != null ? player.getServicePrice().doubleValue() : 0.0,
+                        "intro", player.getIntroduction() != null ? player.getIntroduction() : ""
                     );
                     return playerInfo;
                 })
@@ -79,9 +85,9 @@ public class HomeService {
                         "id", post.getId(),
                         "userId", post.getUserId(),
                         "content", post.getContent(),
-                        "images", post.getImages() != null ? post.getImages() : List.of(),
-                        "likes", post.getLikes() != null ? post.getLikes() : 0,
-                        "comments", post.getComments() != null ? post.getComments() : 0,
+                        "images", post.getMediaUrls() != null ? post.getMediaUrls() : new String[0],
+                        "likes", post.getLikeCount() != null ? post.getLikeCount() : 0,
+                        "comments", post.getCommentCount() != null ? post.getCommentCount() : 0,
                         "createTime", post.getCreateTime()
                     );
                     return postInfo;

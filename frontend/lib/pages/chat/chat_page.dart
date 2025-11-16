@@ -74,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
 
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     await chatProvider.sendTextMessage(widget.conversationId, text);
-    
+
     // 延迟滚动到底部，等待消息添加到列表
     Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
   }
@@ -108,7 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                       final conversation = chatProvider.conversations
                           .where((c) => c.id == widget.conversationId)
                           .firstOrNull;
-                      
+
                       if (conversation != null && conversation.isOnline) {
                         return const Text(
                           '在线',
@@ -128,10 +128,7 @@ class _ChatPageState extends State<ChatPage> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.phone),
-            onPressed: _startVoiceCall,
-          ),
+          IconButton(icon: const Icon(Icons.phone), onPressed: _startVoiceCall),
           IconButton(
             icon: const Icon(Icons.videocam),
             onPressed: _startVideoCall,
@@ -210,11 +207,13 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildMessageBubble(Message message) {
     final isMe = message.senderId == _getCurrentUserId();
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe) ...[
@@ -231,10 +230,15 @@ class _ChatPageState extends State<ChatPage> {
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: isMe
                         ? Theme.of(context).colorScheme.primary
@@ -242,8 +246,12 @@ class _ChatPageState extends State<ChatPage> {
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(18),
                       topRight: const Radius.circular(18),
-                      bottomLeft: isMe ? const Radius.circular(18) : Radius.zero,
-                      bottomRight: isMe ? Radius.zero : const Radius.circular(18),
+                      bottomLeft: isMe
+                          ? const Radius.circular(18)
+                          : Radius.zero,
+                      bottomRight: isMe
+                          ? Radius.zero
+                          : const Radius.circular(18),
                     ),
                   ),
                   child: Text(
@@ -335,7 +343,10 @@ class _ChatPageState extends State<ChatPage> {
                 decoration: const InputDecoration(
                   hintText: '输入消息...',
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                 ),
                 maxLines: null,
                 textCapitalization: TextCapitalization.sentences,
@@ -345,14 +356,13 @@ class _ChatPageState extends State<ChatPage> {
               icon: const Icon(Icons.camera_alt),
               onPressed: _sendImage,
             ),
-            IconButton(
-              icon: const Icon(Icons.mic),
-              onPressed: _sendVoice,
-            ),
+            IconButton(icon: const Icon(Icons.mic), onPressed: _sendVoice),
             IconButton(
               icon: Icon(
                 _isComposing ? Icons.send : Icons.mic,
-                color: _isComposing ? Theme.of(context).colorScheme.primary : null,
+                color: _isComposing
+                    ? Theme.of(context).colorScheme.primary
+                    : null,
               ),
               onPressed: _isComposing ? _sendMessage : _sendVoice,
             ),
@@ -454,9 +464,9 @@ class _ChatPageState extends State<ChatPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('功能开发中')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('功能开发中')));
             },
             child: const Text('确定'),
           ),
@@ -479,9 +489,9 @@ class _ChatPageState extends State<ChatPage> {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('功能开发中')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('功能开发中')));
             },
             child: const Text('确定'),
           ),
@@ -491,33 +501,33 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _sendImage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('功能开发中')));
   }
 
   void _sendVoice() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('功能开发中')));
   }
 
   void _selectFromGallery() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('功能开发中')));
   }
 
   void _takePhoto() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('功能开发中')));
   }
 
   void _sendLocation() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('功能开发中')));
   }
 
   void _startVoiceCall() {

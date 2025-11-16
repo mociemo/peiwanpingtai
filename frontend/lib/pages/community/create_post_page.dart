@@ -84,7 +84,9 @@ class CreatePostPageState extends State<CreatePostPage> {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final theme = Theme.of(context);
-    final currentUser = userProvider.user != null ? User.fromJson(userProvider.user!) : null;
+    final currentUser = userProvider.user != null
+        ? User.fromJson(userProvider.user!)
+        : null;
 
     if (!userProvider.isLoggedIn) {
       return Scaffold(
@@ -144,7 +146,8 @@ class CreatePostPageState extends State<CreatePostPage> {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: currentUser != null && currentUser.avatar.isNotEmpty
+                  backgroundImage:
+                      currentUser != null && currentUser.avatar.isNotEmpty
                       ? NetworkImage(currentUser.avatar)
                       : const AssetImage('assets/images/default_avatar.png')
                             as ImageProvider,

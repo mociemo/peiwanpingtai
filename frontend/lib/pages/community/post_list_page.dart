@@ -65,7 +65,7 @@ class _PostListPageState extends State<PostListPage> {
 
     try {
       List<Post> newPosts;
-      
+
       if (widget.userId != null) {
         newPosts = await PostService.getUserPosts(
           userId: widget.userId!,
@@ -96,9 +96,9 @@ class _PostListPageState extends State<PostListPage> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('加载失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('加载失败: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -125,7 +125,7 @@ class _PostListPageState extends State<PostListPage> {
       } else {
         await PostService.likePost(postId);
       }
-      
+
       // 更新本地状态
       setState(() {
         final index = _posts.indexWhere((p) => p.id == postId);
@@ -139,9 +139,9 @@ class _PostListPageState extends State<PostListPage> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('操作失败: ${e.toString()}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('操作失败: ${e.toString()}')));
       }
     }
   }
@@ -149,7 +149,7 @@ class _PostListPageState extends State<PostListPage> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    
+
     return Scaffold(
       appBar: widget.showAppBar
           ? AppBar(
@@ -178,24 +178,33 @@ class _PostListPageState extends State<PostListPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.rss_feed, size: 64, color: Theme.of(context).colorScheme.outline),
+                    Icon(
+                      Icons.rss_feed,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                     SizedBox(height: 16),
-                    Text('暂无动态', style: Theme.of(context).textTheme.headlineSmall),
+                    Text(
+                      '暂无动态',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
                     SizedBox(height: 8),
                     Text(
                       widget.userId != null
                           ? '该用户还没有发布任何动态'
                           : widget.followingUserIds != null
-                              ? '关注的人还没有发布动态'
-                              : '动态广场空空如也',
+                          ? '关注的人还没有发布动态'
+                          : '动态广场空空如也',
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
-                    if (widget.userId == null && widget.followingUserIds == null)
+                    if (widget.userId == null &&
+                        widget.followingUserIds == null)
                       Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: ElevatedButton(
-                          onPressed: () => Navigator.pushNamed(context, '/community/create'),
+                          onPressed: () =>
+                              Navigator.pushNamed(context, '/community/create'),
                           child: Text('发布第一条动态'),
                         ),
                       ),
@@ -204,36 +213,33 @@ class _PostListPageState extends State<PostListPage> {
               )
             else
               SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index < _posts.length) {
-                      final post = _posts[index];
-                      return PostCard(
-                        post: post,
-                        onLike: () => _handleLikePost(post.id, post.isLiked),
-                        onComment: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/community/posts/${post.id}',
-                          );
-                        },
-                        onShare: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('分享功能开发中')),
-                          );
-                        },
-                      );
-                    } else if (_hasMore) {
-                      return Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: LoadingWidget(),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                  childCount: _posts.length + (_hasMore ? 1 : 0),
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  if (index < _posts.length) {
+                    final post = _posts[index];
+                    return PostCard(
+                      post: post,
+                      onLike: () => _handleLikePost(post.id, post.isLiked),
+                      onComment: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/community/posts/${post.id}',
+                        );
+                      },
+                      onShare: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('分享功能开发中')),
+                        );
+                      },
+                    );
+                  } else if (_hasMore) {
+                    return Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: LoadingWidget(),
+                    );
+                  } else {
+                    return Container();
+                  }
+                }, childCount: _posts.length + (_hasMore ? 1 : 0)),
               ),
           ],
         ),

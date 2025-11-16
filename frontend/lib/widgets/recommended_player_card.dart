@@ -41,10 +41,7 @@ class RecommendedPlayerCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(avatar),
-            ),
+            CircleAvatar(radius: 30, backgroundImage: NetworkImage(avatar)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -63,11 +60,7 @@ class RecommendedPlayerCard extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 16,
-                          ),
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
                           const SizedBox(width: 4),
                           Text(
                             rating.toStringAsFixed(1),
@@ -83,10 +76,7 @@ class RecommendedPlayerCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     intro,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -104,7 +94,9 @@ class RecommendedPlayerCard extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                                color: Theme.of(
+                                  context,
+                                ).primaryColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(

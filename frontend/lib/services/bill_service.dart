@@ -20,19 +20,16 @@ class BillService {
     DateTime? endTime,
   }) async {
     try {
-      final Map<String, dynamic> queryParams = {
-        'page': page,
-        'size': size,
-      };
-      
+      final Map<String, dynamic> queryParams = {'page': page, 'size': size};
+
       if (type != null) {
         queryParams['type'] = type;
       }
-      
+
       if (startTime != null) {
         queryParams['startTime'] = startTime.toIso8601String();
       }
-      
+
       if (endTime != null) {
         queryParams['endTime'] = endTime.toIso8601String();
       }
@@ -43,7 +40,8 @@ class BillService {
       );
 
       if (response.statusCode == 200) {
-        final dataList = response.data?['data']?['list'] as List<dynamic>? ?? [];
+        final dataList =
+            response.data?['data']?['list'] as List<dynamic>? ?? [];
         return dataList.map((item) {
           final itemMap = item as Map<String, dynamic>?;
           return itemMap != null ? Bill.fromJson(itemMap) : Bill.empty();
@@ -62,9 +60,7 @@ class BillService {
   /// 获取账单详情
   Future<Bill> getBillDetail(String billId) async {
     try {
-      final response = await _httpUtil.get(
-        '/api/bill/$billId',
-      );
+      final response = await _httpUtil.get('/api/bill/$billId');
 
       if (response.statusCode == 200) {
         final data = response.data?['data'] as Map<String, dynamic>?;
@@ -83,9 +79,7 @@ class BillService {
   /// 获取用户账户余额
   Future<double> getUserBalance() async {
     try {
-      final response = await _httpUtil.get(
-        '/api/bill/balance',
-      );
+      final response = await _httpUtil.get('/api/bill/balance');
 
       if (response.statusCode == 200) {
         return (response.data?['data'] as num?)?.toDouble() ?? 0.0;
@@ -107,11 +101,11 @@ class BillService {
   }) async {
     try {
       final Map<String, dynamic> queryParams = {};
-      
+
       if (startTime != null) {
         queryParams['startTime'] = startTime.toIso8601String();
       }
-      
+
       if (endTime != null) {
         queryParams['endTime'] = endTime.toIso8601String();
       }
@@ -142,18 +136,16 @@ class BillService {
     String format = 'excel', // excel, csv
   }) async {
     try {
-      final Map<String, dynamic> queryParams = {
-        'format': format,
-      };
-      
+      final Map<String, dynamic> queryParams = {'format': format};
+
       if (type != null) {
         queryParams['type'] = type;
       }
-      
+
       if (startTime != null) {
         queryParams['startTime'] = startTime.toIso8601String();
       }
-      
+
       if (endTime != null) {
         queryParams['endTime'] = endTime.toIso8601String();
       }
@@ -184,15 +176,12 @@ class BillService {
     DateTime? endTime,
   }) async {
     try {
-      final Map<String, dynamic> queryParams = {
-        'page': page,
-        'size': size,
-      };
-      
+      final Map<String, dynamic> queryParams = {'page': page, 'size': size};
+
       if (startTime != null) {
         queryParams['startTime'] = startTime.toIso8601String();
       }
-      
+
       if (endTime != null) {
         queryParams['endTime'] = endTime.toIso8601String();
       }
@@ -203,7 +192,8 @@ class BillService {
       );
 
       if (response.statusCode == 200) {
-        final dataList = response.data?['data']?['list'] as List<dynamic>? ?? [];
+        final dataList =
+            response.data?['data']?['list'] as List<dynamic>? ?? [];
         return dataList.map((item) {
           final itemMap = item as Map<String, dynamic>?;
           return itemMap != null ? Bill.fromJson(itemMap) : Bill.empty();
@@ -226,11 +216,11 @@ class BillService {
   }) async {
     try {
       final Map<String, dynamic> queryParams = {};
-      
+
       if (startTime != null) {
         queryParams['startTime'] = startTime.toIso8601String();
       }
-      
+
       if (endTime != null) {
         queryParams['endTime'] = endTime.toIso8601String();
       }

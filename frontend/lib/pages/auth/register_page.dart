@@ -20,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _verificationCodeController = TextEditingController();
-  
+
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   int _countdown = 0;
@@ -38,9 +38,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _sendVerificationCode() async {
     if (_phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请输入手机号')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请输入手机号')));
       return;
     }
 
@@ -76,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
         _emailController.text.trim(),
         _phoneController.text.trim(),
       );
-      
+
       // 注册成功后跳转到首页
       if (mounted) {
         context.go('/home');
@@ -84,10 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
         );
       }
     }
@@ -110,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              
+
               // 标题
               Text(
                 '创建账户',
@@ -122,12 +119,15 @@ class _RegisterPageState extends State<RegisterPage> {
               Text(
                 '填写以下信息完成注册',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(153), Colors.transparent),
+                  color: Color.alphaBlend(
+                    Theme.of(context).colorScheme.onSurface.withAlpha(153),
+                    Colors.transparent,
+                  ),
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // 注册表单
               Form(
                 key: _formKey,
@@ -149,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     CustomTextField(
                       controller: _emailController,
                       labelText: '邮箱',
@@ -160,14 +160,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         if (value == null || value.isEmpty) {
                           return '请输入邮箱地址';
                         }
-                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                        if (!RegExp(
+                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                        ).hasMatch(value)) {
                           return '请输入有效的邮箱地址';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     Row(
                       children: [
                         Expanded(
@@ -195,19 +197,27 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: SizedBox(
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: _countdown > 0 ? null : _sendVerificationCode,
+                              onPressed: _countdown > 0
+                                  ? null
+                                  : _sendVerificationCode,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.secondary,
-                                foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.secondary,
+                                foregroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.onSecondary,
                               ),
-                              child: Text(_countdown > 0 ? '$_countdown秒' : '发送验证码'),
+                              child: Text(
+                                _countdown > 0 ? '$_countdown秒' : '发送验证码',
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     CustomTextField(
                       controller: _verificationCodeController,
                       labelText: '验证码',
@@ -225,7 +235,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     CustomTextField(
                       controller: _passwordController,
                       labelText: '密码',
@@ -234,8 +244,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       obscureText: !_isPasswordVisible,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                          color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(153), Colors.transparent),
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.alphaBlend(
+                            Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withAlpha(153),
+                            Colors.transparent,
+                          ),
                         ),
                         onPressed: () {
                           setState(() {
@@ -254,7 +271,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     CustomTextField(
                       controller: _confirmPasswordController,
                       labelText: '确认密码',
@@ -263,12 +280,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       obscureText: !_isConfirmPasswordVisible,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                          color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(153), Colors.transparent),
+                          _isConfirmPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.alphaBlend(
+                            Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withAlpha(153),
+                            Colors.transparent,
+                          ),
                         ),
                         onPressed: () {
                           setState(() {
-                            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
                           });
                         },
                       ),
@@ -282,30 +307,34 @@ class _RegisterPageState extends State<RegisterPage> {
                         return null;
                       },
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // 注册按钮
                     Consumer<AuthProvider>(
                       builder: (context, authProvider, child) {
                         return SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: authProvider.isLoading ? null : _handleRegister,
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : _handleRegister,
                             child: authProvider.isLoading
                                 ? const SizedBox(
                                     height: 20,
                                     width: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
                                   )
                                 : const Text('注册'),
                           ),
                         );
                       },
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // 登录链接
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

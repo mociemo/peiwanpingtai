@@ -18,10 +18,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
-@RequiredArgsConstructor
 public class PostController {
     
     private final PostService postService;
+    
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
     
     @GetMapping
     public ResponseEntity<ApiResponse<Page<PostResponse>>> getPosts(
@@ -40,7 +43,7 @@ public class PostController {
     
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<Page<PostResponse>>> getUserPosts(
-            @PathVariable Long userId,
+            @PathVariable String userId,
             @RequestParam(defaultValue = "PUBLISHED") PostStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -88,7 +91,7 @@ public class PostController {
     
     @GetMapping("/following")
     public ResponseEntity<ApiResponse<Page<PostResponse>>> getFollowingPosts(
-            @RequestParam List<Long> userIds,
+            @RequestParam List<String> userIds,
             @RequestParam(defaultValue = "PUBLISHED") PostStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -100,7 +103,7 @@ public class PostController {
     
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> createPost(
-            @RequestHeader("X-User-Id") Long userId,
+            @RequestHeader("X-User-Id") String userId,
             @RequestBody CreatePostRequest request) {
         
         PostResponse post = postService.createPost(userId, request);
@@ -109,8 +112,8 @@ public class PostController {
     
     @PutMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostResponse>> updatePost(
-            @PathVariable Long postId,
-            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable String postId,
+            @RequestHeader("X-User-Id") String userId,
             @RequestBody CreatePostRequest request) {
         
         PostResponse post = postService.updatePost(postId, userId, request);
@@ -119,8 +122,8 @@ public class PostController {
     
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePost(
-            @PathVariable Long postId,
-            @RequestHeader("X-User-Id") Long userId) {
+            @PathVariable String postId,
+            @RequestHeader("X-User-Id") String userId) {
         
         postService.deletePost(postId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -128,8 +131,8 @@ public class PostController {
     
     @PostMapping("/{postId}/like")
     public ResponseEntity<ApiResponse<Void>> likePost(
-            @PathVariable Long postId,
-            @RequestHeader("X-User-Id") Long userId) {
+            @PathVariable String postId,
+            @RequestHeader("X-User-Id") String userId) {
         
         postService.likePost(postId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -137,15 +140,15 @@ public class PostController {
     
     @PostMapping("/{postId}/unlike")
     public ResponseEntity<ApiResponse<Void>> unlikePost(
-            @PathVariable Long postId,
-            @RequestHeader("X-User-Id") Long userId) {
+            @PathVariable String postId,
+            @RequestHeader("X-User-Id") String userId) {
         
         postService.unlikePost(postId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
     
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostResponse>> getPostById(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponse<PostResponse>> getPostById(@PathVariable String postId) {
         PostResponse post = postService.getPostById(postId);
         return ResponseEntity.ok(ApiResponse.success(post));
     }

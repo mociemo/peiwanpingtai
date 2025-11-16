@@ -13,13 +13,19 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-@RequiredArgsConstructor
-@Slf4j
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final PlayerRepository playerRepository;
     private final PasswordEncoder passwordEncoder;
+    
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DataInitializer.class);
+
+    public DataInitializer(UserRepository userRepository, PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.playerRepository = playerRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public void run(String... args) throws Exception {

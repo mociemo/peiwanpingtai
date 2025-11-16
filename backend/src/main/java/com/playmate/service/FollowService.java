@@ -133,7 +133,7 @@ public class FollowService {
         stats.setFollowingCount((int) followingCount);
         
         // 获取动态数
-        long postsCount = postRepository.countByUserIdAndStatus(userId, com.playmate.entity.PostStatus.PUBLISHED);
+        long postsCount = postRepository.countByUserIdAndStatus(userId.toString(), com.playmate.entity.PostStatus.PUBLISHED);
         stats.setPostsCount((int) postsCount);
         
         // 获取获赞数（需要结合点赞记录）
@@ -160,7 +160,7 @@ public class FollowService {
         response.setCreateTime(follow.getCreateTime());
         
         // 设置关注者信息
-        userRepository.findById(follow.getFollowerId()).ifPresent(user -> {
+        userRepository.findById(Long.valueOf(follow.getFollowerId())).ifPresent(user -> {
             FollowResponse.UserInfo followerInfo = new FollowResponse.UserInfo();
             followerInfo.setId(user.getId());
             followerInfo.setUsername(user.getUsername());
@@ -169,7 +169,7 @@ public class FollowService {
         });
         
         // 设置被关注者信息
-        userRepository.findById(follow.getFollowingId()).ifPresent(user -> {
+        userRepository.findById(Long.valueOf(follow.getFollowingId())).ifPresent(user -> {
             FollowResponse.UserInfo followingInfo = new FollowResponse.UserInfo();
             followingInfo.setId(user.getId());
             followingInfo.setUsername(user.getUsername());

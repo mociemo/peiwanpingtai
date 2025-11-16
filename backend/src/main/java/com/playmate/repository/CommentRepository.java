@@ -4,25 +4,23 @@ import com.playmate.entity.Comment;
 import com.playmate.entity.CommentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
-
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends MongoRepository<Comment, String> {
     
-    Page<Comment> findByPostIdAndStatusOrderByCreateTimeDesc(Long postId, CommentStatus status, Pageable pageable);
+    Page<Comment> findByPostIdAndStatusOrderByCreateTimeDesc(String postId, CommentStatus status, Pageable pageable);
     
-    Page<Comment> findByPostIdAndParentIdAndStatusOrderByCreateTimeDesc(Long postId, Long parentId, CommentStatus status, Pageable pageable);
+    Page<Comment> findByPostIdAndParentIdAndStatusOrderByCreateTimeDesc(String postId, String parentId, CommentStatus status, Pageable pageable);
     
-    Page<Comment> findByUserIdAndStatusOrderByCreateTimeDesc(Long userId, CommentStatus status, Pageable pageable);
+    Page<Comment> findByUserIdAndStatusOrderByCreateTimeDesc(String userId, CommentStatus status, Pageable pageable);
     
-    @Query("SELECT COUNT(c) FROM Comment c WHERE c.postId = :postId AND c.status = :status")
-    long countByPostIdAndStatus(@Param("postId") Long postId, @Param("status") CommentStatus status);
+    @Query(value = "{ 'postId': ?0, 'status': ?1 }", count = true)
+    long countByPostIdAndStatus(String postId, CommentStatus status);
     
-    @Query("SELECT COUNT(c) FROM Comment c WHERE c.userId = :userId AND c.status = :status")
-    long countByUserIdAndStatus(@Param("userId") Long userId, @Param("status") CommentStatus status);
+    @Query(value = "{ 'userId': ?0, 'status': ?1 }", count = true)
+    long countByUserIdAndStatus(String userId, CommentStatus status);
     
-    @Query("SELECT c FROM Comment c WHERE c.postId = :postId AND c.status = :status ORDER BY c.likeCount DESC, c.createTime DESC")
-    Page<Comment> findTopCommentsByPostId(@Param("postId") Long postId, @Param("status") CommentStatus status, Pageable pageable);
+    @Query("{ 'postId': ?0, 'status': ?1 }")
+    Page<Comment> findTopCommentsByPostId(String postId, CommentStatus status, Pageable pageable);
 }

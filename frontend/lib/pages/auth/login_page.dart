@@ -31,11 +31,11 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      await Provider.of<AuthProvider>(context, listen: false).login(
-        _usernameController.text.trim(),
-        _passwordController.text.trim(),
-      );
-      
+      await Provider.of<AuthProvider>(
+        context,
+        listen: false,
+      ).login(_usernameController.text.trim(), _passwordController.text.trim());
+
       // 登录成功后跳转到首页
       if (mounted) {
         context.go('/home');
@@ -43,10 +43,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
         );
       }
     }
@@ -62,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              
+
               // 标题
               Text(
                 '欢迎回来',
@@ -74,12 +71,15 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 '请登录您的账户',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(153), Colors.transparent),
+                  color: Color.alphaBlend(
+                    Theme.of(context).colorScheme.onSurface.withAlpha(153),
+                    Colors.transparent,
+                  ),
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // 登录表单
               Form(
                 key: _formKey,
@@ -106,8 +106,15 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: !_isPasswordVisible,
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                          color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(153), Colors.transparent),
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Color.alphaBlend(
+                            Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withAlpha(153),
+                            Colors.transparent,
+                          ),
                         ),
                         onPressed: () {
                           setState(() {
@@ -125,30 +132,34 @@ class _LoginPageState extends State<LoginPage> {
                         return null;
                       },
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // 登录按钮
                     Consumer<AuthProvider>(
                       builder: (context, authProvider, child) {
                         return SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: authProvider.isLoading ? null : _handleLogin,
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : _handleLogin,
                             child: authProvider.isLoading
                                 ? const SizedBox(
                                     height: 20,
                                     width: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
                                   )
                                 : const Text('登录'),
                           ),
                         );
                       },
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // 注册链接
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -163,9 +174,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // 第三方登录
                     _buildThirdPartyLogin(),
                   ],
@@ -185,7 +196,12 @@ class _LoginPageState extends State<LoginPage> {
         Row(
           children: [
             Expanded(
-              child: Divider(color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(77), Colors.transparent)),
+              child: Divider(
+                color: Color.alphaBlend(
+                  Theme.of(context).colorScheme.onSurface.withAlpha(77),
+                  Colors.transparent,
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -195,25 +211,25 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Expanded(
-              child: Divider(color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(77), Colors.transparent)),
+              child: Divider(
+                color: Color.alphaBlend(
+                  Theme.of(context).colorScheme.onSurface.withAlpha(77),
+                  Colors.transparent,
+                ),
+              ),
             ),
           ],
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // 第三方登录按钮
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              onPressed: () {
-              },
-              icon: Icon(
-                Icons.chat,
-                size: 24,
-                color: Colors.green,
-              ),
+              onPressed: () {},
+              icon: Icon(Icons.chat, size: 24, color: Colors.green),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.grey[100],
                 padding: const EdgeInsets.all(12),
@@ -221,13 +237,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(width: 16),
             IconButton(
-              onPressed: () {
-              },
-              icon: Icon(
-                Icons.group,
-                size: 24,
-                color: Colors.blue,
-              ),
+              onPressed: () {},
+              icon: Icon(Icons.group, size: 24, color: Colors.blue),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.grey[100],
                 padding: const EdgeInsets.all(12),

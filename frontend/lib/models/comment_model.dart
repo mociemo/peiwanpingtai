@@ -42,10 +42,16 @@ class Comment {
       parentId: json['parentId'],
       replyToUserId: json['replyToUserId'],
       replyToUserName: json['replyToUserName'],
-      createTime: DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
+      createTime: DateTime.parse(
+        json['createTime'] ?? DateTime.now().toIso8601String(),
+      ),
       likeCount: json['likeCount'] ?? 0,
       isLiked: json['isLiked'] ?? false,
-      replies: (json['replies'] as List?)?.map((e) => Comment.fromJson(e)).toList() ?? [],
+      replies:
+          (json['replies'] as List?)
+              ?.map((e) => Comment.fromJson(e))
+              .toList() ??
+          [],
       status: CommentStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => CommentStatus.published,
@@ -75,7 +81,7 @@ class Comment {
   String get timeAgo {
     final now = DateTime.now();
     final difference = now.difference(createTime);
-    
+
     if (difference.inDays > 365) {
       return '${(difference.inDays / 365).floor()}年前';
     } else if (difference.inDays > 30) {
@@ -156,8 +162,8 @@ class Comment {
 }
 
 enum CommentStatus {
-  published,  // 已发布
-  deleted,    // 已删除
-  pending,    // 审核中
-  rejected    // 审核失败
+  published, // 已发布
+  deleted, // 已删除
+  pending, // 审核中
+  rejected, // 审核失败
 }

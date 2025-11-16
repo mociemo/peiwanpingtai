@@ -87,8 +87,7 @@ class _VideoCallPageState extends State<VideoCallPage> {
     CallService().endCall();
   }
 
-  void _switchCamera() {
-  }
+  void _switchCamera() {}
 
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -124,7 +123,11 @@ class _VideoCallPageState extends State<VideoCallPage> {
                                 ? NetworkImage(widget.participantAvatar)
                                 : null,
                             child: widget.participantAvatar.isEmpty
-                                ? const Icon(Icons.person, size: 60, color: Colors.white)
+                                ? const Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Colors.white,
+                                  )
                                 : null,
                           ),
                           const SizedBox(height: 16),
@@ -138,7 +141,9 @@ class _VideoCallPageState extends State<VideoCallPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _isConnected ? _formatDuration(_callDuration) : '连接中...',
+                            _isConnected
+                                ? _formatDuration(_callDuration)
+                                : '连接中...',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -225,7 +230,9 @@ class _VideoCallPageState extends State<VideoCallPage> {
                 FloatingActionButton(
                   heroTag: "camera",
                   onPressed: _toggleCamera,
-                  backgroundColor: _isCameraOff ? Colors.red : Colors.grey.shade700,
+                  backgroundColor: _isCameraOff
+                      ? Colors.red
+                      : Colors.grey.shade700,
                   child: Icon(
                     _isCameraOff ? Icons.videocam_off : Icons.videocam,
                     color: Colors.white,
@@ -235,7 +242,9 @@ class _VideoCallPageState extends State<VideoCallPage> {
                 FloatingActionButton(
                   heroTag: "speaker",
                   onPressed: _toggleSpeaker,
-                  backgroundColor: _isSpeakerOn ? Colors.grey.shade700 : Colors.grey.shade700,
+                  backgroundColor: _isSpeakerOn
+                      ? Colors.grey.shade700
+                      : Colors.grey.shade700,
                   child: Icon(
                     _isSpeakerOn ? Icons.volume_up : Icons.volume_down,
                     color: Colors.white,
@@ -246,10 +255,7 @@ class _VideoCallPageState extends State<VideoCallPage> {
                   heroTag: "end",
                   onPressed: _endCall,
                   backgroundColor: Colors.red,
-                  child: const Icon(
-                    Icons.call_end,
-                    color: Colors.white,
-                  ),
+                  child: const Icon(Icons.call_end, color: Colors.white),
                 ),
               ],
             ),

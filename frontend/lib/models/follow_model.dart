@@ -30,7 +30,9 @@ class FollowRelationship {
       followingId: json['followingId']?.toString() ?? '',
       followingName: json['followingName'] ?? '',
       followingAvatar: json['followingAvatar'] ?? '',
-      createTime: DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
+      createTime: DateTime.parse(
+        json['createTime'] ?? DateTime.now().toIso8601String(),
+      ),
       status: FollowStatus.values.firstWhere(
         (e) => e.name == json['status'],
         orElse: () => FollowStatus.following,
@@ -55,7 +57,7 @@ class FollowRelationship {
   String get timeAgo {
     final now = DateTime.now();
     final difference = now.difference(createTime);
-    
+
     if (difference.inDays > 365) {
       return '${(difference.inDays / 365).floor()}年前';
     } else if (difference.inDays > 30) {
@@ -124,10 +126,10 @@ class FollowRelationship {
 }
 
 enum FollowStatus {
-  following,  // 已关注
-  pending,    // 关注申请中
-  rejected,   // 已拒绝
-  blocked     // 已拉黑
+  following, // 已关注
+  pending, // 关注申请中
+  rejected, // 已拒绝
+  blocked, // 已拉黑
 }
 
 class UserStats {
@@ -154,7 +156,9 @@ class UserStats {
       followingCount: json['followingCount'] ?? 0,
       postsCount: json['postsCount'] ?? 0,
       likedCount: json['likedCount'] ?? 0,
-      lastActiveTime: DateTime.parse(json['lastActiveTime'] ?? DateTime.now().toIso8601String()),
+      lastActiveTime: DateTime.parse(
+        json['lastActiveTime'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 
@@ -172,7 +176,7 @@ class UserStats {
   String get lastActiveAgo {
     final now = DateTime.now();
     final difference = now.difference(lastActiveTime);
-    
+
     if (difference.inDays > 7) {
       return '7天前在线';
     } else if (difference.inDays > 0) {
@@ -186,7 +190,7 @@ class UserStats {
     }
   }
 
-  bool get isActiveRecently => 
+  bool get isActiveRecently =>
       DateTime.now().difference(lastActiveTime).inMinutes < 5;
 
   UserStats copyWith({
@@ -208,9 +212,6 @@ class UserStats {
   }
 
   static UserStats empty() {
-    return UserStats(
-      userId: '',
-      lastActiveTime: DateTime.now(),
-    );
+    return UserStats(userId: '', lastActiveTime: DateTime.now());
   }
 }

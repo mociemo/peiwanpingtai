@@ -1,11 +1,40 @@
 package com.playmate.dto;
 
-import lombok.Data;
-
-@Data
 public class RatingRequest {
     private String orderId;
-    private Integer rating; // 1-5星评分
+    private Integer rating;
     private String comment;
-    private List<String> tags; // 评价标签，如"技术好"、"态度好"等
+    private String[] tags;
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
 }

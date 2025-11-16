@@ -21,7 +21,7 @@ public class CommentController {
     
     @GetMapping("/post/{postId}")
     public ResponseEntity<ApiResponse<Page<CommentResponse>>> getCommentsByPostId(
-            @PathVariable Long postId,
+            @PathVariable String postId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         
@@ -32,7 +32,7 @@ public class CommentController {
     
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<Page<CommentResponse>>> getCommentsByUserId(
-            @PathVariable Long userId,
+            @PathVariable String userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         
@@ -43,8 +43,8 @@ public class CommentController {
     
     @PostMapping("/post/{postId}")
     public ResponseEntity<ApiResponse<CommentResponse>> createComment(
-            @RequestHeader("X-User-Id") Long userId,
-            @PathVariable Long postId,
+            @RequestHeader("X-User-Id") String userId,
+            @PathVariable String postId,
             @RequestBody CommentRequest request) {
         
         CommentResponse comment = commentService.createComment(userId, postId, request);
@@ -53,8 +53,8 @@ public class CommentController {
     
     @PutMapping("/{commentId}")
     public ResponseEntity<ApiResponse<CommentResponse>> updateComment(
-            @PathVariable Long commentId,
-            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable String commentId,
+            @RequestHeader("X-User-Id") String userId,
             @RequestBody CommentRequest request) {
         
         CommentResponse comment = commentService.updateComment(commentId, userId, request);
@@ -63,8 +63,8 @@ public class CommentController {
     
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> deleteComment(
-            @PathVariable Long commentId,
-            @RequestHeader("X-User-Id") Long userId) {
+            @PathVariable String commentId,
+            @RequestHeader("X-User-Id") String userId) {
         
         commentService.deleteComment(commentId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -72,8 +72,8 @@ public class CommentController {
     
     @PostMapping("/{commentId}/like")
     public ResponseEntity<ApiResponse<Void>> likeComment(
-            @PathVariable Long commentId,
-            @RequestHeader("X-User-Id") Long userId) {
+            @PathVariable String commentId,
+            @RequestHeader("X-User-Id") String userId) {
         
         commentService.likeComment(commentId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -81,15 +81,15 @@ public class CommentController {
     
     @PostMapping("/{commentId}/unlike")
     public ResponseEntity<ApiResponse<Void>> unlikeComment(
-            @PathVariable Long commentId,
-            @RequestHeader("X-User-Id") Long userId) {
+            @PathVariable String commentId,
+            @RequestHeader("X-User-Id") String userId) {
         
         commentService.unlikeComment(commentId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
     
     @GetMapping("/{commentId}")
-    public ResponseEntity<ApiResponse<CommentResponse>> getCommentById(@PathVariable Long commentId) {
+    public ResponseEntity<ApiResponse<CommentResponse>> getCommentById(@PathVariable String commentId) {
         CommentResponse comment = commentService.getCommentById(commentId);
         return ResponseEntity.ok(ApiResponse.success(comment));
     }

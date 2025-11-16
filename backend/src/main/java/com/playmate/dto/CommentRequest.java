@@ -1,10 +1,31 @@
 package com.playmate.dto;
 
-import lombok.Data;
-
-@Data
 public class CommentRequest {
     private String content;
-    private Long parentId;
-    private Long replyToUserId;
+    private String parentId;
+    private String replyToUserId;
+    
+    public String getContent() {
+        return content;
+    }
+    
+    public void setContent(String content) {
+        this.content = content;
+    }
+    
+    public String getParentId() {
+        return parentId;
+    }
+    
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+    
+    public String getReplyToUserId() {
+        return replyToUserId;
+    }
+    
+    public void setReplyToUserId(String replyToUserId) {
+        this.replyToUserId = replyToUserId;
+    }
 }

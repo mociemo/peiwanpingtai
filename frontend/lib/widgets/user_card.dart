@@ -17,13 +17,11 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       margin: EdgeInsets.all(8.0),
       elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Row(
@@ -33,10 +31,11 @@ class UserCard extends StatelessWidget {
               radius: 24,
               backgroundImage: user['avatar'] != null
                   ? NetworkImage(user['avatar'] as String)
-                  : AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                  : AssetImage('assets/images/default_avatar.png')
+                        as ImageProvider,
             ),
             SizedBox(width: 12),
-            
+
             // 用户信息
             Expanded(
               child: Column(
@@ -54,7 +53,9 @@ class UserCard extends StatelessWidget {
                       child: Text(
                         user['bio'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -64,7 +65,7 @@ class UserCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // 关注按钮
             if (showFollowButton)
               ElevatedButton(

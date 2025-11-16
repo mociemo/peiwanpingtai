@@ -57,14 +57,8 @@ class AppTheme {
         fontWeight: FontWeight.w500,
         color: textColor,
       ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: textColor,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: textSecondaryColor,
-      ),
+      bodyLarge: TextStyle(fontSize: 16, color: textColor),
+      bodyMedium: TextStyle(fontSize: 14, color: textSecondaryColor),
       labelLarge: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w500,
@@ -75,14 +69,9 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         elevation: 0,
       ),
     ),
@@ -90,14 +79,9 @@ class AppTheme {
       style: OutlinedButton.styleFrom(
         foregroundColor: primaryColor,
         side: BorderSide(color: primaryColor),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -105,25 +89,39 @@ class AppTheme {
       fillColor: surfaceColor,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Color.alphaBlend(secondaryColor.withAlpha(77), Colors.transparent)),
+        borderSide: BorderSide(
+          color: Color.alphaBlend(
+            secondaryColor.withAlpha(77),
+            Colors.transparent,
+          ),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Color.alphaBlend(secondaryColor.withAlpha(77), Colors.transparent)),
+        borderSide: BorderSide(
+          color: Color.alphaBlend(
+            secondaryColor.withAlpha(77),
+            Colors.transparent,
+          ),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide: BorderSide(color: primaryColor),
       ),
       labelStyle: TextStyle(color: textSecondaryColor),
-      hintStyle: TextStyle(color: Color.alphaBlend(textSecondaryColor.withAlpha(153), Colors.transparent)),
+      hintStyle: TextStyle(
+        color: Color.alphaBlend(
+          textSecondaryColor.withAlpha(153),
+          Colors.transparent,
+        ),
+      ),
     ),
-    cardTheme: CardThemeData( // 将CardTheme改为CardThemeData
+    cardTheme: CardThemeData(
+      // 将CardTheme改为CardThemeData
       color: surfaceColor,
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
   );
 

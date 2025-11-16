@@ -1,18 +1,18 @@
 enum MessageType {
-  text,       // 文本消息
-  image,      // 图片消息
-  voice,      // 语音消息
-  video,      // 视频消息
-  system,     // 系统消息
-  custom,     // 自定义消息
+  text, // 文本消息
+  image, // 图片消息
+  voice, // 语音消息
+  video, // 视频消息
+  system, // 系统消息
+  custom, // 自定义消息
 }
 
 enum MessageStatus {
-  sending,    // 发送中
-  sent,       // 已发送
-  delivered,  // 已送达
-  read,       // 已读
-  failed,     // 发送失败
+  sending, // 发送中
+  sent, // 已发送
+  delivered, // 已送达
+  read, // 已读
+  failed, // 发送失败
 }
 
 class Message {
@@ -55,8 +55,12 @@ class Message {
         (e) => e.name == json['status'],
         orElse: () => MessageStatus.sending,
       ),
-      createTime: DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
-      readTime: json['readTime'] != null ? DateTime.parse(json['readTime']) : null,
+      createTime: DateTime.parse(
+        json['createTime'] ?? DateTime.now().toIso8601String(),
+      ),
+      readTime: json['readTime'] != null
+          ? DateTime.parse(json['readTime'])
+          : null,
       extra: json['extra'],
     );
   }

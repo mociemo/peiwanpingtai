@@ -13,19 +13,24 @@ class _SearchPageState extends State<SearchPage> {
   double _minPrice = 0;
   double _maxPrice = 100;
   double _minRating = 0;
-  
+
   final List<String> _games = [
-    '王者荣耀', '和平精英', '英雄联盟', '原神', 'CS:GO', 
-    'DOTA2', '守望先锋', '永劫无间', '穿越火线', '其他'
+    '王者荣耀',
+    '和平精英',
+    '英雄联盟',
+    '原神',
+    'CS:GO',
+    'DOTA2',
+    '守望先锋',
+    '永劫无间',
+    '穿越火线',
+    '其他',
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('搜索陪玩达人'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('搜索陪玩达人'), elevation: 0),
       body: Column(
         children: [
           // 搜索框
@@ -50,7 +55,7 @@ class _SearchPageState extends State<SearchPage> {
               onChanged: (value) => _performSearch(),
             ),
           ),
-          
+
           // 筛选条件
           ExpansionTile(
             title: const Text('筛选条件'),
@@ -58,13 +63,13 @@ class _SearchPageState extends State<SearchPage> {
             children: [
               // 游戏选择
               _buildFilterSection('游戏类型', _buildGameFilter()),
-              
+
               // 价格范围
               _buildFilterSection('价格范围', _buildPriceFilter()),
-              
+
               // 评分要求
               _buildFilterSection('最低评分', _buildRatingFilter()),
-              
+
               // 筛选按钮
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -88,16 +93,14 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ],
           ),
-          
+
           // 搜索结果
-          Expanded(
-            child: _buildSearchResults(),
-          ),
+          Expanded(child: _buildSearchResults()),
         ],
       ),
     );
   }
-  
+
   Widget _buildFilterSection(String title, Widget content) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -106,10 +109,7 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 8),
           content,
@@ -117,7 +117,7 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
-  
+
   Widget _buildGameFilter() {
     return Wrap(
       spacing: 8,
@@ -136,7 +136,7 @@ class _SearchPageState extends State<SearchPage> {
       }).toList(),
     );
   }
-  
+
   Widget _buildPriceFilter() {
     return Column(
       children: [
@@ -145,10 +145,7 @@ class _SearchPageState extends State<SearchPage> {
           min: 0,
           max: 100,
           divisions: 10,
-          labels: RangeLabels(
-            '¥${_minPrice.toInt()}',
-            '¥${_maxPrice.toInt()}',
-          ),
+          labels: RangeLabels('¥${_minPrice.toInt()}', '¥${_maxPrice.toInt()}'),
           onChanged: (values) {
             setState(() {
               _minPrice = values.start;
@@ -166,7 +163,7 @@ class _SearchPageState extends State<SearchPage> {
       ],
     );
   }
-  
+
   Widget _buildRatingFilter() {
     return Column(
       children: [
@@ -193,7 +190,7 @@ class _SearchPageState extends State<SearchPage> {
       ],
     );
   }
-  
+
   void _resetFilters() {
     setState(() {
       _selectedGame = '';
@@ -204,10 +201,9 @@ class _SearchPageState extends State<SearchPage> {
     });
     _performSearch();
   }
-  
-  void _performSearch() {
-  }
-  
+
+  void _performSearch() {}
+
   Widget _buildSearchResults() {
     return ListView.builder(
       itemCount: 10,
@@ -220,7 +216,9 @@ class _SearchPageState extends State<SearchPage> {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.person,
                     color: Theme.of(context).colorScheme.primary,
@@ -259,11 +257,7 @@ class _SearchPageState extends State<SearchPage> {
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                  },
-                  child: const Text('立即下单'),
-                ),
+                ElevatedButton(onPressed: () {}, child: const Text('立即下单')),
               ],
             ),
           ),

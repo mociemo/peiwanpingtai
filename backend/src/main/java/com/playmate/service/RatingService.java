@@ -50,26 +50,26 @@ public class RatingService {
         }
 
         // 获取评价者和被评价者信息
-        User rater = userRepository.findById(order.getUserId())
+        User rater = userRepository.findById(Long.valueOf(order.getUserId()))
                 .orElseThrow(() -> new RuntimeException("评价者不存在"));
 
-        User player = userRepository.findById(order.getPlayerId())
+        User player = userRepository.findById(Long.valueOf(order.getPlayerId()))
                 .orElseThrow(() -> new RuntimeException("被评价者不存在"));
 
         // 创建评价
         Rating rating = new Rating();
         rating.setOrderId(request.getOrderId());
-        rating.setRaterId(rater.getId());
-        rating.setPlayerId(player.getId());
+        rating.setRaterId(rater.getId().toString());
+        rating.setPlayerId(player.getId().toString());
         rating.setRating(request.getRating());
         rating.setComment(request.getComment());
-        rating.setTags(request.getTags());
+        rating.setTags(request.getTags() != null ? java.util.Arrays.asList(request.getTags()) : null);
         rating.setCreateTime(LocalDateTime.now());
 
         rating = ratingRepository.save(rating);
 
         // 更新订单评价状态
-        order.setRating(request.getRating());
+        order.setRating(String.valueOf(request.getRating()));
         order.setComment(request.getComment());
         order.setCommentTime(LocalDateTime.now());
         orderRepository.save(order);
@@ -87,8 +87,8 @@ public class RatingService {
 
         return ratings.getContent().stream()
                 .map(rating -> {
-                    User rater = userRepository.findById(rating.getRaterId()).orElse(null);
-                    User player = userRepository.findById(rating.getPlayerId()).orElse(null);
+                    User rater = userRepository.findById(Long.valueOf(rating.getRaterId())).orElse(null);
+                    User player = userRepository.findById(Long.valueOf(rating.getPlayerId())).orElse(null);
                     return convertToResponse(rating, rater, player);
                 })
                 .collect(Collectors.toList());

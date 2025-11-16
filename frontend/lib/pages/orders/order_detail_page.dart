@@ -34,9 +34,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('获取订单详情失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('获取订单详情失败: $e')));
       }
     } finally {
       if (mounted) {
@@ -56,17 +56,17 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       final response = await ApiService.cancelOrder(widget.orderId, '用户取消');
       if (response['success'] == true) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('订单已取消')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('订单已取消')));
           await _loadOrderDetail(); // 重新加载订单详情
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('取消订单失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('取消订单失败: $e')));
       }
     } finally {
       if (mounted) {
@@ -79,9 +79,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   Future<void> _rateOrder() async {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => RatingPage(orderId: _order!.id),
-      ),
+      MaterialPageRoute(builder: (context) => RatingPage(orderId: _order!.id)),
     );
   }
 
@@ -106,39 +104,39 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             ),
           ],
         );
-      
+
       case OrderStatus.accepted:
         return Row(
           children: [
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('联系功能开发中')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('联系功能开发中')));
                 },
                 child: const Text('联系陪玩'),
               ),
             ),
           ],
         );
-      
+
       case OrderStatus.inProgress:
         return Row(
           children: [
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('服务功能开发中')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('服务功能开发中')));
                 },
                 child: const Text('进入服务'),
               ),
             ),
           ],
         );
-      
+
       case OrderStatus.completed:
         if (_order!.rating == null) {
           return Row(
@@ -146,9 +144,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('再次下单功能开发中')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('再次下单功能开发中')));
                   },
                   child: const Text('再次下单'),
                 ),
@@ -168,9 +166,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('再次下单功能开发中')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text('再次下单功能开发中')));
                   },
                   child: const Text('再次下单'),
                 ),
@@ -178,7 +176,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             ],
           );
         }
-      
+
       case OrderStatus.cancelled:
       case OrderStatus.refunded:
         return Row(
@@ -186,9 +184,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('重新下单功能开发中')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('重新下单功能开发中')));
                 },
                 child: const Text('重新下单'),
               ),
@@ -201,250 +199,261 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('订单详情'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('订单详情'), elevation: 0),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _order == null
-              ? const Center(child: Text('订单不存在'))
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 订单状态卡片
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '订单状态',
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Chip(
-                                    label: Text(
-                                      _order!.statusText,
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                    backgroundColor: _getStatusColor(_order!.status),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '订单编号',
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  Text(
-                                    _order!.orderNo,
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      // 陪玩信息
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundImage: NetworkImage(_order!.playerAvatar),
-                                child: _order!.playerAvatar.isEmpty 
-                                    ? const Icon(Icons.person, size: 25)
-                                    : null,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _order!.playerName,
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _order!.serviceTypeText,
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      // 订单详情
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+          ? const Center(child: Text('订单不存在'))
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 订单状态卡片
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '订单信息',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                '订单状态',
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Chip(
+                                label: Text(
+                                  _order!.statusText,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: _getStatusColor(
+                                  _order!.status,
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              _buildInfoRow('服务类型', _order!.serviceTypeText),
-                              _buildInfoRow('服务时长', '${_order!.duration}分钟'),
-                              _buildInfoRow('单价', '¥${_order!.amount.toStringAsFixed(2)}/小时'),
-                              _buildInfoRow('总费用', '¥${_order!.totalAmount.toStringAsFixed(2)}'),
-                              _buildInfoRow('创建时间', _formatDateTime(_order!.createTime)),
-                              if (_order!.startTime != null)
-                                _buildInfoRow('开始时间', _formatDateTime(_order!.startTime!)),
-                              if (_order!.endTime != null)
-                                _buildInfoRow('结束时间', _formatDateTime(_order!.endTime!)),
                             ],
                           ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '订单编号',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(color: Colors.grey.shade600),
+                              ),
+                              Text(
+                                _order!.orderNo,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 陪玩信息
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(_order!.playerAvatar),
+                            child: _order!.playerAvatar.isEmpty
+                                ? const Icon(Icons.person, size: 25)
+                                : null,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _order!.playerName,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _order!.serviceTypeText,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 订单详情
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '订单信息',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInfoRow('服务类型', _order!.serviceTypeText),
+                          _buildInfoRow('服务时长', '${_order!.duration}分钟'),
+                          _buildInfoRow(
+                            '单价',
+                            '¥${_order!.amount.toStringAsFixed(2)}/小时',
+                          ),
+                          _buildInfoRow(
+                            '总费用',
+                            '¥${_order!.totalAmount.toStringAsFixed(2)}',
+                          ),
+                          _buildInfoRow(
+                            '创建时间',
+                            _formatDateTime(_order!.createTime),
+                          ),
+                          if (_order!.startTime != null)
+                            _buildInfoRow(
+                              '开始时间',
+                              _formatDateTime(_order!.startTime!),
+                            ),
+                          if (_order!.endTime != null)
+                            _buildInfoRow(
+                              '结束时间',
+                              _formatDateTime(_order!.endTime!),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  if (_order!.requirements.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '需求描述',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(_order!.requirements),
+                          ],
                         ),
                       ),
-                      
-                      if (_order!.requirements.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '需求描述',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(_order!.requirements),
-                              ],
+                    ),
+                  ],
+
+                  if (_order!.contactInfo.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '联系方式',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
-                          ),
+                            const SizedBox(height: 8),
+                            Text(_order!.contactInfo),
+                          ],
                         ),
-                      ],
-                      
-                      if (_order!.contactInfo.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '联系方式',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(_order!.contactInfo),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                      
-                      if (_order!.cancelReason != null) ...[
-                        const SizedBox(height: 16),
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '取消原因',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      ),
+                    ),
+                  ],
+
+                  if (_order!.cancelReason != null) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '取消原因',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red,
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(_order!.cancelReason!),
-                              ],
                             ),
-                          ),
+                            const SizedBox(height: 8),
+                            Text(_order!.cancelReason!),
+                          ],
                         ),
-                      ],
-                      
-                      if (_order!.rating != null) ...[
-                        const SizedBox(height: 16),
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                    ),
+                  ],
+
+                  if (_order!.rating != null) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '评价信息',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
                               children: [
-                                Text(
-                                  '评价信息',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Text('评分: '),
-                                    ...List.generate(5, (index) {
-                                      return Icon(
-                                        Icons.star,
-                                        size: 16,
-                                        color: index < _order!.rating! ? Colors.amber : Colors.grey.shade300,
-                                      );
-                                    }),
-                                    Text(' ${_order!.rating!.toStringAsFixed(1)}'),
-                                  ],
-                                ),
-                                if (_order!.comment != null) ...[
-                                  const SizedBox(height: 8),
-                                  Text('评价内容: ${_order!.comment}'),
-                                ],
-                                if (_order!.commentTime != null) ...[
-                                  const SizedBox(height: 8),
-                                  Text('评价时间: ${_formatDateTime(_order!.commentTime!)}'),
-                                ],
+                                Text('评分: '),
+                                ...List.generate(5, (index) {
+                                  return Icon(
+                                    Icons.star,
+                                    size: 16,
+                                    color: index < _order!.rating!
+                                        ? Colors.amber
+                                        : Colors.grey.shade300,
+                                  );
+                                }),
+                                Text(' ${_order!.rating!.toStringAsFixed(1)}'),
                               ],
                             ),
-                          ),
+                            if (_order!.comment != null) ...[
+                              const SizedBox(height: 8),
+                              Text('评价内容: ${_order!.comment}'),
+                            ],
+                            if (_order!.commentTime != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                '评价时间: ${_formatDateTime(_order!.commentTime!)}',
+                              ),
+                            ],
+                          ],
                         ),
-                      ],
-                      
-                      const SizedBox(height: 24),
-                      _buildActionButtons(),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 24),
+                  _buildActionButtons(),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
     );
   }
 
@@ -456,14 +465,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey.shade600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
           ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          Text(value, style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
     );

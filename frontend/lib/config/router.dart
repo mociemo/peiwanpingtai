@@ -29,67 +29,57 @@ import '../pages/community/user_profile_page.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     routes: <RouteBase>[
-      GoRoute(
-        path: '/',
-        redirect: (context, state) => '/login',
-      ),
+      GoRoute(path: '/', redirect: (context, state) => '/login'),
       GoRoute(
         path: '/login',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: LoginPage(),
-        ),
+        pageBuilder: (context, state) => MaterialPage<void>(child: LoginPage()),
       ),
       GoRoute(
         path: '/register',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: RegisterPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: RegisterPage()),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => HomePage(),
-      ),
+      GoRoute(path: '/home', builder: (context, state) => HomePage()),
       GoRoute(
         path: '/profile',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: ProfilePage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: ProfilePage()),
       ),
       GoRoute(
         path: '/search',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: SearchPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: SearchPage()),
       ),
       GoRoute(
         path: '/notifications',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: NotificationsPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: NotificationsPage()),
       ),
       GoRoute(
         path: '/orders',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: OrdersPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: OrdersPage()),
       ),
       GoRoute(
         path: '/orders/create',
         pageBuilder: (context, state) => MaterialPage<void>(
-          child: CreateOrderPage(player: state.extra as Map<String, dynamic>? ?? {}),
+          child: CreateOrderPage(
+            player: state.extra as Map<String, dynamic>? ?? {},
+          ),
         ),
       ),
       GoRoute(
         path: '/orders/:orderId',
         pageBuilder: (context, state) => MaterialPage<void>(
-          child: OrderDetailPage(orderId: state.pathParameters['orderId'] ?? ''),
+          child: OrderDetailPage(
+            orderId: state.pathParameters['orderId'] ?? '',
+          ),
         ),
       ),
       GoRoute(
         path: '/chat',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: ConversationsPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: ConversationsPage()),
       ),
       GoRoute(
         path: '/chat/:conversationId',
@@ -150,33 +140,27 @@ class AppRouter {
       ),
       GoRoute(
         path: '/recharge',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: RechargePage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: RechargePage()),
       ),
       GoRoute(
         path: '/withdrawal',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: WithdrawalPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: WithdrawalPage()),
       ),
       GoRoute(
         path: '/withdrawal/records',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: WithdrawalRecordsPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: WithdrawalRecordsPage()),
       ),
       GoRoute(
         path: '/bills',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: BillsPage(),
-        ),
+        pageBuilder: (context, state) => MaterialPage<void>(child: BillsPage()),
       ),
       GoRoute(
         path: '/payment/process',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: PaymentProcessPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: PaymentProcessPage()),
       ),
       GoRoute(
         path: '/payment/order/detail',
@@ -189,15 +173,13 @@ class AppRouter {
       ),
       GoRoute(
         path: '/community',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: PostListPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: PostListPage()),
       ),
       GoRoute(
         path: '/community/create',
-        pageBuilder: (context, state) => MaterialPage<void>(
-          child: CreatePostPage(),
-        ),
+        pageBuilder: (context, state) =>
+            MaterialPage<void>(child: CreatePostPage()),
       ),
       GoRoute(
         path: '/community/posts/:postId',

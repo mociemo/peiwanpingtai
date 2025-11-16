@@ -1,6 +1,8 @@
 package com.playmate.repository;
 
 import com.playmate.entity.Rating;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,6 +28,11 @@ public interface RatingRepository extends MongoRepository<Rating, String> {
     List<Rating> findByPlayerIdOrderByCreateTimeDesc(String playerId);
     
     /**
+     * 根据陪玩人员ID查找评价，按创建时间倒序（分页）
+     */
+    Page<Rating> findByPlayerIdOrderByCreateTimeDesc(String playerId, Pageable pageable);
+    
+    /**
      * 统计陪玩人员的评价数量
      */
     long countByPlayerId(String playerId);
@@ -44,9 +51,8 @@ public interface RatingRepository extends MongoRepository<Rating, String> {
     /**
      * 使用聚合管道计算平均评分
      */
-    @Query(value = "{ 'playerId': ?0 }", count = true)
     default Double calculateAverageRatingByPlayerId(String playerId) {
-        List<Rating> ratings = findRatingsByPlayerId(playerId);
+        List<Rating> ratings = findByPlayerIdOrderByCreateTimeDesc(playerId);
         if (ratings.isEmpty()) {
             return null;
         }

@@ -1,13 +1,11 @@
 package com.playmate.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "players")
-@Data
 public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,4 +71,44 @@ public class Player {
     public BigDecimal getPrice() {
         return this.servicePrice;
     }
+    
+    // Manual getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    
+    public String getRealName() { return realName; }
+    public void setRealName(String realName) { this.realName = realName; }
+    
+    public String getIdCard() { return idCard; }
+    public void setIdCard(String idCard) { this.idCard = idCard; }
+    
+    public String getSkillTags() { return skillTags; }
+    public void setSkillTags(String skillTags) { this.skillTags = skillTags; }
+    
+    public BigDecimal getServicePrice() { return servicePrice; }
+    public void setServicePrice(BigDecimal servicePrice) { this.servicePrice = servicePrice; }
+    
+    public String getIntroduction() { return introduction; }
+    public void setIntroduction(String introduction) { this.introduction = introduction; }
+    
+    public CertificationStatus getCertificationStatus() { return certificationStatus; }
+    public void setCertificationStatus(CertificationStatus certificationStatus) { this.certificationStatus = certificationStatus; }
+    
+    public Integer getTotalOrders() { return totalOrders; }
+    public void setTotalOrders(Integer totalOrders) { this.totalOrders = totalOrders; }
+    
+    public BigDecimal getRating() { return rating; }
+    public void setRating(BigDecimal rating) { this.rating = rating; }
+    
+    public String getAvailableTime() { return availableTime; }
+    public void setAvailableTime(String availableTime) { this.availableTime = availableTime; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public String getGame() { return game; }
+    public void setGame(String game) { this.game = game; }
 }

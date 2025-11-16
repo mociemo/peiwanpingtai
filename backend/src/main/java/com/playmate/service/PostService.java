@@ -18,18 +18,22 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class PostService {
     
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+    }
     
     public Page<PostResponse> getPosts(PostStatus status, Pageable pageable) {
         Page<Post> posts = postRepository.findByStatusOrderByCreateTimeDesc(status, pageable);
         return posts.map(this::convertToResponse);
     }
     
-    public Page<PostResponse> getUserPosts(Long userId, PostStatus status, Pageable pageable) {
+    public Page<PostResponse> getUserPosts(String userId, PostStatus status, Pageable pageable) {
         Page<Post> posts = postRepository.findByUserIdAndStatusOrderByCreateTimeDesc(userId, status, pageable);
         return posts.map(this::convertToResponse);
     }
@@ -49,24 +53,20 @@ public class PostService {
         return posts.map(this::convertToResponse);
     }
     
-    public Page<PostResponse> getPostsByUserIds(List<Long> userIds, PostStatus status, Pageable pageable) {
+    public Page<PostResponse> getPostsByUserIds(List<String> userIds, PostStatus status, Pageable pageable) {
         Page<Post> posts = postRepository.findByUserIdInAndStatusOrderByCreateTimeDesc(userIds, status, pageable);
         return posts.map(this::convertToResponse);
     }
     
     @Transactional
     @SuppressWarnings("null")
-    public PostResponse createPost(Long userId, CreatePostRequest request) {
+    public PostResponse createPost(String userId, CreatePostRequest request) {
         Post post = new Post();
         post.setUserId(userId);
         post.setContent(request.getContent());
-        post.setImages(request.getImages());
-        post.setTags(request.getTags());
+        post.setMediaUrls(request.getImages() != null ? request.getImages().toArray(new String[0]) : new String[0]);
         post.setType(request.getType() != null ? request.getType() : PostType.TEXT);
         post.setStatus(PostStatus.PUBLISHED);
-        post.setLocation(request.getLocation());
-        post.setGameName(request.getGameName());
-        post.setVideoUrl(request.getVideoUrl());
         post.setCreateTime(LocalDateTime.now());
         
         Post savedPost = postRepository.save(post);
@@ -75,7 +75,7 @@ public class PostService {
     
     @Transactional
     @SuppressWarnings("null")
-    public PostResponse updatePost(Long postId, Long userId, CreatePostRequest request) {
+    public PostResponse updatePost(String postId, String userId, CreatePostRequest request) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new RuntimeException("动态不存在");
@@ -87,12 +87,8 @@ public class PostService {
         }
         
         post.setContent(request.getContent());
-        post.setImages(request.getImages());
-        post.setTags(request.getTags());
+        post.setMediaUrls(request.getImages() != null ? request.getImages().toArray(new String[0]) : new String[0]);
         post.setType(request.getType());
-        post.setLocation(request.getLocation());
-        post.setGameName(request.getGameName());
-        post.setVideoUrl(request.getVideoUrl());
         post.setUpdateTime(LocalDateTime.now());
         
         Post updatedPost = postRepository.save(post);
@@ -101,7 +97,7 @@ public class PostService {
     
     @Transactional
     @SuppressWarnings("null")
-    public void deletePost(Long postId, Long userId) {
+    public void deletePost(String postId, String userId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new RuntimeException("动态不存在");
@@ -118,7 +114,7 @@ public class PostService {
     
     @Transactional
     @SuppressWarnings("null")
-    public void likePost(Long postId, Long userId) {
+    public void likePost(String postId, String userId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new RuntimeException("动态不存在");
@@ -131,7 +127,7 @@ public class PostService {
     
     @Transactional
     @SuppressWarnings("null")
-    public void unlikePost(Long postId, Long userId) {
+    public void unlikePost(String postId, String userId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new RuntimeException("动态不存在");
@@ -145,7 +141,7 @@ public class PostService {
     }
     
     @SuppressWarnings("null")
-    public PostResponse getPostById(Long postId) {
+    public PostResponse getPostById(String postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             throw new RuntimeException("动态不存在");
@@ -157,10 +153,10 @@ public class PostService {
     
     private PostResponse convertToResponse(Post post) {
         PostResponse response = new PostResponse();
-        response.setId(post.getId());
+        response.setId(Long.valueOf(post.getId()));
         
         // 设置用户信息
-        userRepository.findById(post.getUserId()).ifPresent(user -> {
+        userRepository.findById(Long.valueOf(post.getUserId())).ifPresent(user -> {
             PostResponse.UserInfo userInfo = new PostResponse.UserInfo();
             userInfo.setId(user.getId());
             userInfo.setUsername(user.getUsername());
@@ -169,8 +165,7 @@ public class PostService {
         });
         
         response.setContent(post.getContent());
-        response.setImages(post.getImages());
-        response.setTags(post.getTags());
+        response.setImages(java.util.Arrays.asList(post.getMediaUrls()));
         response.setType(post.getType());
         response.setStatus(post.getStatus());
         response.setCreateTime(post.getCreateTime());
@@ -179,11 +174,8 @@ public class PostService {
         response.setCommentCount(post.getCommentCount());
         response.setShareCount(post.getShareCount());
         response.setIsLiked(false);
-        response.setIsCollected(false);
-        response.setIsPinned(post.getIsPinned());
-        response.setLocation(post.getLocation());
-        response.setGameName(post.getGameName());
-        response.setVideoUrl(post.getVideoUrl());
+        response.setCollected(Boolean.FALSE);
+        response.setPinned(post.getIsPinned());
         
         return response;
     }

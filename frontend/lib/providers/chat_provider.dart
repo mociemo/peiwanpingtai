@@ -35,12 +35,12 @@ class ChatProvider with ChangeNotifier {
   Future<void> _connectWebSocket() async {
     try {
       await WebSocketService.instance.connect();
-      
+
       // 监听消息
       WebSocketService.instance.messageStream.listen((message) {
         _handleNewMessage(message);
       });
-      
+
       // 监听事件
       WebSocketService.instance.eventStream.listen((event) {
         _handleWebSocketEvent(event);
@@ -55,16 +55,18 @@ class ChatProvider with ChangeNotifier {
     if (refresh) {
       _conversations.clear();
     }
-    
+
     setLoading(true);
     clearError();
-    
+
     try {
       final response = await ChatService.getConversations();
-      
+
       if (response['success'] == true && response['data'] != null) {
         final List<dynamic> data = response['data']['content'] ?? [];
-        _conversations = data.map((item) => Conversation.fromJson(item)).toList();
+        _conversations = data
+            .map((item) => Conversation.fromJson(item))
+            .toList();
         notifyListeners();
       } else {
         setError(response['message'] ?? '获取会话列表失败');
@@ -77,40 +79,45 @@ class ChatProvider with ChangeNotifier {
   }
 
   // 加载消息列表
-  Future<void> loadMessages(String conversationId, {bool refresh = false}) async {
+  Future<void> loadMessages(
+    String conversationId, {
+    bool refresh = false,
+  }) async {
     if (refresh) {
       _messages.clear();
       _conversationMessages[conversationId]?.clear();
     }
-    
+
     _currentConversationId = conversationId;
     setLoading(true);
     clearError();
-    
+
     try {
       // 如果已有缓存消息，先显示缓存
-      if (_conversationMessages.containsKey(conversationId) && 
+      if (_conversationMessages.containsKey(conversationId) &&
           _conversationMessages[conversationId]!.isNotEmpty) {
         _messages = _conversationMessages[conversationId]!;
         notifyListeners();
       }
-      
+
       final response = await ChatService.getMessages(conversationId);
-      
+
       if (response['success'] == true && response['data'] != null) {
         final List<dynamic> data = response['data']['content'] ?? [];
         final newMessages = data.map((item) => Message.fromJson(item)).toList();
-        
+
         // 合并消息（去重）
         final existingIds = _messages.map((m) => m.id).toSet();
-        final uniqueNewMessages = newMessages.where((m) => !existingIds.contains(m.id)).toList();
-        
+        final uniqueNewMessages = newMessages
+            .where((m) => !existingIds.contains(m.id))
+            .toList();
+
         _messages = [...uniqueNewMessages, ..._messages];
         _conversationMessages[conversationId] = _messages;
-        
+
         // 标记消息为已读
         await markMessagesAsRead(conversationId);
-        
+
         notifyListeners();
       } else {
         setError(response['message'] ?? '获取消息列表失败');
@@ -125,7 +132,7 @@ class ChatProvider with ChangeNotifier {
   // 发送文本消息
   Future<void> sendTextMessage(String conversationId, String content) async {
     if (content.trim().isEmpty) return;
-    
+
     // 创建临时消息
     final tempMessage = Message(
       id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
@@ -137,16 +144,19 @@ class ChatProvider with ChangeNotifier {
       status: MessageStatus.sending,
       createTime: DateTime.now(),
     );
-    
+
     // 添加到消息列表
     _messages = [..._messages, tempMessage];
     _conversationMessages[conversationId] = _messages;
     notifyListeners();
-    
+
     try {
       // 发送消息
-      final response = await ChatService.sendTextMessage(conversationId, content);
-      
+      final response = await ChatService.sendTextMessage(
+        conversationId,
+        content,
+      );
+
       if (response['success'] == true && response['data'] != null) {
         // 更新消息状态
         final serverMessage = Message.fromJson(response['data']);
@@ -167,10 +177,10 @@ class ChatProvider with ChangeNotifier {
   Future<String?> createConversation(String participantId) async {
     setLoading(true);
     clearError();
-    
+
     try {
       final response = await ChatService.createConversation(participantId);
-      
+
       if (response['success'] == true && response['data'] != null) {
         final conversation = Conversation.fromJson(response['data']);
         _conversations.insert(0, conversation);
@@ -192,15 +202,17 @@ class ChatProvider with ChangeNotifier {
   Future<void> markMessagesAsRead(String conversationId) async {
     try {
       await ChatService.markMessagesAsRead(conversationId);
-      
+
       // 更新本地未读数
-      final conversation = _conversations.where((c) => c.id == conversationId).firstOrNull;
+      final conversation = _conversations
+          .where((c) => c.id == conversationId)
+          .firstOrNull;
       if (conversation != null) {
         final index = _conversations.indexOf(conversation);
         _conversations[index] = conversation.copyWith(unreadCount: 0);
         notifyListeners();
       }
-      
+
       await _updateUnreadCount();
     } catch (e) {
       // 不显示错误，因为标记已读失败不影响用户体验
@@ -214,16 +226,16 @@ class ChatProvider with ChangeNotifier {
     if (message.conversationId == _currentConversationId) {
       _messages = [..._messages, message];
       _conversationMessages[message.conversationId] = _messages;
-      
+
       // 如果不是自己发送的消息，标记为已读
       if (message.senderId != _getCurrentUserIdSync()) {
         markMessagesAsRead(message.conversationId);
       }
     }
-    
+
     // 更新会话列表中的最后一条消息
     _updateConversationLastMessage(message);
-    
+
     notifyListeners();
   }
 
@@ -273,21 +285,23 @@ class ChatProvider with ChangeNotifier {
 
   // 更新会话最后一条消息
   void _updateConversationLastMessage(Message message) {
-    final index = _conversations.indexWhere((c) => c.id == message.conversationId);
+    final index = _conversations.indexWhere(
+      (c) => c.id == message.conversationId,
+    );
     if (index != -1) {
       final conversation = _conversations[index];
       _conversations[index] = conversation.copyWith(
         lastMessage: message.content,
         lastMessageTime: message.createTime,
-        unreadCount: message.senderId != _getCurrentUserIdSync() 
-            ? conversation.unreadCount + 1 
+        unreadCount: message.senderId != _getCurrentUserIdSync()
+            ? conversation.unreadCount + 1
             : conversation.unreadCount,
       );
-      
+
       // 将该会话移到顶部
       final updatedConversation = _conversations.removeAt(index);
       _conversations.insert(0, updatedConversation);
-      
+
       notifyListeners();
     }
   }
@@ -363,15 +377,18 @@ class ChatProvider with ChangeNotifier {
     final participantAvatar = event['participantAvatar'] ?? '';
     final callType = event['callType'] ?? 'voice';
     final callId = event['callId'] ?? '';
-    
+
     // 导航到来电页面
-    NavigatorService.pushNamed('/chat/$conversationId/incoming', arguments: {
-      'participantId': participantId,
-      'participantName': participantName,
-      'participantAvatar': participantAvatar,
-      'isVideoCall': callType == 'video',
-      'callId': callId,
-    });
+    NavigatorService.pushNamed(
+      '/chat/$conversationId/incoming',
+      arguments: {
+        'participantId': participantId,
+        'participantName': participantName,
+        'participantAvatar': participantAvatar,
+        'isVideoCall': callType == 'video',
+        'callId': callId,
+      },
+    );
   }
 
   // 处理通话响应

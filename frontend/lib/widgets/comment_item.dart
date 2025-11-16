@@ -17,7 +17,7 @@ class CommentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(12),
@@ -36,7 +36,8 @@ class CommentItem extends StatelessWidget {
                 radius: 16,
                 backgroundImage: comment.userAvatar.isNotEmpty
                     ? NetworkImage(comment.userAvatar)
-                    : AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                    : AssetImage('assets/images/default_avatar.png')
+                          as ImageProvider,
               ),
               SizedBox(width: 8),
               Expanded(
@@ -52,7 +53,9 @@ class CommentItem extends StatelessWidget {
                     Text(
                       TimeUtils.formatRelativeTime(comment.createTime),
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                   ],
@@ -61,14 +64,11 @@ class CommentItem extends StatelessWidget {
             ],
           ),
           SizedBox(height: 8),
-          
+
           // 评论内容
-          Text(
-            comment.content,
-            style: theme.textTheme.bodyLarge,
-          ),
+          Text(comment.content, style: theme.textTheme.bodyLarge),
           SizedBox(height: 8),
-          
+
           // 互动按钮
           Row(
             children: [
@@ -78,12 +78,16 @@ class CommentItem extends StatelessWidget {
                 icon: Icon(
                   comment.isLiked ? Icons.favorite : Icons.favorite_border,
                   size: 16,
-                  color: comment.isLiked ? Colors.red : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: comment.isLiked
+                      ? Colors.red
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 label: Text(
                   '${comment.likeCount}',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: comment.isLiked ? Colors.red : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: comment.isLiked
+                        ? Colors.red
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 style: TextButton.styleFrom(
@@ -91,7 +95,7 @@ class CommentItem extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 ),
               ),
-              
+
               // 回复
               TextButton.icon(
                 onPressed: onReply,
@@ -113,7 +117,7 @@ class CommentItem extends StatelessWidget {
               ),
             ],
           ),
-          
+
           // 回复列表
           if (comment.replies.isNotEmpty)
             Container(
@@ -146,7 +150,10 @@ class CommentItem extends StatelessWidget {
                             if (reply.parentId != null)
                               Row(
                                 children: [
-                                  Text(' 回复 ', style: theme.textTheme.bodySmall),
+                                  Text(
+                                    ' 回复 ',
+                                    style: theme.textTheme.bodySmall,
+                                  ),
                                   Text(
                                     comment.userName,
                                     style: theme.textTheme.bodyMedium?.copyWith(

@@ -79,7 +79,7 @@ class RatingStats {
   factory RatingStats.fromJson(Map<String, dynamic> json) {
     final ratingCounts = <int, int>{};
     final countsMap = json['ratingCounts'] as Map<String, dynamic>;
-    
+
     countsMap.forEach((key, value) {
       ratingCounts[int.parse(key)] = value as int;
     });

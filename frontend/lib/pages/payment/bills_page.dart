@@ -16,12 +16,19 @@ class BillsPage extends StatefulWidget {
   State<BillsPage> createState() => _BillsPageState();
 }
 
-class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMixin {
+class _BillsPageState extends State<BillsPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   final List<String> _tabTitles = ['全部', '充值', '消费', '收入', '提现'];
-  final List<String?> _tabTypes = [null, 'recharge', 'consumption', 'income', 'withdrawal'];
-  
+  final List<String?> _tabTypes = [
+    null,
+    'recharge',
+    'consumption',
+    'income',
+    'withdrawal',
+  ];
+
   DateTime? _startTime;
   DateTime? _endTime;
 
@@ -43,21 +50,22 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
 
   void _onTabChanged() {
     if (_tabController.indexIsChanging) return;
-    
+
     final billProvider = Provider.of<BillProvider>(context, listen: false);
     billProvider.setFilters(type: _tabTypes[_tabController.index]);
     _loadBills(refresh: true);
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       _loadBills();
     }
   }
 
   Future<void> _loadData() async {
     final billProvider = Provider.of<BillProvider>(context, listen: false);
-    
+
     await Future.wait([
       billProvider.getUserBalance(),
       billProvider.getBillStatistics(),
@@ -67,7 +75,7 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
 
   Future<void> _loadBills({bool refresh = false}) async {
     final billProvider = Provider.of<BillProvider>(context, listen: false);
-    
+
     await billProvider.getUserBills(
       refresh: refresh,
       type: _tabTypes[_tabController.index],
@@ -78,7 +86,7 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
 
   void _showFilterBottomSheet() {
     final billProvider = Provider.of<BillProvider>(context, listen: false);
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -96,19 +104,13 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '筛选条件',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('筛选条件', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 16),
-                  
+
                   // 时间范围选择
-                  Text(
-                    '时间范围',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('时间范围', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
-                  
+
                   Row(
                     children: [
                       Expanded(
@@ -116,7 +118,11 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                           onTap: () async {
                             final date = await showDatePicker(
                               context: context,
-                              initialDate: _startTime ?? DateTime.now().subtract(const Duration(days: 30)),
+                              initialDate:
+                                  _startTime ??
+                                  DateTime.now().subtract(
+                                    const Duration(days: 30),
+                                  ),
                               firstDate: DateTime(2020),
                               lastDate: DateTime.now(),
                             );
@@ -129,7 +135,9 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Theme.of(context).colorScheme.outline),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
@@ -137,9 +145,11 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                                 const Icon(Icons.calendar_today, size: 18),
                                 const SizedBox(width: 8),
                                 Text(
-                                  _startTime != null 
-                                    ? DateFormat('yyyy-MM-dd').format(_startTime!)
-                                    : '开始日期',
+                                  _startTime != null
+                                      ? DateFormat(
+                                          'yyyy-MM-dd',
+                                        ).format(_startTime!)
+                                      : '开始日期',
                                 ),
                               ],
                             ),
@@ -165,7 +175,9 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Theme.of(context).colorScheme.outline),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
@@ -173,9 +185,11 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                                 const Icon(Icons.calendar_today, size: 18),
                                 const SizedBox(width: 8),
                                 Text(
-                                  _endTime != null 
-                                    ? DateFormat('yyyy-MM-dd').format(_endTime!)
-                                    : '结束日期',
+                                  _endTime != null
+                                      ? DateFormat(
+                                          'yyyy-MM-dd',
+                                        ).format(_endTime!)
+                                      : '结束日期',
                                 ),
                               ],
                             ),
@@ -184,16 +198,13 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // 快捷时间选择
-                  Text(
-                    '快捷选择',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
+                  Text('快捷选择', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
-                  
+
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -202,14 +213,23 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                         final now = DateTime.now();
                         setModalState(() {
                           _startTime = DateTime(now.year, now.month, now.day);
-                          _endTime = DateTime(now.year, now.month, now.day, 23, 59, 59);
+                          _endTime = DateTime(
+                            now.year,
+                            now.month,
+                            now.day,
+                            23,
+                            59,
+                            59,
+                          );
                         });
                       }),
                       _buildQuickFilter('本周', () {
                         final now = DateTime.now();
                         final weekDay = now.weekday;
                         setModalState(() {
-                          _startTime = now.subtract(Duration(days: weekDay - 1));
+                          _startTime = now.subtract(
+                            Duration(days: weekDay - 1),
+                          );
                           _endTime = now;
                         });
                       }),
@@ -223,15 +243,19 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                       _buildQuickFilter('最近三个月', () {
                         final now = DateTime.now();
                         setModalState(() {
-                          _startTime = DateTime(now.year, now.month - 3, now.day);
+                          _startTime = DateTime(
+                            now.year,
+                            now.month - 3,
+                            now.day,
+                          );
                           _endTime = now;
                         });
                       }),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // 操作按钮
                   Row(
                     children: [
@@ -265,7 +289,7 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
                 ],
               ),
@@ -298,9 +322,9 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
 
   Future<void> _exportBills() async {
     final billProvider = Provider.of<BillProvider>(context, listen: false);
-    
+
     final downloadUrl = await billProvider.exportBills();
-    
+
     if (downloadUrl != null) {
       ToastUtil.showSuccess('账单导出成功');
       // 这里可以添加下载逻辑或打开浏览器
@@ -348,21 +372,22 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                         ),
                         Text(
                           '¥${billProvider.userBalance.toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // 筛选条件显示
                     if (_startTime != null || _endTime != null)
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
@@ -376,9 +401,12 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                             Expanded(
                               child: Text(
                                 '${_startTime != null ? DateFormat('yyyy-MM-dd').format(_startTime!) : '开始'} 至 ${_endTime != null ? DateFormat('yyyy-MM-dd').format(_endTime!) : '结束'}',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
                               ),
                             ),
                             IconButton(
@@ -399,7 +427,7 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                   ],
                 ),
               ),
-              
+
               // Tab栏
               TabBar(
                 controller: _tabController,
@@ -407,9 +435,11 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                 isScrollable: true,
                 indicatorColor: Theme.of(context).colorScheme.primary,
                 labelColor: Theme.of(context).colorScheme.primary,
-                unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
-              
+
               // 账单列表
               Expanded(
                 child: TabBarView(
@@ -432,10 +462,7 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
     }
 
     if (billProvider.bills.isEmpty && !billProvider.isLoading) {
-      return const EmptyWidget(
-        message: '暂无账单记录',
-        icon: Icons.receipt_long,
-      );
+      return const EmptyWidget(message: '暂无账单记录', icon: Icons.receipt_long);
     }
 
     return RefreshIndicator(
@@ -491,9 +518,14 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: _getBillTypeColor(bill.type).withValues(alpha: 0.1),
+                            color: _getBillTypeColor(
+                              bill.type,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -507,7 +539,10 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                         const SizedBox(width: 8),
                         if (bill.isIncome)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.green.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
@@ -532,7 +567,7 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                   ],
                 ),
               ),
-              
+
               // 金额
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -548,26 +583,26 @@ class _BillsPageState extends State<BillsPage> with SingleTickerProviderStateMix
                   const SizedBox(height: 4),
                   Text(
                     '余额: ${bill.formattedBalance}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                   ),
                 ],
               ),
             ],
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // 时间
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 DateFormat('yyyy-MM-dd HH:mm:ss').format(bill.createTime),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
               ),
               if (bill.relatedOrderId != null)
                 TextButton(

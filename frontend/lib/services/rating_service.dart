@@ -33,18 +33,16 @@ class RatingService {
     int size = 10,
   }) async {
     final response = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/api/ratings/user/$userId?page=$page&size=$size'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      Uri.parse(
+        '${ApiConfig.baseUrl}/api/ratings/user/$userId?page=$page&size=$size',
+      ),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List<dynamic> ratingsJson = data['data'];
-      return ratingsJson
-          .map((json) => RatingResponse.fromJson(json))
-          .toList();
+      return ratingsJson.map((json) => RatingResponse.fromJson(json)).toList();
     } else {
       final errorData = jsonDecode(response.body);
       throw Exception(errorData['message'] ?? '获取用户评价失败');
@@ -54,9 +52,7 @@ class RatingService {
   Future<double> getPlayerAverageRating(String playerId) async {
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/api/ratings/average/$playerId'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
@@ -71,9 +67,7 @@ class RatingService {
   Future<RatingStats> getPlayerRatingStats(String playerId) async {
     final response = await http.get(
       Uri.parse('${ApiConfig.baseUrl}/api/ratings/stats/$playerId'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {

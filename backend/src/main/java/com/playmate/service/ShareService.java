@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ShareService {
@@ -34,6 +36,22 @@ public class ShareService {
     private OrderRepository orderRepository;
 
     /**
+     * 创建分享
+     */
+    public ShareResponse createShare(ShareRequest request) {
+        return generateShareLink(request);
+    }
+
+    /**
+     * 获取用户分享列表
+     */
+    public List<ShareResponse> getUserShares(String userId, int page, int size) {
+        // 这里需要实现获取用户分享列表的逻辑
+        // 暂时返回空列表
+        return java.util.Collections.emptyList();
+    }
+
+    /**
      * 生成分享链接
      */
     public ShareResponse generateShareLink(ShareRequest request) {
@@ -45,7 +63,7 @@ public class ShareService {
         shareRecord.setShareId(shareId);
         shareRecord.setUserId(request.getUserId());
         shareRecord.setShareType(request.getShareType());
-        shareRecord.setShareId(request.getShareId());
+        shareRecord.setContentId(request.getShareId());
         shareRecord.setPlatform(request.getPlatform());
         shareRecord.setCreateTime(LocalDateTime.now());
         shareRecord.setExpireTime(LocalDateTime.now().plusDays(7)); // 7天后过期
@@ -102,7 +120,7 @@ public class ShareService {
     /**
      * 获取用户的分享统计
      */
-    public Map<String, Object> getShareStats(String userId) {
+    public Map<String, Object> getShareStats(Long userId) {
         Map<String, Object> stats = new HashMap<>();
         
         // 总分享次数
@@ -131,10 +149,10 @@ public class ShareService {
         
         switch (shareType) {
             case "user":
-                User user = userRepository.findById(shareId)
+                User user = userRepository.findById(Long.valueOf(shareId))
                         .orElseThrow(() -> new RuntimeException("用户不存在"));
                 contentInfo.put("title", user.getNickname() + "的陪玩名片");
-                contentInfo.put("description", user.getIntro() != null ? user.getIntro() : "快来体验专业的陪玩服务");
+                contentInfo.put("description", user.getSignature() != null ? user.getSignature() : "快来体验专业的陪玩服务");
                 contentInfo.put("imageUrl", user.getAvatar());
                 break;
                 
@@ -155,7 +173,7 @@ public class ShareService {
                         .orElseThrow(() -> new RuntimeException("订单不存在"));
                 contentInfo.put("title", "陪玩订单分享");
                 contentInfo.put("description", "体验了" + order.getServiceType() + "服务，非常棒！");
-                contentInfo.put("imageUrl", order.getPlayerAvatar());
+                contentInfo.put("imageUrl", order.getPlayer() != null && order.getPlayer().getUser() != null ? order.getPlayer().getUser().getAvatar() : "");
                 break;
                 
             default:

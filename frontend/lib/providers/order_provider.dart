@@ -6,23 +6,25 @@ class OrderProvider with ChangeNotifier {
   List<Order> _orders = [];
   bool _isLoading = false;
   String? _error;
-  
+
   List<Order> get orders => _orders;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  
+
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
-  
+
   Future<void> fetchOrders() async {
     _setLoading(true);
     try {
       final response = await ApiService.getUserOrders();
       if (response['success'] == true) {
         final List<dynamic> ordersData = response['data'];
-        _orders = ordersData.map((orderData) => Order.fromJson(orderData)).toList();
+        _orders = ordersData
+            .map((orderData) => Order.fromJson(orderData))
+            .toList();
         _error = null;
       } else {
         _error = response['message'] ?? '获取订单列表失败';
@@ -33,7 +35,7 @@ class OrderProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-  
+
   Future<Order?> getOrderById(String orderId) async {
     try {
       final response = await ApiService.getOrderById(orderId);
@@ -48,7 +50,7 @@ class OrderProvider with ChangeNotifier {
       return null;
     }
   }
-  
+
   Future<void> createOrder(Order order) async {
     _setLoading(true);
     try {
@@ -66,7 +68,7 @@ class OrderProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-  
+
   Future<void> updateOrderStatus(String orderId, String status) async {
     _setLoading(true);
     try {
@@ -86,7 +88,7 @@ class OrderProvider with ChangeNotifier {
           return;
         }
       }
-      
+
       await fetchOrders(); // 刷新订单列表
       _error = null;
     } catch (e) {
@@ -95,7 +97,7 @@ class OrderProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-  
+
   Future<void> cancelOrder(String orderId, {String reason = '用户取消'}) async {
     _setLoading(true);
     try {
@@ -112,7 +114,7 @@ class OrderProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-  
+
   void clearError() {
     _error = null;
     notifyListeners();

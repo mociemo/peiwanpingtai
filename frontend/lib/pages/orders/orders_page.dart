@@ -37,9 +37,9 @@ class _OrdersPageState extends State<OrdersPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('获取订单列表失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('获取订单列表失败: $e')));
       }
     } finally {
       if (mounted) {
@@ -56,20 +56,32 @@ class _OrdersPageState extends State<OrdersPage> {
         _filteredOrders = _orders;
         break;
       case 1: // 待接单
-        _filteredOrders = _orders.where((order) => order.status == OrderStatus.pending).toList();
+        _filteredOrders = _orders
+            .where((order) => order.status == OrderStatus.pending)
+            .toList();
         break;
       case 2: // 进行中
-        _filteredOrders = _orders.where((order) => 
-          order.status == OrderStatus.accepted || order.status == OrderStatus.inProgress
-        ).toList();
+        _filteredOrders = _orders
+            .where(
+              (order) =>
+                  order.status == OrderStatus.accepted ||
+                  order.status == OrderStatus.inProgress,
+            )
+            .toList();
         break;
       case 3: // 已完成
-        _filteredOrders = _orders.where((order) => order.status == OrderStatus.completed).toList();
+        _filteredOrders = _orders
+            .where((order) => order.status == OrderStatus.completed)
+            .toList();
         break;
       case 4: // 已取消
-        _filteredOrders = _orders.where((order) => 
-          order.status == OrderStatus.cancelled || order.status == OrderStatus.refunded
-        ).toList();
+        _filteredOrders = _orders
+            .where(
+              (order) =>
+                  order.status == OrderStatus.cancelled ||
+                  order.status == OrderStatus.refunded,
+            )
+            .toList();
         break;
     }
   }
@@ -114,19 +126,22 @@ class _OrdersPageState extends State<OrdersPage> {
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                     backgroundColor: _getStatusColor(order.status),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               Row(
                 children: [
                   CircleAvatar(
                     radius: 20,
                     backgroundImage: NetworkImage(order.playerAvatar),
-                    child: order.playerAvatar.isEmpty 
+                    child: order.playerAvatar.isEmpty
                         ? const Icon(Icons.person, size: 20)
                         : null,
                   ),
@@ -137,25 +152,23 @@ class _OrdersPageState extends State<OrdersPage> {
                       children: [
                         Text(
                           order.playerName,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           order.serviceTypeText,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey.shade600,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey.shade600),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -168,9 +181,9 @@ class _OrdersPageState extends State<OrdersPage> {
                   Text('${order.duration}分钟'),
                 ],
               ),
-              
+
               const SizedBox(height: 4),
-              
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -189,9 +202,9 @@ class _OrdersPageState extends State<OrdersPage> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 4),
-              
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -224,16 +237,16 @@ class _OrdersPageState extends State<OrdersPage> {
           const SizedBox(height: 16),
           Text(
             '暂无订单',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.grey.shade600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: Colors.grey.shade600),
           ),
           const SizedBox(height: 8),
           Text(
             '快去下单体验陪玩服务吧',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey.shade500,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -243,10 +256,7 @@ class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('我的订单'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('我的订单'), elevation: 0),
       body: Column(
         children: [
           // 订单状态筛选
@@ -263,8 +273,10 @@ class _OrdersPageState extends State<OrdersPage> {
                     label: Text(_tabTitles[index]),
                     selected: isSelected,
                     onSelected: (selected) => _onTabChanged(index),
-                    backgroundColor: isSelected 
-                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+                    backgroundColor: isSelected
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.1)
                         : null,
                     selectedColor: Theme.of(context).colorScheme.primary,
                     checkmarkColor: Colors.white,
@@ -273,22 +285,22 @@ class _OrdersPageState extends State<OrdersPage> {
               },
             ),
           ),
-          
+
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _filteredOrders.isEmpty
-                    ? _buildEmptyState()
-                    : RefreshIndicator(
-                        onRefresh: _loadOrders,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _filteredOrders.length,
-                          itemBuilder: (context, index) {
-                            return _buildOrderCard(_filteredOrders[index]);
-                          },
-                        ),
-                      ),
+                ? _buildEmptyState()
+                : RefreshIndicator(
+                    onRefresh: _loadOrders,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _filteredOrders.length,
+                      itemBuilder: (context, index) {
+                        return _buildOrderCard(_filteredOrders[index]);
+                      },
+                    ),
+                  ),
           ),
         ],
       ),

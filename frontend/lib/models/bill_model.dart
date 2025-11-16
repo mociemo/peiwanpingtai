@@ -2,28 +2,28 @@
 class Bill {
   /// 账单ID
   final String id;
-  
+
   /// 用户ID
   final String userId;
-  
+
   /// 账单类型：recharge-充值，consumption-消费，income-收入，withdrawal-提现
   final String type;
-  
+
   /// 金额（正数为收入，负数为支出）
   final double amount;
-  
+
   /// 余额
   final double balance;
-  
+
   /// 描述
   final String description;
-  
+
   /// 相关订单ID（如果有）
   final String? relatedOrderId;
-  
+
   /// 创建时间
   final DateTime createTime;
-  
+
   /// 交易类型名称
   String get typeName {
     switch (type) {
@@ -39,19 +39,19 @@ class Bill {
         return '未知';
     }
   }
-  
+
   /// 是否为收入
   bool get isIncome => amount > 0;
-  
+
   /// 是否为支出
   bool get isExpense => amount < 0;
-  
+
   /// 格式化金额（带正负号）
   String get formattedAmount {
     final sign = amount >= 0 ? '+' : '';
     return '$sign¥${amount.abs().toStringAsFixed(2)}';
   }
-  
+
   /// 格式化余额
   String get formattedBalance => '¥${balance.toStringAsFixed(2)}';
 
