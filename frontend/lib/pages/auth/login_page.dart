@@ -88,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                     CustomTextField(
                       controller: _usernameController,
                       labelText: '用户名或手机号',
+                      hintText: '请输入用户名或手机号',
                       prefixIcon: const Icon(Icons.person_outline),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -100,6 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                     CustomTextField(
                       controller: _passwordController,
                       labelText: '密码',
+                      hintText: '请输入密码',
                       prefixIcon: const Icon(Icons.lock_outline),
                       obscureText: !_isPasswordVisible,
                       suffixIcon: IconButton(

@@ -6,8 +6,13 @@ import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/community_provider.dart';
 import '../../widgets/post_card.dart';
+import '../../widgets/featured_content_banner.dart';
+import '../../widgets/recommended_player_card.dart';
 import '../orders/orders_page.dart';
 import '../chat/conversations_page.dart';
+import '../search/search_page.dart';
+import '../../models/home_content_model.dart';
+import '../../services/home_service.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -17,6 +22,38 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  final HomeService _homeService = HomeService();
+  List<HomeContent> _featuredContent = [];
+  List<RecommendedPlayer> _recommendedPlayers = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHomeData();
+  }
+
+  Future<void> _loadHomeData() async {
+    try {
+      final featuredContent = await _homeService.getFeaturedContent();
+      final recommendedPlayers = await _homeService.getRecommendedPlayers();
+      
+      setState(() {
+        _featuredContent = featuredContent;
+        _recommendedPlayers = recommendedPlayers;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('加载数据失败: ${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +64,9 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              );
             },
           ),
           Consumer<ChatProvider>(
@@ -73,7 +113,17 @@ class _HomePageState extends State<HomePage> {
       ),
       body: IndexedStack(
         index: _currentIndex,
-        children: const [_HomeTab(), _SearchTab(), _MessagesTab(), _OrdersTab(), _ProfileTab()],
+        children: [
+          _HomeTab(
+            featuredContent: _featuredContent,
+            recommendedPlayers: _recommendedPlayers,
+            isLoading: _isLoading,
+          ),
+          const _SearchTab(),
+          const _MessagesTab(),
+          const _OrdersTab(),
+          const _ProfileTab(),
+        ],
       ),
       bottomNavigationBar: Consumer<ChatProvider>(
         builder: (context, chatProvider, child) {
@@ -157,13 +207,27 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+
 }
 
 class _HomeTab extends StatelessWidget {
-  const _HomeTab();
+  final List<HomeContent> featuredContent;
+  final List<RecommendedPlayer> recommendedPlayers;
+  final bool isLoading;
+
+  const _HomeTab({
+    required this.featuredContent,
+    required this.recommendedPlayers,
+    required this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -198,6 +262,12 @@ class _HomeTab extends StatelessWidget {
           ),
 
           const SizedBox(height: 24),
+
+          // 置顶内容
+          if (featuredContent.isNotEmpty) ...[
+            _buildFeaturedContent(context),
+            const SizedBox(height: 24),
+          ],
 
           // 快速筛选
           _buildQuickFilters(context),
@@ -238,6 +308,38 @@ class _HomeTab extends StatelessWidget {
     );
   }
 
+  Widget _buildFeaturedContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '精选内容',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 160,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: featuredContent.length,
+            itemBuilder: (context, index) {
+              final content = featuredContent[index];
+              return FeaturedContentBanner(
+                title: content.title,
+                description: content.description,
+                imageUrl: content.imageUrl,
+                linkType: content.linkType,
+                linkId: content.linkId,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFilterChip(String label) {
     return FilterChip(
       label: Text(label),
@@ -269,162 +371,32 @@ class _HomeTab extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        // 模拟推荐达人列表
+        // 推荐达人列表
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: 5,
+          itemCount: recommendedPlayers.length > 5 ? 5 : recommendedPlayers.length,
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            return _buildPlayerCard(context, index);
+            final player = recommendedPlayers[index];
+            return RecommendedPlayerCard(
+              id: player.id,
+              name: player.nickname,
+              avatar: player.avatar,
+              rating: player.rating,
+              gameTypes: player.gameTypes,
+              price: player.price,
+              intro: player.intro,
+            );
           },
         ),
       ],
     );
   }
 
-  Widget _buildPlayerCard(BuildContext context, int index) {
-    final players = [
-      {
-        'name': '王者荣耀大神',
-        'game': '王者荣耀',
-        'price': '30元/小时',
-        'rating': 4.9,
-        'orders': 128,
-      },
-      {
-        'name': '和平精英战神',
-        'game': '和平精英',
-        'price': '25元/小时',
-        'rating': 4.8,
-        'orders': 95,
-      },
-      {
-        'name': 'LOL钻石玩家',
-        'game': '英雄联盟',
-        'price': '35元/小时',
-        'rating': 4.7,
-        'orders': 76,
-      },
-      {
-        'name': '原神资深玩家',
-        'game': '原神',
-        'price': '20元/小时',
-        'rating': 4.9,
-        'orders': 112,
-      },
-      {
-        'name': 'CSGO专业选手',
-        'game': 'CS:GO',
-        'price': '40元/小时',
-        'rating': 4.6,
-        'orders': 64,
-      },
-    ];
 
-    final player = players[index % players.length];
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // 头像
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: Color.alphaBlend(
-                Theme.of(context).colorScheme.primary.withAlpha(26),
-                Colors.transparent,
-              ),
-              child: Icon(
-                Icons.person,
-                color: Theme.of(context).colorScheme.primary,
-                size: 24,
-              ),
-            ),
 
-            const SizedBox(width: 12),
-
-            // 信息
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    player['name']?.toString() ?? '',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    player['game']?.toString() ?? '',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Color.alphaBlend(
-                        Theme.of(context).colorScheme.onSurface.withAlpha(153),
-                        Colors.transparent,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.amber, size: 16),
-                      const SizedBox(width: 4),
-                      Text(
-                        player['rating']?.toString() ?? '0.0',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        '${player['orders']?.toString() ?? '0'}单',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Color.alphaBlend(
-                            Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withAlpha(153),
-                            Colors.transparent,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // 价格和按钮
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  player['price']?.toString() ?? '',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    context.push('/orders/create', extra: player);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    textStyle: Theme.of(context).textTheme.labelSmall,
-                  ),
-                  child: const Text('立即下单'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _SearchTab extends StatelessWidget {
@@ -437,6 +409,8 @@ class _SearchTab extends StatelessWidget {
       child: const CommunityTab(),
     );
   }
+
+
 }
 
 class CommunityTab extends StatefulWidget {
@@ -461,6 +435,19 @@ class _CommunityTabState extends State<CommunityTab> {
       _communityProvider = Provider.of<CommunityProvider>(context, listen: false);
       await _communityProvider.loadPosts(refresh: true);
     }
+  }
+
+  void _sharePost(dynamic post, BuildContext context) {
+    // 导航到分享页面
+    context.push('/share', extra: {
+      'shareType': 'post',
+      'shareId': post.id,
+      'title': '精彩动态分享',
+      'description': post.content.length > 50 
+          ? '${post.content.substring(0, 50)}...' 
+          : post.content,
+      'imageUrl': post.images.isNotEmpty ? post.images[0] : '',
+    });
   }
 
   @override
@@ -523,6 +510,7 @@ class _CommunityTabState extends State<CommunityTab> {
                     context.push('/community/posts/${post.id}');
                   },
                   onShare: () {
+                    _sharePost(post, context);
                   },
                 );
               },
@@ -532,6 +520,8 @@ class _CommunityTabState extends State<CommunityTab> {
       ),
     );
   }
+
+
 }
 
 class _OrdersTab extends StatelessWidget {
@@ -573,4 +563,6 @@ class _ProfileTab extends StatelessWidget {
       ),
     );
   }
+
+
 }

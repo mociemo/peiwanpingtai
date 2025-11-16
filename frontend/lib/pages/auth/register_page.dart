@@ -136,6 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     CustomTextField(
                       controller: _usernameController,
                       labelText: '用户名',
+                      hintText: '请输入用户名',
                       prefixIcon: const Icon(Icons.person_outline),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -152,6 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     CustomTextField(
                       controller: _emailController,
                       labelText: '邮箱',
+                      hintText: '请输入邮箱地址',
                       prefixIcon: const Icon(Icons.email_outlined),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
@@ -173,6 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: CustomTextField(
                             controller: _phoneController,
                             labelText: '手机号',
+                            hintText: '请输入手机号',
                             prefixIcon: const Icon(Icons.phone_outlined),
                             keyboardType: TextInputType.phone,
                             validator: (value) {
@@ -208,6 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     CustomTextField(
                       controller: _verificationCodeController,
                       labelText: '验证码',
+                      hintText: '请输入验证码',
                       prefixIcon: const Icon(Icons.sms_outlined),
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -225,6 +229,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     CustomTextField(
                       controller: _passwordController,
                       labelText: '密码',
+                      hintText: '请输入密码',
                       prefixIcon: const Icon(Icons.lock_outline),
                       obscureText: !_isPasswordVisible,
                       suffixIcon: IconButton(
@@ -253,6 +258,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     CustomTextField(
                       controller: _confirmPasswordController,
                       labelText: '确认密码',
+                      hintText: '请再次输入密码',
                       prefixIcon: const Icon(Icons.lock_outline),
                       obscureText: !_isConfirmPasswordVisible,
                       suffixIcon: IconButton(

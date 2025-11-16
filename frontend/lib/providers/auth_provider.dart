@@ -13,6 +13,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
   String? get token => _token;
   Map<String, dynamic>? get userInfo => _userInfo;
+  String? get userId => _userInfo?['id'];
 
   AuthProvider() {
     _loadAuthData();

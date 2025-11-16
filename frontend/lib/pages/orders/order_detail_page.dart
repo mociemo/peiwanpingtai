@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/order_model.dart';
 import '../../services/api_service.dart';
+import '../rating/rating_page.dart';
 
 class OrderDetailPage extends StatefulWidget {
   final String orderId;
@@ -77,8 +78,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   }
 
   Future<void> _rateOrder() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('评价功能开发中')),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RatingPage(orderId: _order!.id),
+      ),
     );
   }
 

@@ -9,6 +9,7 @@ import '../../providers/user_provider.dart';
 import '../../widgets/user_stats_card.dart';
 import '../../widgets/post_card.dart';
 import '../../widgets/loading_widget.dart';
+import '../share/share_page.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String userId;
@@ -34,6 +35,38 @@ class _UserProfilePageState extends State<UserProfilePage> {
     super.initState();
     _loadUserProfile();
     _loadUserPosts();
+  }
+
+  void _sharePost(Post post) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SharePage(
+          shareType: 'post',
+          shareId: post.id,
+          title: '精彩动态分享',
+          description: post.content.length > 50 
+              ? '${post.content.substring(0, 50)}...' 
+              : post.content,
+          imageUrl: post.images.isNotEmpty ? post.images[0] : '',
+        ),
+      ),
+    );
+  }
+
+  void _shareUserProfile() {
+    if (_user == null) return;
+    
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SharePage(
+          shareType: 'user',
+          shareId: _user!.id,
+          title: '${_user!.nickname}的陪玩名片',
+          description: _user!.intro ?? '快来体验专业的陪玩服务',
+          imageUrl: _user!.avatar,
+        ),
+      ),
+    );
   }
 
   Future<void> _loadUserProfile() async {
@@ -167,6 +200,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
       appBar: AppBar(
         title: const Text('个人主页'),
         actions: [
+          if (!isCurrentUser)
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: () => _shareUserProfile(),
+            ),
           if (isCurrentUser)
             IconButton(
               icon: const Icon(Icons.edit),
@@ -319,6 +357,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       );
                                     },
                                     onShare: () {
+                                      _sharePost(post);
                                     },
                                   );
                                 } else if (_hasMorePosts) {

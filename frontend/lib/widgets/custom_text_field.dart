@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  final TextEditingController? controller;
-  final String labelText;
-  final String? hintText;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
+  final TextEditingController controller;
+  final String hintText;
   final bool obscureText;
-  final TextInputType? keyboardType;
+  final TextInputType keyboardType;
+  final int maxLines;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
-  final int? maxLines;
-  final int? maxLength;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final bool enabled;
+  final String? labelText;
 
   const CustomTextField({
     super.key,
-    this.controller,
-    required this.labelText,
-    this.hintText,
-    this.prefixIcon,
-    this.suffixIcon,
+    required this.controller,
+    required this.hintText,
     this.obscureText = false,
-    this.keyboardType,
+    this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
     this.validator,
     this.onChanged,
-    this.maxLines = 1,
-    this.maxLength,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.enabled = true,
+    this.labelText,
   });
 
   @override
@@ -34,10 +34,10 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      maxLines: maxLines,
       validator: validator,
       onChanged: onChanged,
-      maxLines: maxLines,
-      maxLength: maxLength,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
@@ -45,36 +45,25 @@ class CustomTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(77), Colors.transparent),
-          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
-            color: Color.alphaBlend(Theme.of(context).colorScheme.onSurface.withAlpha(77), Colors.transparent),
+            color: Colors.grey.shade300,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).primaryColor,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.error,
+          borderSide: const BorderSide(
+            color: Colors.red,
           ),
         ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.error,
-          ),
-        ),
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,

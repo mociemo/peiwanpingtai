@@ -17,6 +17,7 @@ class User {
   final String nickname;
   final String avatar;
   final String? bio;
+  final String? intro;
   final String? location;
   final UserRole role;
   final UserStatus status;
@@ -35,6 +36,7 @@ class User {
     required this.nickname,
     required this.avatar,
     this.bio,
+    this.intro,
     this.location,
     required this.role,
     required this.status,
@@ -56,6 +58,7 @@ class User {
       avatar: json['avatar'] ?? '',
       bio: json['bio'],
       location: json['location'],
+      intro: json['intro'],
       role: UserRole.values.firstWhere(
         (e) => e.name == json['role'],
         orElse: () => UserRole.user,
