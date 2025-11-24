@@ -1,0 +1,52 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: playmate-backend
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/playmate_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 3000ms
+      # Redis连接失败时不阻止应用启动
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+# JWT配置
+jwt:
+  secret: playmate-secret-key-2024-very-long-secret-key-for-jwt-token-generation
+  expiration: 86400000
+
+logging:
+  level:
+    com.playmate: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: DEBUG
