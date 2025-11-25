@@ -23,12 +23,6 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -40,31 +34,31 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authz -> authz
-                // 公开访问的端点
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/posts").permitAll()
-                .requestMatchers("/api/posts/**").permitAll()
-                .requestMatchers("/api/players").permitAll()
-                .requestMatchers("/api/players/**").permitAll()
-                .requestMatchers("/api/search").permitAll()
-                .requestMatchers("/api/search/**").permitAll()
-                .requestMatchers("/api/health").permitAll()
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/api/files/upload").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
-                // WebSocket端点
-                .requestMatchers("/ws/**").permitAll()
-                // 其他端点需要认证
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authz -> authz
+                        // 公开访问的端点
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/posts").permitAll()
+                        .requestMatchers("/api/posts/**").permitAll()
+                        .requestMatchers("/api/players").permitAll()
+                        .requestMatchers("/api/players/**").permitAll()
+                        .requestMatchers("/api/search").permitAll()
+                        .requestMatchers("/api/search/**").permitAll()
+                        .requestMatchers("/api/health").permitAll()
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/files/upload").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        // WebSocket端点
+                        .requestMatchers("/ws/**").permitAll()
+                        // 其他端点需要认证
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -76,7 +70,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

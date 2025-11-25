@@ -15,6 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/game-categories")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class GameCategoryController {
     
     private final GameCategoryService gameCategoryService;

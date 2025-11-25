@@ -6,8 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
+
 import org.springframework.lang.Nullable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,9 +24,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("null")
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -70,25 +73,25 @@ public class UserService implements UserDetailsService {
     public User applyForPlayer(String username, String additionalInfo) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("用户不存在: " + username));
-        
+
         if (user.getUserType() == User.UserType.PLAYER) {
             throw new IllegalStateException("用户已经是玩家");
         }
-        
+
         if (user.getUserType() == User.UserType.ADMIN) {
             throw new IllegalStateException("管理员不能申请成为玩家");
         }
-        
+
         // 设置用户类型为玩家（实际项目中可能需要审核流程）
         user.setUserType(User.UserType.PLAYER);
-        
+
         return userRepository.save(user);
     }
 
     public User updateUserInfo(String username, Map<String, Object> userData) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("用户不存在: " + username));
-        
+
         // 更新用户信息（排除敏感字段）
         if (userData.containsKey("nickname")) {
             user.setNickname((String) userData.get("nickname"));
@@ -112,7 +115,7 @@ public class UserService implements UserDetailsService {
                 }
             }
         }
-        
+
         return userRepository.save(user);
     }
 
@@ -120,8 +123,8 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public Page<User> searchUsers(String keyword, String gameType, String skillLevel, 
-                                 Double minPrice, Double maxPrice, Pageable pageable) {
+    public Page<User> searchUsers(String keyword, String gameType, String skillLevel,
+            Double minPrice, Double maxPrice, Pageable pageable) {
         // 简单搜索实现，实际项目中可能需要更复杂的查询逻辑
         if (keyword != null && !keyword.trim().isEmpty()) {
             return userRepository.findByUsernameContainingOrNicknameContaining(keyword, keyword, pageable);
@@ -136,7 +139,7 @@ public class UserService implements UserDetailsService {
         } else {
             users = userRepository.findAll();
         }
-        
+
         return users.stream().map(user -> {
             Map<String, Object> userMap = new HashMap<>();
             userMap.put("id", user.getId());
@@ -152,10 +155,12 @@ public class UserService implements UserDetailsService {
     /**
      * 注册新用户
      */
-    public User registerUser(String username, String encodedPassword, String phone, String email, String nickname) {
+    @SuppressWarnings("null")
+    public User registerUser(String username, String rawPassword, String phone, String email, String nickname) {
         User user = new User();
         user.setUsername(username);
-        user.setPassword(encodedPassword);
+        // encode password here to centralize logic
+        user.setPassword(passwordEncoder.encode(rawPassword));
         user.setPhone(phone);
         user.setEmail(email);
         user.setNickname(nickname != null ? nickname : username);

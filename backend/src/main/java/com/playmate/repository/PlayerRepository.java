@@ -11,24 +11,24 @@ import java.util.List;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
-    
+
     @Query("SELECT p FROM Player p WHERE p.skillTags LIKE %:game%")
     List<Player> findByGameContainingIgnoreCase(@Param("game") String game);
-    
-    @Query("SELECT p FROM Player p WHERE p.servicePrice BETWEEN :minPrice AND :maxPrice")
-    List<Player> findByPriceBetween(@Param("minPrice") BigDecimal minPrice, 
-                                   @Param("maxPrice") BigDecimal maxPrice);
-    
+
+    @Query("SELECT p FROM Player p WHERE p.price BETWEEN :minPrice AND :maxPrice")
+    List<Player> findByPriceBetween(@Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice);
+
     @Query("SELECT p FROM Player p WHERE p.rating >= :minRating")
     List<Player> findByRatingGreaterThanEqual(@Param("minRating") BigDecimal minRating);
-    
+
     @Query("SELECT p FROM Player p ORDER BY p.rating DESC, p.totalOrders DESC")
     List<Player> findTopPlayers();
-    
-    @Query("SELECT p FROM Player p WHERE p.skillTags LIKE %:game% AND p.servicePrice BETWEEN :minPrice AND :maxPrice")
-    List<Player> findByGameAndPriceRange(@Param("game") String game, 
-                                       @Param("minPrice") BigDecimal minPrice, 
-                                       @Param("maxPrice") BigDecimal maxPrice);
-    
+
+    @Query("SELECT p FROM Player p WHERE p.skillTags LIKE %:game% AND p.price BETWEEN :minPrice AND :maxPrice")
+    List<Player> findByGameAndPriceRange(@Param("game") String game,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice);
+
     java.util.Optional<Player> findByUserId(Long userId);
 }

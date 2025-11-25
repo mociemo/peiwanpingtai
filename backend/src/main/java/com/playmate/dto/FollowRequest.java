@@ -4,10 +4,11 @@ import lombok.Data;
 
 @Data
 public class FollowRequest {
-    private Long followingId;
+    private Long targetUserId;
     private String remark;
     
-    public Long getTargetUserId() {
-        return this.followingId;
+    // 为了兼容性保留这个方法
+    public Long getFollowingId() {
+        return this.targetUserId;
     }
 }

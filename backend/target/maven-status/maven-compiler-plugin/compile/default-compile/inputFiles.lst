@@ -57,6 +57,7 @@ D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\GameCa
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\Message.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\Order.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\Payment.java
+D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\PaymentSetting.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\Player.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\PlayerService.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\entity\Post.java
@@ -80,6 +81,7 @@ D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\Ga
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\MessageRepository.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\OrderRepository.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\PaymentRepository.java
+D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\PaymentSettingRepository.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\PlayerRepository.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\PlayerServiceRepository.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\repository\PostLikeRepository.java
@@ -99,6 +101,7 @@ D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\Messa
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\MonitoringService.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\OrderService.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\PaymentService.java
+D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\PaymentSettingService.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\PlayerServiceManager.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\PostService.java
 D:\PEILIAODIAN\vs1\playmate_app\backend\src\main\java\com\playmate\service\PushNotificationService.java

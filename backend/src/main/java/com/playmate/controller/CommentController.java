@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class CommentController {
     
     private final CommentService commentService;

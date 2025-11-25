@@ -51,7 +51,14 @@ public class PostService {
     }
 
     public Page<PostResponse> searchPosts(String keyword, PostStatus status, Pageable pageable) {
-        Page<Post> posts = postRepository.findByKeyword(status, keyword, pageable);
+        PostStatus useStatus = status != null ? status : PostStatus.PUBLISHED;
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return postRepository.findByStatusOrderByCreateTimeDesc(useStatus, pageable)
+                    .map(this::convertToResponse);
+        }
+
+        Page<Post> posts = postRepository.findByKeyword(useStatus, keyword, pageable);
         return posts.map(this::convertToResponse);
     }
 
@@ -95,7 +102,7 @@ public class PostService {
             throw new RuntimeException("动态不存在");
         }
 
-        Post post = optionalPost.get();
+        Post post = optionalPost.orElseThrow(() -> new RuntimeException("动态不存在"));
         if (!post.getUserId().equals(userId)) {
             throw new RuntimeException("无权修改此动态");
         }
@@ -123,7 +130,7 @@ public class PostService {
             throw new RuntimeException("动态不存在");
         }
 
-        Post post = optionalPost.get();
+        Post post = optionalPost.orElseThrow(() -> new RuntimeException("动态不存在"));
         if (!post.getUserId().equals(userId)) {
             throw new RuntimeException("无权删除此动态");
         }
@@ -142,7 +149,7 @@ public class PostService {
             throw new RuntimeException("动态不存在");
         }
 
-        Post post = optionalPost.get();
+        Post post = optionalPost.orElseThrow(() -> new RuntimeException("动态不存在"));
 
         // 检查是否已经点赞
         if (postLikeRepository.existsByPostIdAndUserId(postId, userId)) {
@@ -170,7 +177,7 @@ public class PostService {
             throw new RuntimeException("动态不存在");
         }
 
-        Post post = optionalPost.get();
+        Post post = optionalPost.orElseThrow(() -> new RuntimeException("动态不存在"));
 
         // 检查是否已点赞
         if (!postLikeRepository.existsByPostIdAndUserId(postId, userId)) {
@@ -205,7 +212,7 @@ public class PostService {
             throw new RuntimeException("动态不存在");
         }
 
-        Post post = optionalPost.get();
+        Post post = optionalPost.orElseThrow(() -> new RuntimeException("动态不存在"));
         return convertToResponse(post);
     }
 
@@ -244,14 +251,27 @@ public class PostService {
 
         return response;
     }
-    
+
     /**
      * 搜索动态
      */
     public Page<PostResponse> searchPosts(String keyword, String gameType, Pageable pageable) {
-        // 这里应该实现具体的搜索逻辑
-        // 暂时返回空结果，可以根据需要实现
-        return postRepository.findByStatusOrderByCreateTimeDesc(PostStatus.PUBLISHED, pageable)
-                .map(this::convertToResponse);
+        PostStatus useStatus = PostStatus.PUBLISHED;
+
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        boolean hasGame = gameType != null && !gameType.trim().isEmpty();
+
+        Page<Post> posts;
+        if (hasKeyword && hasGame) {
+            posts = postRepository.findByGameNameAndKeyword(useStatus, gameType, keyword, pageable);
+        } else if (hasKeyword) {
+            posts = postRepository.findByKeyword(useStatus, keyword, pageable);
+        } else if (hasGame) {
+            posts = postRepository.findByGameName(useStatus, gameType, pageable);
+        } else {
+            posts = postRepository.findByStatusOrderByCreateTimeDesc(useStatus, pageable);
+        }
+
+        return posts.map(this::convertToResponse);
     }
 }

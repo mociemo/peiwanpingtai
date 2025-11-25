@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: playmate-backend
+  
+  # 使用H2内存数据库进行开发测试
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  
+  # 禁用Redis（开发环境不需要）
+  # 在开发环境中默认启用 Redis（若不需要可通过环境变量关闭）
+  # 如需禁用，请在 application-dev.yml 中配置 autoconfigure.exclude
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+server:
+  port: 8888
+  servlet:
+    context-path: /
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:playmate-dev-secret}
+  expiration: 86400000
+
+# 短信服务配置
+sms:
+  enabled: false
+  mock-mode: true
+
+# 告警配置
+app:
+  alert:
+    email:
+      enabled: false
+    webhook:
+      enabled: false
+
+logging:
+  level:
+    com.playmate: DEBUG
+    org.springframework.security: WARN
+    org.hibernate.SQL: DEBUG
