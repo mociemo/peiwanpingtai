@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/payment_method_model.dart';
+import '../../services/api_service.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/custom_button.dart';
 import '../../utils/toast_util.dart';
@@ -36,34 +37,21 @@ class _PaymentSettingsState extends State<PaymentSettingsPage> {
     });
 
     try {
-      // 暂时使用模拟数据
-      await Future.delayed(const Duration(milliseconds: 500));
+      // 从API获取支付方式
+      final response = await ApiService.dio.get('/api/payment/methods');
       
-      setState(() {
-        _paymentMethods = [
-          PaymentMethod(
-            id: '1',
-            type: 'alipay',
-            name: '支付宝',
-            description: '138****8000',
-            isDefault: true,
-          ),
-          PaymentMethod(
-            id: '2',
-            type: 'wechat',
-            name: '微信支付',
-            description: 'wx****123',
-            isDefault: false,
-          ),
-          PaymentMethod(
-            id: '3',
-            type: 'bank',
-            name: '银行卡',
-            description: '招商银行 ****1234',
-            isDefault: false,
-          ),
-        ];
-      });
+      if (response.statusCode == 200 && response.data['success']) {
+        final List<dynamic> methodsData = response.data['data'] ?? [];
+        setState(() {
+          _paymentMethods = methodsData.map((method) => PaymentMethod(
+            id: method['id'].toString(),
+            type: method['type'],
+            name: method['name'],
+            description: method['description'] ?? '',
+            isDefault: method['isDefault'] ?? false,
+          )).toList();
+        });
+      }
     } catch (e) {
       setState(() {
         _error = e.toString();

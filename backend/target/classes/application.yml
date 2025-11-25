@@ -1,26 +1,31 @@
-server:
-  port: 8888
-  servlet:
-    context-path: /
-
+# 激活配置文件
 spring:
+  profiles:
+    include:
+      - jpush
+      - webrtc
+  # 禁用Redis自动配置
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
   application:
     name: playmate-backend
   
   datasource:
-    url: jdbc:mysql://localhost:3306/playmate_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/playmate_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: create
+    show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
   
   data:
     redis:
@@ -40,10 +45,43 @@ spring:
       max-file-size: 10MB
       max-request-size: 100MB
 
+server:
+  port: 8888
+  servlet:
+    context-path: /
+
 # JWT配置
 jwt:
   secret: playmate-secret-key-2024-very-long-secret-key-for-jwt-token-generation
   expiration: 86400000
+
+# 短信服务配置
+sms:
+  enabled: false  # 是否启用真实短信服务
+  mock-mode: true  # 模拟模式，开发时使用
+  # 阿里云短信配置（当sms.enabled=true时使用）
+  aliyun:
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID:}
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:}
+    sign-name: 陪玩平台
+    template-code: SMS_123456789
+  # 腾讯云短信配置
+  tencent:
+    secret-id: ${TENCENT_SECRET_ID:}
+    secret-key: ${TENCENT_SECRET_KEY:}
+    app-id: ${TENCENT_APP_ID:}
+    sign-name: 陪玩平台
+    template-id: 123456
+
+# 告警配置
+app:
+  alert:
+    email:
+      enabled: false  # 是否启用邮件告警
+      recipients: admin@playmate.com,dev@playmate.com
+    webhook:
+      enabled: false  # 是否启用Webhook告警
+      url: ${WEBHOOK_URL:}  # Webhook地址，如钉钉机器人、企业微信机器人等
 
 logging:
   level:

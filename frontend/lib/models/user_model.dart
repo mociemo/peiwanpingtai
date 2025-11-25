@@ -1,6 +1,5 @@
 enum UserRole {
   user, // 普通用户
-  vip, // VIP用户
   player, // 陪玩达人
   admin, // 管理员
 }
@@ -28,6 +27,14 @@ class User {
   final int likeCount;
   final bool isFollowed;
   final bool isFollowing;
+  
+  // 后端User实体的额外字段
+  final String? phone;
+  final String? email;
+  final String? realName;
+  final String? idCard;
+  final String? signature;
+  final DateTime? updatedAt;
 
   User({
     required this.id,
@@ -46,6 +53,12 @@ class User {
     this.likeCount = 0,
     this.isFollowed = false,
     this.isFollowing = false,
+    this.phone,
+    this.email,
+    this.realName,
+    this.idCard,
+    this.signature,
+    this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -57,15 +70,15 @@ class User {
       bio: json['bio'],
       location: json['location'],
       role: UserRole.values.firstWhere(
-        (e) => e.name == json['role'],
+        (e) => e.name == (json['userType']?.toString().toLowerCase() ?? json['role']),
         orElse: () => UserRole.user,
       ),
       status: UserStatus.values.firstWhere(
-        (e) => e.name == json['status'],
+        (e) => e.name == json['status']?.toString().toLowerCase(),
         orElse: () => UserStatus.active,
       ),
       createTime: DateTime.parse(
-        json['createTime'] ?? DateTime.now().toIso8601String(),
+        json['createdAt'] ?? json['createTime'] ?? DateTime.now().toIso8601String(),
       ),
       lastLoginTime: json['lastLoginTime'] != null
           ? DateTime.parse(json['lastLoginTime'])
@@ -76,6 +89,14 @@ class User {
       likeCount: json['likeCount'] ?? 0,
       isFollowed: json['isFollowed'] ?? false,
       isFollowing: json['isFollowing'] ?? false,
+      phone: json['phone'],
+      email: json['email'],
+      realName: json['realName'],
+      idCard: json['idCard'],
+      signature: json['signature'],
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
     );
   }
 
@@ -104,8 +125,6 @@ class User {
     switch (role) {
       case UserRole.user:
         return '用户';
-      case UserRole.vip:
-        return 'VIP用户';
       case UserRole.player:
         return '陪玩达人';
       case UserRole.admin:

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../services/post_service.dart';
-import '../../providers/user_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../models/user_model.dart'; // 导入User模型
 
 class CreatePostPage extends StatefulWidget {
@@ -68,10 +69,32 @@ class CreatePostPageState extends State<CreatePostPage> {
     }
   }
 
-  void _addImage() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('图片选择功能待实现')));
+  void _addImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final List<XFile> images = await picker.pickMultiImage(
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+      
+      if (images.isNotEmpty && mounted) {
+        // 这里应该上传图片到服务器，现在先用本地路径
+        setState(() {
+          _images.addAll(images.map((image) => image.path).toList());
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('图片添加成功')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('图片选择失败: $e')),
+        );
+      }
+    }
   }
 
   void _removeImage(int index) {
@@ -82,11 +105,11 @@ class CreatePostPageState extends State<CreatePostPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     final theme = Theme.of(context);
-    final currentUser = userProvider.user != null ? User.fromJson(userProvider.user!) : null;
+    final currentUser = authProvider.userInfo != null ? User.fromJson(authProvider.userInfo!) : null;
 
-    if (!userProvider.isLoggedIn) {
+    if (!authProvider.isAuthenticated) {
       return Scaffold(
         appBar: AppBar(title: const Text('发布动态')),
         body: Center(

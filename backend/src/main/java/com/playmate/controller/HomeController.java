@@ -23,4 +23,13 @@ public class HomeController {
         ));
         return response;
     }
+    
+    @GetMapping("/api/health")
+    public Map<String, Object> health() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "ok");
+        response.put("message", "PlayMate API is healthy");
+        response.put("timestamp", System.currentTimeMillis());
+        return response;
+    }
 }

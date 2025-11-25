@@ -117,4 +117,42 @@ class HttpUtil {
       rethrow;
     }
   }
+
+  /// 处理响应数据
+  static Map<String, dynamic> handleResponse(Response response) {
+    try {
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic>) {
+        return responseData;
+      }
+      return {'success': false, 'message': '响应格式错误'};
+    } catch (e) {
+      return {'success': false, 'message': '响应解析失败: $e'};
+    }
+  }
+
+  /// 上传文件
+  Future<Map<String, dynamic>> uploadFile(
+    String path,
+    dynamic file, { // 改为 dynamic 以支持不同文件类型
+    Map<String, String>? fields,
+    ProgressCallback? onSendProgress,
+  }) async {
+    try {
+      final fileName = file.path.split('/').last;
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(file.path, filename: fileName),
+        ...?fields,
+      });
+
+      final response = await _dio.post<Map<String, dynamic>>(
+        path,
+        data: formData,
+        onSendProgress: onSendProgress,
+      );
+      return response.data ?? {'success': false, 'message': '上传失败'};
+    } catch (e) {
+      return {'success': false, 'message': '上传异常: $e'};
+    }
+  }
 }

@@ -21,7 +21,11 @@ public class UserController {
     public ResponseEntity<ApiResponse<User>> getUserInfo(Authentication authentication) {
         try {
             String username = authentication.getName();
-            User user = userService.findByUsername(username);
+            if (username == null) {
+                throw new IllegalStateException("用户认证信息无效");
+            }
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("用户不存在"));
             
             // 隐藏敏感信息
             user.setPassword(null);
@@ -38,6 +42,9 @@ public class UserController {
             @RequestBody Map<String, Object> userData) {
         try {
             String username = authentication.getName();
+            if (username == null) {
+                throw new IllegalStateException("用户认证信息无效");
+            }
             User user = userService.updateUserInfo(username, userData);
             
             // 隐藏敏感信息
@@ -53,7 +60,10 @@ public class UserController {
     public ResponseEntity<ApiResponse<User>> applyForPlayer(Authentication authentication) {
         try {
             String username = authentication.getName();
-            User user = userService.applyForPlayer(username);
+            if (username == null) {
+                throw new IllegalStateException("用户认证信息无效");
+            }
+            User user = userService.applyForPlayer(username, null);
             
             return ResponseEntity.ok(ApiResponse.success("申请已提交，等待审核", user));
         } catch (Exception e) {

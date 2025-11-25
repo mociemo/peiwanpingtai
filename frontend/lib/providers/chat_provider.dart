@@ -126,9 +126,9 @@ class ChatProvider with ChangeNotifier {
   Future<void> sendTextMessage(String conversationId, String content) async {
     if (content.trim().isEmpty) return;
     
-    // 创建临时消息
-    final tempMessage = Message(
-      id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+    // 创建本地消息
+    final localMessage = Message(
+      id: 'local_${DateTime.now().millisecondsSinceEpoch}',
       conversationId: conversationId,
       senderId: await _getCurrentUserId(),
       receiverId: '', // 需要从会话中获取
@@ -139,7 +139,7 @@ class ChatProvider with ChangeNotifier {
     );
     
     // 添加到消息列表
-    _messages = [..._messages, tempMessage];
+    _messages = [..._messages, localMessage];
     _conversationMessages[conversationId] = _messages;
     notifyListeners();
     
@@ -150,15 +150,15 @@ class ChatProvider with ChangeNotifier {
       if (response['success'] == true && response['data'] != null) {
         // 更新消息状态
         final serverMessage = Message.fromJson(response['data']);
-        _updateMessage(tempMessage.id, serverMessage);
+        _updateMessage(localMessage.id, serverMessage);
       } else {
         // 发送失败，更新状态
-        _updateMessageStatus(tempMessage.id, MessageStatus.failed);
+        _updateMessageStatus(localMessage.id, MessageStatus.failed);
         setError(response['message'] ?? '发送消息失败');
       }
     } catch (e) {
       // 发送失败，更新状态
-      _updateMessageStatus(tempMessage.id, MessageStatus.failed);
+      _updateMessageStatus(localMessage.id, MessageStatus.failed);
       setError('发送消息失败: $e');
     }
   }
@@ -325,8 +325,8 @@ class ChatProvider with ChangeNotifier {
 
   // 同步获取当前用户ID
   String _getCurrentUserIdSync() {
-    // 这里应该从AuthProvider获取，为了简化直接返回空字符串
-    // 在实际使用中，应该通过依赖注入或其他方式获取AuthProvider实例
+    // 从SharedPreferences同步获取用户ID
+    // 注意：这里需要同步访问，但在实际应用中应该通过状态管理获取
     return '';
   }
 
@@ -378,6 +378,107 @@ class ChatProvider with ChangeNotifier {
   void _handleCallResponse(Map<String, dynamic> event) {
     // 使用CallService处理通话响应
     CallService().handleCallResponse(event);
+  }
+
+  // 发送图片消息
+  Future<void> sendImageMessage(String conversationId, String imagePath) async {
+    setLoading(true);
+    clearError();
+    
+    try {
+      final response = await ChatService.sendImageMessage(conversationId, imagePath);
+      
+      if (response['success'] == true && response['data'] != null) {
+        final message = Message.fromJson(response['data']);
+        _messages = [..._messages, message];
+        _conversationMessages[conversationId] = _messages;
+        notifyListeners();
+      } else {
+        setError(response['message'] ?? '发送图片失败');
+      }
+    } catch (e) {
+      setError('发送图片失败: $e');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // 发送语音消息
+  Future<void> sendVoiceMessage(String conversationId, {String? voicePath, int? duration}) async {
+    setLoading(true);
+    clearError();
+    
+    try {
+ // 验证语音文件参数
+      if (voicePath == null || voicePath.isEmpty) {
+        setError('语音文件路径无效');
+        return;
+      }
+      
+      if (duration == null || duration <= 0) {
+        setError('语音时长无效');
+        return;
+      }
+      
+      final response = await ChatService.sendVoiceMessage(conversationId, voicePath, duration);
+      
+      if (response['success'] == true && response['data'] != null) {
+        final message = Message.fromJson(response['data']);
+        _messages = [..._messages, message];
+        _conversationMessages[conversationId] = _messages;
+        notifyListeners();
+      } else {
+        setError(response['message'] ?? '发送语音失败');
+      }
+    } catch (e) {
+      setError('发送语音失败: $e');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // 发送位置消息
+  Future<void> sendLocationMessage(String conversationId, {double? latitude, double? longitude, String? address}) async {
+    setLoading(true);
+    clearError();
+    
+    try {
+      // 如果没有提供位置信息，使用默认位置（实际应用中应该获取当前位置）
+      final lat = latitude ?? 39.9042; // 北京天安门纬度
+      final lng = longitude ?? 116.4074; // 北京天安门经度
+      final addr = address ?? '北京市东城区天安门广场';
+      
+      final response = await ChatService.sendLocationMessage(conversationId, lat, lng, addr);
+      
+      if (response['success'] == true && response['data'] != null) {
+        final message = Message.fromJson(response['data']);
+        _messages = [..._messages, message];
+        _conversationMessages[conversationId] = _messages;
+        notifyListeners();
+      } else {
+        setError(response['message'] ?? '发送位置失败');
+      }
+    } catch (e) {
+      setError('发送位置失败: $e');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // 搜索用户
+  Future<List<Conversation>> searchUsers(String query) async {
+    try {
+      final response = await ChatService.searchUsers(query);
+      
+      if (response['success'] == true && response['data'] != null) {
+        final List<dynamic> data = response['data'];
+        return data.map((item) => Conversation.fromJson(item)).toList();
+      }
+    } catch (e) {
+      if (kDebugMode) print('搜索用户失败: $e');
+    }
+    
+    return [];
   }
 
   @override

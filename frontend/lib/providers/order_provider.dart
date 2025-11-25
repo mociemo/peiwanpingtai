@@ -55,7 +55,7 @@ class OrderProvider extends ChangeNotifier {
   Future<void> fetchUserOrders(String userId) async {
     setLoading(true);
     try {
-      final orders = await OrderService.getUserOrders(userId);
+      final orders = await OrderService.getUserOrders();
       setOrders(orders);
     } catch (e) {
       debugPrint('获取订单失败: $e');
@@ -91,14 +91,14 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
-  /// 确认订单
-  Future<bool> confirmOrder(String orderId) async {
+  /// 接受订单（陪玩达人）
+  Future<bool> acceptOrder(String orderId) async {
     try {
-      await OrderService.confirmOrder(orderId);
-      updateOrder(orderId, {'status': 'CONFIRMED'});
+      await OrderService.acceptOrder(orderId);
+      updateOrder(orderId, {'status': 'ACCEPTED'});
       return true;
     } catch (e) {
-      debugPrint('确认订单失败: $e');
+      debugPrint('接单失败: $e');
       return false;
     }
   }

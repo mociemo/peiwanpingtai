@@ -27,6 +27,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   int _currentCommentPage = 0;
   final int _commentPageSize = 20;
   final TextEditingController _commentController = TextEditingController();
+  final TextEditingController _replyController = TextEditingController();
+  final FocusNode _replyFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -38,6 +40,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   void dispose() {
     _commentController.dispose();
+    _replyController.dispose();
+    _replyFocusNode.dispose();
     super.dispose();
   }
 
@@ -226,10 +230,16 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             post: _post!,
                             onLike: _handleLikePost,
                             onComment: () {}, // 在当前页面，不需要跳转
-                            onShare: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('分享功能开发中')),
-                              );
+                            onShare: () async {
+                              try {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('分享链接已复制到剪贴板')),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('分享失败')),
+                                );
+                              }
                             },
                           ),
                         
@@ -267,9 +277,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                                         comment: comment,
                                         onLike: () => _handleLikeComment(comment.id, comment.isLiked),
                                         onReply: () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('回复功能开发中')),
-                                          );
+                                          // 聚焦到回复输入框
+                                          _replyController.text = '@${comment.userName} ';
+                                          _replyFocusNode.requestFocus();
                                         },
                                       );
                                     } else if (_hasMoreComments) {

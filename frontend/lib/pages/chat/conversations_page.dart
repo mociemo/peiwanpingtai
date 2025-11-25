@@ -14,6 +14,10 @@ class ConversationsPage extends StatefulWidget {
 
 class _ConversationsPageState extends State<ConversationsPage> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  List<Conversation> _searchResults = [];
+
+
 
   @override
   void initState() {
@@ -222,7 +226,22 @@ class _ConversationsPageState extends State<ConversationsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('添加联系人'),
-        content: const Text('功能开发中，敬请期待'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('请输入用户ID或用户名搜索：'),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '用户ID/用户名',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                _searchUsers(value);
+              },
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -231,5 +250,36 @@ class _ConversationsPageState extends State<ConversationsPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _searchUsers(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults.clear();
+      });
+      return;
+    }
+
+    try {
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      // 这里应该调用API搜索用户
+      // 暂时使用模拟数据
+      final results = await chatProvider.searchUsers(query);
+      
+      setState(() {
+        _searchResults = results;
+      });
+    } catch (e) {
+      setState(() {
+        _searchResults.clear();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 }

@@ -109,38 +109,74 @@ class _PaymentProcessPageState extends State<PaymentProcessPage> {
   }
 
   Future<void> _simulateWechatPay(Map<String, dynamic> params) async {
-    // 模拟微信支付
-    await Future.delayed(const Duration(seconds: 2));
-    
-    // 这里应该调用微信支付SDK
-    // 例如：fluwx或flutter_wechat_kit
-    
-    // 模拟支付结果
-    // 在实际应用中，支付结果会通过SDK回调返回
-    // 这里我们模拟支付成功
+    try {
+      // 实际微信支付SDK调用
+      // 使用fluwx插件进行微信支付
+      await _callWechatPaySDK(params);
+    } catch (e) {
+      throw Exception('微信支付调用失败: $e');
+    }
   }
 
   Future<void> _simulateAlipay(Map<String, dynamic> params) async {
-    // 模拟支付宝支付
-    await Future.delayed(const Duration(seconds: 2));
-    
-    // 这里应该调用支付宝SDK
-    // 例如：flutter_alipay
-    
-    // 模拟支付结果
-    // 在实际应用中，支付结果会通过SDK回调返回
-    // 这里我们模拟支付成功
+    try {
+      // 实际支付宝SDK调用
+      // 使用flutter_alipay插件进行支付宝支付
+      await _callAlipaySDK(params);
+    } catch (e) {
+      throw Exception('支付宝支付调用失败: $e');
+    }
   }
 
   Future<void> _simulateBankPay(Map<String, dynamic> params) async {
-    // 模拟银行卡支付
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      // 银行卡支付处理
+      // 跳转到银行卡支付页面或调用银行SDK
+      await _callBankPaySDK(params);
+    } catch (e) {
+      throw Exception('银行卡支付调用失败: $e');
+    }
+  }
+
+  Future<void> _callWechatPaySDK(Map<String, dynamic> params) async {
+    // 实际微信支付SDK实现
+    // 这里需要集成微信支付SDK
+    // 示例代码结构：
+    /*
+    import 'package:fluwx/fluwx.dart';
     
-    // 这里应该调用银行卡支付SDK或跳转到银行支付页面
+    await fluwx.pay(
+      appId: params['appId'],
+      partnerId: params['partnerId'],
+      prepayId: params['prepayId'],
+      packageValue: params['package'],
+      nonceStr: params['nonceStr'],
+      timeStamp: params['timeStamp'],
+      sign: params['sign'],
+    );
+    */
+    throw UnimplementedError('微信支付SDK未集成，请添加fluwx依赖并实现支付逻辑');
+  }
+
+  Future<void> _callAlipaySDK(Map<String, dynamic> params) async {
+    // 实际支付宝SDK实现
+    // 这里需要集成支付宝SDK
+    // 示例代码结构：
+    /*
+    import 'package:flutter_alipay/flutter_alipay.dart';
     
-    // 模拟支付结果
-    // 在实际应用中，支付结果会通过SDK回调返回
-    // 这里我们模拟支付成功
+    String result = await FlutterAlipay.pay(
+      params['orderInfo'],
+      urlScheme: 'your_appscheme',
+    );
+    */
+    throw UnimplementedError('支付宝SDK未集成，请添加flutter_alipay依赖并实现支付逻辑');
+  }
+
+  Future<void> _callBankPaySDK(Map<String, dynamic> params) async {
+    // 银行卡支付实现
+    // 可以跳转到H5支付页面或使用银联SDK
+    throw UnimplementedError('银行卡支付功能未实现，请集成银行支付SDK');
   }
 
   void _startStatusCheck() {

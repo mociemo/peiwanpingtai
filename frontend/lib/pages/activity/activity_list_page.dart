@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../models/activity_model.dart';
+import '../../models/activity.dart';
 import '../../services/activity_service.dart';
 import '../../widgets/loading_widget.dart';
 
@@ -30,9 +30,7 @@ class _ActivityListPageState extends State<ActivityListPage> {
     });
 
     try {
-      final activities = await ActivityService.getActivities(
-        status: ActivityStatus.active,
-      );
+      final activities = await ActivityService.getActivities();
       setState(() {
         _activities = activities;
       });
@@ -146,11 +144,11 @@ class _ActivityCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (activity.bannerUrl != null)
+            if (activity.imageUrl != null)
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
-                  activity.bannerUrl!,
+                  activity.imageUrl!,
                   width: double.infinity,
                   height: 180,
                   fit: BoxFit.cover,
@@ -179,7 +177,7 @@ class _ActivityCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (activity.isTop)
+                      if (activity.sortOrder > 0)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
@@ -190,7 +188,7 @@ class _ActivityCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Text(
-                            '置顶',
+                            '推荐',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -201,7 +199,7 @@ class _ActivityCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    activity.description,
+                    activity.description ?? '',
                     style: Theme.of(context).textTheme.bodyMedium,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -209,7 +207,7 @@ class _ActivityCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      _ActivityTypeChip(type: activity.type),
+                      _buildActivityTypeChip(activity.type),
                       const Spacer(),
                       Text(
                         '${activity.participantCount}人参与',
@@ -246,38 +244,27 @@ class _ActivityCard extends StatelessWidget {
   String _formatDate(DateTime date) {
     return '${date.month}/${date.day}';
   }
-}
 
-class _ActivityTypeChip extends StatelessWidget {
-  final ActivityType type;
-
-  const _ActivityTypeChip({required this.type});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildActivityTypeChip(String type) {
     String label;
     Color color;
 
     switch (type) {
-      case ActivityType.promotion:
-        label = '促销';
+      case 'DISCOUNT':
+        label = '优惠';
         color = Colors.orange;
         break;
-      case ActivityType.event:
+      case 'PROMOTION':
+        label = '促销';
+        color = Colors.red;
+        break;
+      case 'EVENT':
         label = '活动';
         color = Colors.blue;
         break;
-      case ActivityType.announcement:
-        label = '公告';
-        color = Colors.green;
-        break;
-      case ActivityType.holiday:
-        label = '节日';
-        color = Colors.purple;
-        break;
-      case ActivityType.tournament:
-        label = '竞赛';
-        color = Colors.red;
+      default:
+        label = '其他';
+        color = Colors.grey;
         break;
     }
 

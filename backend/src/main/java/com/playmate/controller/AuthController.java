@@ -4,7 +4,7 @@ import com.playmate.dto.ApiResponse;
 import com.playmate.dto.LoginRequest;
 import com.playmate.dto.RegisterRequest;
 import com.playmate.entity.User;
-import com.playmate.security.JwtUtil;
+import com.playmate.util.JwtUtil;
 import com.playmate.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,8 @@ public class AuthController {
             String token = jwtUtil.generateToken(request.getUsername());
             
             // 获取用户信息
-            User user = userService.findByUsername(request.getUsername());
+            User user = userService.findByUsername(request.getUsername())
+                    .orElseThrow(() -> new RuntimeException("用户不存在"));
             
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("token", token);

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../services/feedback_service.dart';
 
 enum FeedbackType {
   bug,         // Bug反馈
@@ -310,12 +312,28 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
   }
 
-  void _addImage() {
-    // 这里实现图片选择功能
-    // 暂时添加一个模拟的图片URL
-    setState(() {
-      _images.add('https://via.placeholder.com/100x100');
-    });
+  void _addImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        maxHeight: 600,
+        imageQuality: 80,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _images.add(image.path);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('选择图片失败: $e')),
+        );
+      }
+    }
   }
 
   void _removeImage(int index) {
@@ -334,10 +352,13 @@ class _FeedbackPageState extends State<FeedbackPage> {
     });
 
     try {
-      // 这里实现提交反馈的逻辑
-      await Future.delayed(const Duration(seconds: 2)); // 模拟网络请求
+      final response = await FeedbackService.submitFeedback(
+        type: _getTypeText(_selectedType),
+        content: _contentController.text.trim(),
+        contact: _contactController.text.trim().isEmpty ? null : _contactController.text.trim(),
+      );
 
-      if (mounted) {
+      if (response['success'] == true && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('反馈提交成功，感谢您的建议！')),
         );

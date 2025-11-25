@@ -1,12 +1,10 @@
 package com.playmate.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
-@Data
 public class Comment {
     
     @Id
@@ -40,4 +38,32 @@ public class Comment {
     protected void onCreate() {
         createTime = LocalDateTime.now();
     }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public Long getPostId() { return postId; }
+    public void setPostId(Long postId) { this.postId = postId; }
+    
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+    
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+    
+    public Long getParentId() { return parentId; }
+    public void setParentId(Long parentId) { this.parentId = parentId; }
+    
+    public Long getReplyToUserId() { return replyToUserId; }
+    public void setReplyToUserId(Long replyToUserId) { this.replyToUserId = replyToUserId; }
+    
+    public CommentStatus getStatus() { return status; }
+    public void setStatus(CommentStatus status) { this.status = status; }
+    
+    public Integer getLikeCount() { return likeCount; }
+    public void setLikeCount(Integer likeCount) { this.likeCount = likeCount; }
+    
+    public LocalDateTime getCreateTime() { return createTime; }
+    public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
 }

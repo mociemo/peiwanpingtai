@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
+import '../../services/user_service.dart';
 
 class ProfilePage extends StatefulWidget {
   final String? userId;
@@ -116,7 +117,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 // 编辑按钮
                 IconButton(
                   onPressed: () {
-                    _showEditProfileDialog(context);
+                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                    context.push('/profile/edit', extra: authProvider.userInfo ?? {});
                   },
                   icon: const Icon(Icons.edit),
                   tooltip: '编辑资料',
@@ -321,39 +323,42 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
   
-  void _showEditProfileDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('编辑资料'),
-        content: const Text('编辑资料功能开发中...'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('确定'),
-          ),
-        ],
-      ),
-    );
-  }
+
   
-  void _applyForPlayer(BuildContext context, AuthProvider authProvider) {
+  void _applyForPlayer(BuildContext context, AuthProvider authProvider) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('申请成为陪玩达人'),
-        content: const Text('申请陪玩达人功能开发中...'),
+        content: const Text('申请成为陪玩达人后，您将能够提供陪玩服务并获得收益。是否继续申请？'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('取消'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('申请已提交，等待审核')),
-              );
+              
+              try {
+                await UserService.applyForPlayer(requestData: {});
+                
+                if (mounted) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('申请已提交，等待审核')),
+                    );
+                  }
+                  // 刷新用户信息
+                  await authProvider.refreshUserInfo();
+                }
+              } catch (e) {
+                if (mounted && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('申请失败: $e')),
+                  );
+                }
+              }
             },
             child: const Text('确定申请'),
           ),

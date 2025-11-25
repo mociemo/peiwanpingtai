@@ -3,8 +3,10 @@ package com.playmate.service;
 import com.playmate.dto.CommentRequest;
 import com.playmate.dto.CommentResponse;
 import com.playmate.entity.Comment;
+import com.playmate.entity.CommentLike;
 import com.playmate.entity.CommentStatus;
 import com.playmate.entity.Post;
+import com.playmate.repository.CommentLikeRepository;
 import com.playmate.repository.CommentRepository;
 import com.playmate.repository.PostRepository;
 import com.playmate.repository.UserRepository;
@@ -26,12 +28,14 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentLikeRepository commentLikeRepository;
     
     public Page<CommentResponse> getCommentsByPostId(Long postId, Pageable pageable) {
         Page<Comment> comments = commentRepository.findByPostIdAndParentIdAndStatusOrderByCreateTimeDesc(postId, null, CommentStatus.PUBLISHED, pageable);
         return comments.map(comment -> convertToResponse(comment, true));
     }
     
+    @SuppressWarnings("null")
     public Page<CommentResponse> getRepliesByCommentId(Long commentId, CommentStatus status, Pageable pageable) {
         Optional<Comment> parentComment = commentRepository.findById(commentId);
         if (parentComment.isEmpty()) {
@@ -49,6 +53,7 @@ public class CommentService {
     }
     
     @Transactional
+    @SuppressWarnings("null")
     public CommentResponse createComment(Long userId, Long postId, CommentRequest request) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
@@ -75,6 +80,7 @@ public class CommentService {
     }
     
     @Transactional
+    @SuppressWarnings("null")
     public CommentResponse updateComment(Long commentId, Long userId, CommentRequest request) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
@@ -92,6 +98,7 @@ public class CommentService {
     }
     
     @Transactional
+    @SuppressWarnings("null")
     public void deleteComment(Long commentId, Long userId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
@@ -115,6 +122,7 @@ public class CommentService {
     }
     
     @Transactional
+    @SuppressWarnings("null")
     public void likeComment(Long commentId, Long userId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
@@ -122,11 +130,25 @@ public class CommentService {
         }
         
         Comment comment = optionalComment.get();
+        
+        // 检查是否已经点赞
+        if (commentLikeRepository.existsByCommentIdAndUserId(commentId, userId)) {
+            throw new RuntimeException("已经点赞过了");
+        }
+        
+        // 创建点赞记录
+        CommentLike commentLike = new CommentLike();
+        commentLike.setComment(comment);
+        commentLike.setUser(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("用户不存在")));
+        commentLikeRepository.save(commentLike);
+        
+        // 更新点赞数
         comment.setLikeCount(comment.getLikeCount() + 1);
         commentRepository.save(comment);
     }
     
     @Transactional
+    @SuppressWarnings("null")
     public void unlikeComment(Long commentId, Long userId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
@@ -134,12 +156,30 @@ public class CommentService {
         }
         
         Comment comment = optionalComment.get();
+        
+        // 检查是否已点赞
+        if (!commentLikeRepository.existsByCommentIdAndUserId(commentId, userId)) {
+            throw new RuntimeException("还未点赞");
+        }
+        
+        // 删除点赞记录
+        commentLikeRepository.deleteByCommentIdAndUserId(commentId, userId);
+        
+        // 更新点赞数
         if (comment.getLikeCount() > 0) {
             comment.setLikeCount(comment.getLikeCount() - 1);
             commentRepository.save(comment);
         }
     }
     
+    public boolean isCommentLiked(Long commentId, Long userId) {
+        if (commentId == null || userId == null) {
+            return false;
+        }
+        return commentLikeRepository.existsByCommentIdAndUserId(commentId, userId);
+    }
+    
+    @SuppressWarnings("null")
     public CommentResponse getCommentById(Long commentId) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
@@ -150,6 +190,7 @@ public class CommentService {
         return convertToResponse(comment, true);
     }
     
+    @SuppressWarnings("null")
     private CommentResponse convertToResponse(Comment comment, boolean includeReplies) {
         CommentResponse response = new CommentResponse();
         response.setId(comment.getId());
@@ -158,7 +199,7 @@ public class CommentService {
         // 设置用户信息
         userRepository.findById(comment.getUserId()).ifPresent(user -> {
             CommentResponse.UserInfo userInfo = new CommentResponse.UserInfo();
-            userInfo.setId(user.getId());
+            userInfo.setId(user.getId() != null ? user.getId() : 0L);
             userInfo.setUsername(user.getUsername());
             userInfo.setAvatar(user.getAvatar());
             response.setUser(userInfo);
@@ -168,7 +209,7 @@ public class CommentService {
         if (comment.getReplyToUserId() != null) {
             userRepository.findById(comment.getReplyToUserId()).ifPresent(user -> {
                 CommentResponse.UserInfo replyToUserInfo = new CommentResponse.UserInfo();
-                replyToUserInfo.setId(user.getId());
+                replyToUserInfo.setId(user.getId() != null ? user.getId() : 0L);
                 replyToUserInfo.setUsername(user.getUsername());
                 replyToUserInfo.setAvatar(user.getAvatar());
                 response.setReplyToUser(replyToUserInfo);

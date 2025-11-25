@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../services/api_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../utils/toast_util.dart';
 
@@ -38,11 +39,17 @@ class _SecurityPageState extends State<SecurityPage> {
     setState(() => _isLoading = true);
 
     try {
- 
-      await Future.delayed(const Duration(seconds: 1));
+      final response = await ApiService.dio.post('/security/change-password', data: {
+        'currentPassword': _currentPasswordController.text.trim(),
+        'newPassword': _newPasswordController.text.trim(),
+      });
       
-      ToastUtil.showSuccess('密码修改成功');
-      _clearPasswordForm();
+      if (response.data['success'] == true) {
+        ToastUtil.showSuccess('密码修改成功');
+        _clearPasswordForm();
+      } else {
+        throw Exception(response.data['message'] ?? '修改失败');
+      }
     } catch (e) {
       ToastUtil.showError('密码修改失败: $e');
     } finally {

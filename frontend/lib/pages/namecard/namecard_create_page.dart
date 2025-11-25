@@ -168,14 +168,17 @@ class _NamecardCreatePageState extends State<NamecardCreatePage> {
   void _submitNamecard() async {
     if (_formKey.currentState!.validate()) {
       try {
+        // 构建请求数据
+        final requestData = {
+          'realName': _realNameController.text.trim(),
+          'idCard': _idCardController.text.trim(),
+          'introduction': _introductionController.text.trim(),
+          'price': double.tryParse(_priceController.text) ?? 0.0,
+          'skills': _selectedSkills,
+        };
+        
         // 调用API创建名片
-        await UserService.createPlayerProfile({
-          'realName': _realNameController.text,
-          'idCard': _idCardController.text,
-          'introduction': _introductionController.text,
-          'servicePrice': double.parse(_priceController.text),
-          'skillTags': _selectedSkills,
-        });
+        await UserService.applyForPlayer(requestData: requestData);
         
         // 提交成功
         if (mounted) {

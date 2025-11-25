@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/api_service.dart';
 
 class AuthProvider extends ChangeNotifier {
+  /// 全局认证提供者实例
+  static AuthProvider? globalAuthProvider;
   bool _isLoading = false;
   bool _isAuthenticated = false;
   String? _token;
@@ -17,6 +21,23 @@ class AuthProvider extends ChangeNotifier {
   /// 获取用户ID
   String? get userId {
     return _userInfo?['id']?.toString();
+  }
+
+  String? _errorMessage;
+  
+  /// 获取错误信息
+  String? get errorMessage => _errorMessage;
+  
+  /// 设置错误信息
+  void setError(String error) {
+    _errorMessage = error;
+    notifyListeners();
+  }
+  
+  /// 清除错误信息
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
   }
 
   AuthProvider() {
@@ -51,6 +72,12 @@ class AuthProvider extends ChangeNotifier {
         await prefs.setString('token', _token!);
         
         await _loadUserInfo();
+        
+        // 同步更新UserProvider
+        if (_userInfo != null) {
+          // 通过全局状态管理器同步用户信息
+          _syncUserInfoToOtherProviders();
+        }
       }
     } catch (e) {
       rethrow;
@@ -87,7 +114,7 @@ class AuthProvider extends ChangeNotifier {
     _isAuthenticated = false;
     _userInfo = null;
     
-    notifyListeners();
+    notifyListeners(); // 确保UserProvider能收到更新
   }
 
   Future<void> _loadUserInfo() async {
@@ -95,9 +122,13 @@ class AuthProvider extends ChangeNotifier {
       final response = await ApiService.getUserInfo();
       if (response['success']) {
         _userInfo = response['data'];
+        notifyListeners(); // 确保UserProvider能收到更新
       }
     } catch (e) {
-      // 忽略用户信息加载错误
+      // 用户信息加载失败，可能是token过期，清除认证状态
+      debugPrint('用户信息加载失败: $e');
+      await logout(); // 清除认证状态
+      setError('登录已过期，请重新登录');
     }
   }
 
@@ -110,6 +141,36 @@ class AuthProvider extends ChangeNotifier {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> refreshUserInfo() async {
+    try {
+      final response = await ApiService.getUserInfo();
+      if (response['success']) {
+        _userInfo = response['data'];
+        notifyListeners();
+      }
+    } catch (e) {
+      // 用户信息加载失败，记录到日志并通知用户
+      debugPrint('用户信息加载失败: $e');
+      setError('加载用户信息失败，请检查网络连接');
+    }
+  }
+
+  /// 同步用户信息到其他Provider
+  void _syncUserInfoToOtherProviders() {
+    // 这里可以通过事件总线或其他状态管理方案
+    // 将用户信息同步到其他需要用户信息的Provider
+    // 目前使用SharedPreferences作为中介存储
+    _updateUserPreferences();
+  }
+
+  /// 更新用户偏好设置
+  void _updateUserPreferences() async {
+    if (_userInfo != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('current_user_info', jsonEncode(_userInfo));
     }
   }
 }

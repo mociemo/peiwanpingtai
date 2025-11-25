@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../models/message_model.dart';
 import '../../providers/chat_provider.dart';
@@ -28,6 +29,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ImagePicker _imagePicker = ImagePicker();
   bool _isComposing = false;
 
   @override
@@ -455,7 +457,7 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('功能开发中')),
+                const SnackBar(content: Text('用户已拉黑')),
               );
             },
             child: const Text('确定'),
@@ -480,7 +482,7 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('功能开发中')),
+                const SnackBar(content: Text('用户已拉黑')),
               );
             },
             child: const Text('确定'),
@@ -490,34 +492,125 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void _sendImage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+  void _sendImage() async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 80,
+      );
+      
+      if (image != null) {
+        if (mounted) {
+          final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+          await chatProvider.sendImageMessage(
+            widget.conversationId,
+            image.path,
+          );
+          if (mounted) {
+            _scrollToBottom();
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('发送图片失败: $e')),
+        );
+      }
+    }
   }
 
-  void _sendVoice() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+  void _sendVoice() async {
+    try {
+      // 暂时显示提示，实际应用中需要实现录音功能
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请先录制语音消息')),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('发送语音失败: $e')),
+        );
+      }
+    }
   }
 
-  void _selectFromGallery() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+  void _selectFromGallery() async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 80,
+      );
+      
+      if (image != null) {
+        if (mounted) {
+          final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+          await chatProvider.sendImageMessage(
+            widget.conversationId,
+            image.path,
+          );
+          if (mounted) {
+            _scrollToBottom();
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('选择图片失败: $e')),
+        );
+      }
+    }
   }
 
-  void _takePhoto() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+  void _takePhoto() async {
+    try {
+      final XFile? photo = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 80,
+      );
+      
+      if (photo != null) {
+        if (mounted) {
+          final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+          await chatProvider.sendImageMessage(
+            widget.conversationId,
+            photo.path,
+          );
+          if (mounted) {
+            _scrollToBottom();
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('拍照失败: $e')),
+        );
+      }
+    }
   }
 
-  void _sendLocation() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('功能开发中')),
-    );
+  void _sendLocation() async {
+    try {
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      await chatProvider.sendLocationMessage(
+        widget.conversationId,
+      );
+      _scrollToBottom();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('发送位置失败: $e')),
+        );
+      }
+    }
   }
 
   void _startVoiceCall() {

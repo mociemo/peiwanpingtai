@@ -11,7 +11,7 @@ class ChatService {
     int size = 20,
   }) async {
     try {
-      final response = await _dio.get('/chat/conversations', queryParameters: {
+      final response = await _dio.get('/messages/conversations', queryParameters: {
         'page': page,
         'size': size,
       });
@@ -24,7 +24,7 @@ class ChatService {
   // 获取会话详情
   static Future<Map<String, dynamic>> getConversationById(String conversationId) async {
     try {
-      final response = await _dio.get('/chat/conversations/$conversationId');
+      final response = await _dio.get('/messages/conversations/$conversationId');
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -34,7 +34,7 @@ class ChatService {
   // 创建会话
   static Future<Map<String, dynamic>> createConversation(String participantId) async {
     try {
-      final response = await _dio.post('/chat/conversations', data: {
+      final response = await _dio.post('/messages/conversations', data: {
         'participantId': participantId,
       });
       return response.data;
@@ -51,7 +51,7 @@ class ChatService {
     String? beforeMessageId,
   }) async {
     try {
-      final response = await _dio.get('/chat/conversations/$conversationId/messages', queryParameters: {
+      final response = await _dio.get('/messages/conversations/$conversationId/messages', queryParameters: {
         'page': page,
         'size': size,
         if (beforeMessageId != null) 'beforeMessageId': beforeMessageId,
@@ -68,7 +68,7 @@ class ChatService {
     String content,
   ) async {
     try {
-      final response = await _dio.post('/chat/conversations/$conversationId/messages', data: {
+      final response = await _dio.post('/messages/conversations/$conversationId/messages', data: {
         'type': MessageType.text.name,
         'content': content,
       });
@@ -90,7 +90,7 @@ class ChatService {
       });
       
       final response = await _dio.post(
-        '/chat/conversations/$conversationId/messages',
+        '/messages/conversations/$conversationId/messages',
         data: formData,
       );
       return response.data;
@@ -113,7 +113,7 @@ class ChatService {
       });
       
       final response = await _dio.post(
-        '/chat/conversations/$conversationId/messages',
+        '/messages/conversations/$conversationId/messages',
         data: formData,
       );
       return response.data;
@@ -125,7 +125,7 @@ class ChatService {
   // 撤回消息
   static Future<Map<String, dynamic>> recallMessage(String messageId) async {
     try {
-      final response = await _dio.put('/chat/messages/$messageId/recall');
+      final response = await _dio.put('/messages/$messageId/recall');
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -135,7 +135,7 @@ class ChatService {
   // 删除消息
   static Future<Map<String, dynamic>> deleteMessage(String messageId) async {
     try {
-      final response = await _dio.delete('/chat/messages/$messageId');
+      final response = await _dio.delete('/messages/$messageId');
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -145,7 +145,7 @@ class ChatService {
   // 标记消息为已读
   static Future<Map<String, dynamic>> markMessagesAsRead(String conversationId) async {
     try {
-      final response = await _dio.put('/chat/conversations/$conversationId/read');
+      final response = await _dio.put('/messages/conversations/$conversationId/read');
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -155,7 +155,7 @@ class ChatService {
   // 清空聊天记录
   static Future<Map<String, dynamic>> clearChatHistory(String conversationId) async {
     try {
-      final response = await _dio.delete('/chat/conversations/$conversationId/messages');
+      final response = await _dio.delete('/messages/conversations/$conversationId/messages');
       return response.data;
     } catch (e) {
       throw _handleError(e);
@@ -165,7 +165,39 @@ class ChatService {
   // 获取未读消息数量
   static Future<Map<String, dynamic>> getUnreadCount() async {
     try {
-      final response = await _dio.get('/chat/unread-count');
+      final response = await _dio.get('/messages/unread-count');
+      return response.data;
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // 发送位置消息
+  static Future<Map<String, dynamic>> sendLocationMessage(
+    String conversationId,
+    double latitude,
+    double longitude,
+    String address,
+  ) async {
+    try {
+      final response = await _dio.post('/messages/conversations/$conversationId/messages', data: {
+        'type': MessageType.location.name,
+        'latitude': latitude,
+        'longitude': longitude,
+        'address': address,
+      });
+      return response.data;
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // 搜索用户
+  static Future<Map<String, dynamic>> searchUsers(String keyword) async {
+    try {
+      final response = await _dio.get('/messages/users/search', queryParameters: {
+        'keyword': keyword,
+      });
       return response.data;
     } catch (e) {
       throw _handleError(e);

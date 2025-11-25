@@ -55,10 +55,20 @@ class ApiService {
 
   static Future<Map<String, dynamic>> register(String username, String password, String? email, String? phone) async {
     try {
-      final response = await _dio.post('/auth/register', data: {
+      final Map<String, dynamic> requestData = {
         'username': username,
         'password': password,
-      });
+      };
+      
+      // 添加可选字段
+      if (email != null && email.isNotEmpty) {
+        requestData['email'] = email;
+      }
+      if (phone != null && phone.isNotEmpty) {
+        requestData['phone'] = phone;
+      }
+      
+      final response = await _dio.post('/auth/register', data: requestData);
       return response.data;
     } on DioException catch (e) {
       throw Exception('注册失败: ${e.response?.data?['message'] ?? e.message}');
@@ -151,7 +161,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>> getUserOrders() async {
     try {
-      final response = await _dio.get('/orders');
+      final response = await _dio.get('/orders/user');
       
       if (response.statusCode == 200) {
         return response.data;

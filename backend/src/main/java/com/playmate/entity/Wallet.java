@@ -1,13 +1,11 @@
 package com.playmate.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "wallets")
-@Data
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +46,32 @@ public class Wallet {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+    
+    public BigDecimal getBalance() { return balance; }
+    public void setBalance(BigDecimal balance) { this.balance = balance; }
+    
+    public BigDecimal getFrozenBalance() { return frozenBalance; }
+    public void setFrozenBalance(BigDecimal frozenBalance) { this.frozenBalance = frozenBalance; }
+    
+    public BigDecimal getTotalRecharge() { return totalRecharge; }
+    public void setTotalRecharge(BigDecimal totalRecharge) { this.totalRecharge = totalRecharge; }
+    
+    public BigDecimal getTotalWithdraw() { return totalWithdraw; }
+    public void setTotalWithdraw(BigDecimal totalWithdraw) { this.totalWithdraw = totalWithdraw; }
+    
+    public BigDecimal getTotalIncome() { return totalIncome; }
+    public void setTotalIncome(BigDecimal totalIncome) { this.totalIncome = totalIncome; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

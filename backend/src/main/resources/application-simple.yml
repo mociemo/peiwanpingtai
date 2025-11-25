@@ -1,0 +1,29 @@
+server:
+  port: 8888
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/playmate_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+# 禁用不需要的自动配置
+spring.autoconfigure.exclude: |
+  org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,
+  org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration,
+  org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+logging:
+  level:
+    com.playmate: DEBUG
+    root: INFO

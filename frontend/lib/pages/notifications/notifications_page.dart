@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/notification_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -13,7 +17,41 @@ class _NotificationsPageState extends State<NotificationsPage> {
   final List<String> _tabTitles = ['全部', '订单', '系统', '活动'];
 
   @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    if (mounted) {
+      await notificationProvider.refreshNotifications();
+    }
+  }
+
+  Future<void> _markAllAsRead() async {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    await notificationProvider.markAllAsRead();
+  }
+
+  Future<void> _clearAll() async {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    notificationProvider.clearNotifications();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    
+    if (!authProvider.isAuthenticated) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('通知中心')),
+        body: const Center(
+          child: Text('请先登录查看通知'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('通知中心'),
@@ -207,53 +245,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
   
-  void _markAsRead(int notificationId) {
-    setState(() {
-    });
-  }
-  
-  void _markAllAsRead() {
-    setState(() {
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('全部通知已标记为已读')),
-    );
-  }
-  
-  void _deleteNotification(int notificationId) {
-    setState(() {
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('通知已删除')),
-    );
-  }
-  
-  void _clearAll() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('清空通知'),
-        content: const Text('确定要清空所有通知吗？此操作不可撤销。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('所有通知已清空')),
-              );
-            },
-            child: const Text('确定'),
-          ),
-        ],
-      ),
-    );
-  }
+
   
   void _handleNotificationTap(Map<String, dynamic> notification) {
     switch (notification['type']) {
@@ -264,5 +256,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
       case 'activity':
         break;
     }
+  }
+
+  void _markAsRead(int notificationId) async {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    await notificationProvider.markAsRead(notificationId.toString());
+  }
+
+  void _deleteNotification(int notificationId) async {
+    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+    await notificationProvider.deleteNotification(notificationId.toString());
   }
 }

@@ -37,7 +37,7 @@ class WebSocketService {
         throw Exception('未登录或用户信息不完整');
       }
 
-      // 连接WebSocket服务器
+      // 连接WebSocket服务器 (使用STOMP协议)
       final uri = Uri.parse('${ApiConfig.wsBaseUrl}?token=$token&userId=$userId');
       _channel = WebSocketChannel.connect(uri);
 

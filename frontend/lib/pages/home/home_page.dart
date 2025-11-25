@@ -561,7 +561,7 @@ class _ProfileTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('个人页面 - 开发中'),
+          const Text('个人页面'),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {

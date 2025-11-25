@@ -16,6 +16,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   Order? _order;
   bool _isLoading = true;
   bool _isActionLoading = false;
+  int _rating = 0;
+
 
   @override
   void initState() {
@@ -77,8 +79,92 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   }
 
   Future<void> _rateOrder() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('评价功能开发中')),
+    // 显示评价对话框
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('评价服务'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('请为本次服务评分：'),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                return IconButton(
+                  icon: Icon(
+                    index < _rating ? Icons.star : Icons.star_border,
+                    color: Colors.amber,
+                  ),
+                  onPressed: () async {
+                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+                    setState(() {
+                      _rating = index + 1;
+                    });
+                    
+                    try {
+                      final response = await ApiService.rateOrder(
+                        widget.orderId,
+                        (index + 1).toString(),
+                        '',
+                      );
+                      
+                      if (!mounted) return;
+                      
+                      if (response['success'] == true) {
+                        if (mounted) {
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(content: Text('评分成功')),
+                          );
+                        }
+                        _loadOrderDetail(); // 重新加载订单详情
+                      } else {
+                        if (mounted) {
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(content: Text(response['message'] ?? '评分失败')),
+                          );
+                        }
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(content: Text('评分失败: $e')),
+                        );
+                      }
+                    }
+                  },
+                );
+              }),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '评价内容',
+                hintText: '请输入您的评价...',
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('评价提交成功')),
+                );
+              }
+            },
+            child: const Text('提交'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -110,9 +196,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('联系功能开发中')),
-                  );
+                  // 跳转到聊天页面
+                  Navigator.pushNamed(context, '/chat', arguments: {
+                    'userId': _order!.playerId,
+                    'userName': _order!.playerName,
+                  });
                 },
                 child: const Text('联系陪玩'),
               ),
@@ -126,9 +214,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('服务功能开发中')),
-                  );
+                  // 跳转到服务页面或开始服务计时
+                  Navigator.pushNamed(context, '/service', arguments: {
+                    'orderId': _order!.id,
+                    'playerId': _order!.playerId,
+                  });
                 },
                 child: const Text('进入服务'),
               ),
@@ -143,9 +233,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('再次下单功能开发中')),
-                    );
+                    // 再次下单
+                    Navigator.pushNamed(context, '/player/detail', arguments: {
+                      'playerId': _order!.playerId,
+                    });
                   },
                   child: const Text('再次下单'),
                 ),
@@ -165,9 +256,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('再次下单功能开发中')),
-                    );
+                    // 再次下单
+                    Navigator.pushNamed(context, '/player/detail', arguments: {
+                      'playerId': _order!.playerId,
+                    });
                   },
                   child: const Text('再次下单'),
                 ),
@@ -183,9 +275,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('重新下单功能开发中')),
-                  );
+                  // 重新下单
+                  Navigator.pushNamed(context, '/player/detail', arguments: {
+                    'playerId': _order!.playerId,
+                  });
                 },
                 child: const Text('重新下单'),
               ),

@@ -8,7 +8,7 @@ class WalletService {
   /// 获取用户钱包信息
   static Future<Wallet> getUserWallet(String userId) async {
     try {
-      final response = await _dio.get('/api/wallet/user/$userId');
+      final response = await _dio.get('/wallet/user/$userId');
       
       if (response.statusCode == 200) {
         final data = response.data;
@@ -42,7 +42,7 @@ class WalletService {
       if (status != null) queryParams['status'] = status.name;
 
       final response = await _dio.get(
-        '/api/wallet/transactions/user/$userId',
+        '/wallet/transactions/user/$userId',
         queryParameters: queryParams,
       );
       
@@ -66,7 +66,7 @@ class WalletService {
   /// 获取交易详情
   static Future<WalletTransaction> getTransactionDetail(String transactionId) async {
     try {
-      final response = await _dio.get('/api/wallet/transactions/$transactionId');
+      final response = await _dio.get('/wallet/transactions/$transactionId');
       
       if (response.statusCode == 200) {
         final data = response.data;

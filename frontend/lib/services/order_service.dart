@@ -7,9 +7,9 @@ class OrderService {
   static final Dio _dio = ApiService.dio;
 
   /// 获取用户订单
-  static Future<List<Map<String, dynamic>>> getUserOrders(String userId) async {
+  static Future<List<Map<String, dynamic>>> getUserOrders() async {
     try {
-      final response = await _dio.get('/api/orders/user/$userId');
+      final response = await _dio.get('/orders/user');
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data['data']);
       }
@@ -22,8 +22,8 @@ class OrderService {
   /// 创建订单
   static Future<Map<String, dynamic>> createOrder(Map<String, dynamic> orderData) async {
     try {
-      final response = await _dio.post('/api/orders', data: orderData);
-      if (response.statusCode == 201) {
+      final response = await _dio.post('/orders', data: orderData);
+      if (response.statusCode == 200) {
         return response.data['data'];
       }
       throw Exception('创建订单失败');
@@ -35,7 +35,7 @@ class OrderService {
   /// 取消订单
   static Future<void> cancelOrder(String orderId, String reason) async {
     try {
-      await _dio.put('/api/orders/$orderId/cancel', data: {
+      await _dio.post('/orders/$orderId/cancel', queryParameters: {
         'reason': reason,
       });
     } catch (e) {
@@ -43,19 +43,28 @@ class OrderService {
     }
   }
 
-  /// 确认订单
-  static Future<void> confirmOrder(String orderId) async {
+  /// 接受订单（陪玩达人）
+  static Future<void> acceptOrder(String orderId) async {
     try {
-      await _dio.put('/api/orders/$orderId/confirm');
+      await _dio.post('/orders/$orderId/accept');
     } catch (e) {
-      throw Exception('确认订单失败: $e');
+      throw Exception('接单失败: $e');
+    }
+  }
+
+  /// 开始订单
+  static Future<void> startOrder(String orderId) async {
+    try {
+      await _dio.post('/orders/$orderId/start');
+    } catch (e) {
+      throw Exception('开始订单失败: $e');
     }
   }
 
   /// 完成订单
   static Future<void> completeOrder(String orderId) async {
     try {
-      await _dio.put('/api/orders/$orderId/complete');
+      await _dio.post('/orders/$orderId/complete');
     } catch (e) {
       throw Exception('完成订单失败: $e');
     }
@@ -64,7 +73,7 @@ class OrderService {
   /// 获取订单详情
   static Future<Map<String, dynamic>> getOrderDetail(String orderId) async {
     try {
-      final response = await _dio.get('/api/orders/$orderId');
+      final response = await _dio.get('/orders/$orderId');
       if (response.statusCode == 200) {
         return response.data['data'];
       }

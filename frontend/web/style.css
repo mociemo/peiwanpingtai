@@ -1,0 +1,378 @@
+/* Web平台兼容性样式 */
+
+/* 全局样式重置和优化 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #ffffff;
+  color: #333333;
+  line-height: 1.6;
+}
+
+/* 主题样式 */
+[data-theme="dark"] {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+[data-theme="dark"] body {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #2f2f2f;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #555555;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #777777;
+}
+
+/* Toast样式 */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  z-index: 10000;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 加载动画 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* 通用动画类 */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .toast {
+    font-size: 12px;
+    padding: 10px 20px;
+    bottom: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
+  
+  .toast {
+    font-size: 11px;
+    padding: 8px 16px;
+    bottom: 10px;
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  body {
+    color: #000000;
+    background-color: #ffffff;
+  }
+  
+  [data-theme="dark"] body {
+    color: #ffffff;
+    background-color: #000000;
+  }
+}
+
+/* 减少动画模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .toast {
+    display: none;
+  }
+  
+  /* 隐藏不必要的UI元素 */
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  /* 增大触摸目标 */
+  button, a, input, select, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* 移除悬停效果 */
+  :hover {
+    /* 覆盖悬停样式 */
+  }
+}
+
+/* 聚焦样式 */
+:focus {
+  outline: 2px solid #1976D2;
+  outline-offset: 2px;
+}
+
+/* 选择文本样式 */
+::selection {
+  background-color: #1976D2;
+  color: white;
+}
+
+[data-theme="dark"] ::selection {
+  background-color: #64B5F6;
+  color: black;
+}
+
+/* 图片优化 */
+img {
+  max-width: 100%;
+  height: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* 表单元素样式 */
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  background: white;
+  color: inherit;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background: #333;
+  border-color: #555;
+}
+
+/* 按钮样式 */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  background: #1976D2;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: #1565C0;
+}
+
+button:active {
+  background: #0D47A1;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] button:disabled {
+  background: #555;
+}
+
+/* 链接样式 */
+a {
+  color: #1976D2;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+[data-theme="dark"] a {
+  color: #64B5F6;
+}
+
+/* 错误和成功状态 */
+.error {
+  color: #d32f2f;
+}
+
+.success {
+  color: #388e3c;
+}
+
+.warning {
+  color: #f57c00;
+}
+
+.info {
+  color: #1976D2;
+}
+
+[data-theme="dark"] .error {
+  color: #ef5350;
+}
+
+[data-theme="dark"] .success {
+  color: #66bb6a;
+}
+
+[data-theme="dark"] .warning {
+  color: #ffb74d;
+}
+
+[data-theme="dark"] .info {
+  color: #64B5F6;
+}
+
+/* 工具类 */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.flex { display: flex; }
+.flex-column { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.align-center { align-items: center; }
+
+.hidden { display: none; }
+.visible { visibility: visible; }
+.invisible { visibility: hidden; }
+
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+
+.rounded { border-radius: 4px; }
+.rounded-lg { border-radius: 8px; }
+.rounded-full { border-radius: 50%; }
+
+.shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.shadow-lg { box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+
+.bg-primary { background-color: #1976D2; }
+.bg-secondary { background-color: #f5f5f5; }
+
+[data-theme="dark"] .bg-secondary {
+  background-color: #333;
+}
+
+.text-primary { color: #1976D2; }
+.text-secondary { color: #666; }
+
+[data-theme="dark"] .text-secondary {
+  color: #aaa;
+}
+
+/* 间距工具类 */
+.m-0 { margin: 0; }
+.m-1 { margin: 4px; }
+.m-2 { margin: 8px; }
+.m-3 { margin: 12px; }
+.m-4 { margin: 16px; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 4px; }
+.p-2 { padding: 8px; }
+.p-3 { padding: 12px; }
+.p-4 { padding: 16px; }

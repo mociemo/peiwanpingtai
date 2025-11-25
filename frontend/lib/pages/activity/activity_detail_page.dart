@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../models/activity_model.dart';
+import '../../models/activity.dart';
 import '../../services/activity_service.dart';
 import '../../widgets/loading_widget.dart';
 
 class ActivityDetailPage extends StatefulWidget {
-  final String activityId;
+  final int activityId;
 
   const ActivityDetailPage({super.key, required this.activityId});
 
@@ -52,13 +51,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     if (_activity == null) return;
 
     try {
-      // 这里需要获取当前用户ID，暂时使用模拟数据
-      const userId = 'current_user_id';
-      
-      await ActivityService.joinActivity(
-        _activity!.id,
-        userId,
-      );
+      await ActivityService.joinActivity(_activity!.id);
       
       setState(() {
         _isJoined = true;
@@ -149,11 +142,11 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (_activity!.bannerUrl != null)
+          if (_activity!.imageUrl != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
-                _activity!.bannerUrl!,
+                _activity!.imageUrl!,
                 width: double.infinity,
                 height: 200,
                 fit: BoxFit.cover,
@@ -178,7 +171,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                   ),
                 ),
               ),
-              if (_activity!.isTop)
+              if (_activity!.sortOrder > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -189,7 +182,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Text(
-                    '置顶',
+                    '推荐',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -199,17 +192,14 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
             ],
           ),
           const SizedBox(height: 8),
-          _ActivityTypeChip(type: _activity!.type),
+          _buildActivityTypeChip(_activity!.type),
           const SizedBox(height: 16),
           Text(
-            _activity!.description,
+            _activity!.description ?? '',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
           _buildInfoSection(),
-          const SizedBox(height: 24),
-          if (_activity!.rules != null) _buildRulesSection(),
-          if (_activity!.rewards != null) _buildRewardsSection(),
           const SizedBox(height: 24),
           _buildStatsSection(),
         ],
@@ -238,17 +228,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
             '${_activity!.participantCount}人',
           ),
           const SizedBox(height: 12),
-          _buildInfoRow(
-            Icons.visibility,
-            '浏览次数',
-            '${_activity!.viewCount}次',
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            Icons.share,
-            '分享次数',
-            '${_activity!.shareCount}次',
-          ),
+
         ],
       ),
     );
@@ -274,62 +254,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     );
   }
 
-  Widget _buildRulesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '活动规则',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-          ),
-          child: Text(
-            _formatRules(_activity!.rules!),
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-      ],
-    );
-  }
 
-  Widget _buildRewardsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 16),
-        Text(
-          '活动奖励',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.orange.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-          ),
-          child: Text(
-            _formatRewards(_activity!.rewards!),
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildStatsSection() {
     return Column(
@@ -347,10 +272,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
             Expanded(
               child: _buildStatCard('参与人数', '${_activity!.participantCount}'),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildStatCard('浏览次数', '${_activity!.viewCount}'),
-            ),
+
           ],
         ),
       ],
@@ -409,14 +331,7 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
                 child: Text(_isJoined ? '已参与' : '立即参与'),
               ),
             ),
-            if (_activity!.linkUrl != null) ...[
-              const SizedBox(width: 12),
-              ElevatedButton.icon(
-                onPressed: () => _launchLink(_activity!.linkUrl!),
-                icon: const Icon(Icons.link),
-                label: const Text('查看详情'),
-              ),
-            ],
+
           ],
         ),
       ),
@@ -427,60 +342,26 @@ class _ActivityDetailPageState extends State<ActivityDetailPage> {
     return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
-  String _formatRules(Map<String, dynamic> rules) {
-    // 这里可以根据实际规则格式进行格式化
-    return rules.entries.map((entry) => '${entry.key}: ${entry.value}').join('\n');
-  }
-
-  String _formatRewards(Map<String, dynamic> rewards) {
-    // 这里可以根据实际奖励格式进行格式化
-    return rewards.entries.map((entry) => '${entry.key}: ${entry.value}').join('\n');
-  }
-
-  Future<void> _launchLink(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('无法打开链接')),
-        );
-      }
-    }
-  }
-}
-
-class _ActivityTypeChip extends StatelessWidget {
-  final ActivityType type;
-
-  const _ActivityTypeChip({required this.type});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildActivityTypeChip(String type) {
     String label;
     Color color;
 
     switch (type) {
-      case ActivityType.promotion:
-        label = '促销';
+      case 'DISCOUNT':
+        label = '优惠';
         color = Colors.orange;
         break;
-      case ActivityType.event:
+      case 'PROMOTION':
+        label = '促销';
+        color = Colors.red;
+        break;
+      case 'EVENT':
         label = '活动';
         color = Colors.blue;
         break;
-      case ActivityType.announcement:
-        label = '公告';
-        color = Colors.green;
-        break;
-      case ActivityType.holiday:
-        label = '节日';
-        color = Colors.purple;
-        break;
-      case ActivityType.tournament:
-        label = '竞赛';
-        color = Colors.red;
+      default:
+        label = '其他';
+        color = Colors.grey;
         break;
     }
 
@@ -502,3 +383,4 @@ class _ActivityTypeChip extends StatelessWidget {
     );
   }
 }
+

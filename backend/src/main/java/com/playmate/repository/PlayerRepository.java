@@ -29,4 +29,6 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     List<Player> findByGameAndPriceRange(@Param("game") String game, 
                                        @Param("minPrice") BigDecimal minPrice, 
                                        @Param("maxPrice") BigDecimal maxPrice);
+    
+    java.util.Optional<Player> findByUserId(Long userId);
 }

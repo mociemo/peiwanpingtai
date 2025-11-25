@@ -215,7 +215,7 @@ class _NamecardEditPageState extends State<NamecardEditPage> {
     if (_formKey.currentState!.validate()) {
       try {
         // 调用API更新名片
-        await UserService.updatePlayerProfile({
+        await UserService.updateUserInfo({
           'introduction': _introductionController.text,
           'servicePrice': double.parse(_priceController.text),
           'skillTags': _selectedSkills,

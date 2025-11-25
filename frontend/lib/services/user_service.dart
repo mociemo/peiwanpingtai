@@ -4,10 +4,10 @@ import 'api_service.dart';
 class UserService {
   static final Dio _dio = ApiService.dio;
 
-  /// 获取用户信息
-  static Future<Map<String, dynamic>> getUserInfo(String userId) async {
+  /// 获取当前用户信息
+  static Future<Map<String, dynamic>> getUserInfo() async {
     try {
-      final response = await _dio.get('/users/$userId');
+      final response = await _dio.get('/user/info');
       
       if (response.data['success'] == true) {
         return response.data['data'];
@@ -22,7 +22,7 @@ class UserService {
   /// 更新用户信息
   static Future<Map<String, dynamic>> updateUserInfo(Map<String, dynamic> userData) async {
     try {
-      final response = await _dio.put('/users/profile', data: userData);
+      final response = await _dio.put('/user/info', data: userData);
       
       if (response.data['success'] == true) {
         return response.data['data'];
@@ -38,10 +38,10 @@ class UserService {
   static Future<String> uploadAvatar(String filePath) async {
     try {
       final formData = FormData.fromMap({
-        'avatar': await MultipartFile.fromFile(filePath),
+        'file': await MultipartFile.fromFile(filePath),
       });
       
-      final response = await _dio.post('/users/avatar', data: formData);
+      final response = await _dio.post('/files/upload', data: formData);
       
       if (response.data['success'] == true) {
         return response.data['data']['url'];
@@ -69,10 +69,10 @@ class UserService {
         queryParams['keyword'] = keyword;
       }
       
-      final response = await _dio.get('/users', queryParameters: queryParams);
+      final response = await _dio.get('/search/users', queryParameters: queryParams);
       
       if (response.data['success'] == true) {
-        final List<dynamic> data = response.data['data']['content'];
+        final List<dynamic> data = response.data['data'];
         return data.cast<Map<String, dynamic>>();
       } else {
         throw Exception('获取用户列表失败: ${response.data['message']}');
@@ -85,7 +85,7 @@ class UserService {
   /// 搜索用户
   static Future<List<Map<String, dynamic>>> searchUsers(String keyword) async {
     try {
-      final response = await _dio.get('/users/search', queryParameters: {
+      final response = await _dio.get('/search/users', queryParameters: {
         'keyword': keyword,
       });
       
@@ -100,73 +100,33 @@ class UserService {
     }
   }
 
-  /// 获取当前用户信息
-  static Future<Map<String, dynamic>> getCurrentUser() async {
+  /// 获取指定用户信息（公开信息）
+  static Future<Map<String, dynamic>> getPublicUserInfo(String userId) async {
     try {
-      final response = await _dio.get('/users/me');
+      final response = await _dio.get('/user/$userId');
       
       if (response.data['success'] == true) {
         return response.data['data'];
       } else {
-        throw Exception('获取当前用户信息失败: ${response.data['message']}');
+        throw Exception('获取用户信息失败: ${response.data['message']}');
       }
     } on DioException catch (e) {
       throw Exception('网络错误: ${e.message}');
     }
   }
 
-  /// 更新用户状态
-  static Future<void> updateUserStatus(String status) async {
+  /// 申请成为陪玩达人
+  static Future<Map<String, dynamic>> applyForPlayer({Map<String, dynamic>? requestData}) async {
     try {
-      final response = await _dio.put('/users/status', data: {
-        'status': status,
-      });
-      
-      if (response.data['success'] != true) {
-        throw Exception('更新用户状态失败: ${response.data['message']}');
-      }
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
-    }
-  }
-
-  /// 删除用户账户
-  static Future<void> deleteAccount() async {
-    try {
-      final response = await _dio.delete('/users/account');
-      
-      if (response.data['success'] != true) {
-        throw Exception('删除账户失败: ${response.data['message']}');
-      }
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
-    }
-  }
-
-  /// 创建玩家档案
-  static Future<Map<String, dynamic>> createPlayerProfile(Map<String, dynamic> profileData) async {
-    try {
-      final response = await _dio.post('/users/player-profile', data: profileData);
+      final response = await _dio.post(
+        '/user/apply-player',
+        data: requestData,
+      );
       
       if (response.data['success'] == true) {
         return response.data['data'];
       } else {
-        throw Exception('创建玩家档案失败: ${response.data['message']}');
-      }
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
-    }
-  }
-
-  /// 更新玩家档案
-  static Future<Map<String, dynamic>> updatePlayerProfile(Map<String, dynamic> profileData) async {
-    try {
-      final response = await _dio.put('/users/player-profile', data: profileData);
-      
-      if (response.data['success'] == true) {
-        return response.data['data'];
-      } else {
-        throw Exception('更新玩家档案失败: ${response.data['message']}');
+        throw Exception('申请陪玩达人失败: ${response.data['message']}');
       }
     } on DioException catch (e) {
       throw Exception('网络错误: ${e.message}');
@@ -176,7 +136,7 @@ class UserService {
   /// 更新个人资料
   static Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> profileData) async {
     try {
-      final response = await _dio.put('/users/profile', data: profileData);
+      final response = await _dio.put('/user/info', data: profileData);
       
       if (response.data['success'] == true) {
         return response.data['data'];

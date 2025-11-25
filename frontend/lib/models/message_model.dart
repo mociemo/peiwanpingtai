@@ -3,6 +3,7 @@ enum MessageType {
   image,      // 图片消息
   voice,      // 语音消息
   video,      // 视频消息
+  location,   // 位置消息
   system,     // 系统消息
   custom,     // 自定义消息
 }

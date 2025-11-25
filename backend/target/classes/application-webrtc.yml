@@ -1,0 +1,33 @@
+# WebRTC配置
+webrtc:
+  # STUN服务器配置 - 用于NAT穿透
+  stun-servers:
+    - "stun:stun.l.google.com:19302"
+    - "stun:stun1.l.google.com:19302"
+    - "stun:stun2.l.google.com:19302"
+  
+  # TURN服务器配置 - 用于对称NAT穿透（需要自建或使用付费服务）
+  turn-servers:
+    - url: "turn:your-turn-server.com:3478"
+      username: ${TURN_USERNAME:turnuser}
+      credential: ${TURN_PASSWORD:turnpass}
+  
+  # WebSocket配置
+  websocket:
+    # WebSocket路径
+    path: "/webrtc"
+    # 允许的源
+    allowed-origins: "*"
+    # 心跳间隔（秒）
+    heartbeat-interval: 30
+    # 连接超时（秒）
+    connection-timeout: 60
+  
+  # 通话配置
+  call:
+    # 最大通话时长（分钟）
+    max-duration: 120
+    # 通话质量检测间隔（秒）
+    quality-check-interval: 10
+    # 是否启用通话录制
+    enable-recording: false

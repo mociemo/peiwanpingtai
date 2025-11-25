@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'help_detail_page.dart';
 
 class HelpCenterPage extends StatefulWidget {
   const HelpCenterPage({super.key});
@@ -249,19 +250,10 @@ class _HelpCenterPageState extends State<HelpCenterPage> {
   }
 
   void _showHelpContent(String category) {
-    // 这里可以导航到具体的帮助内容页面
-    // 暂时显示一个简单的对话框
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(category),
-        content: Text('这里是$category相关的帮助内容。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('确定'),
-          ),
-        ],
+    // 导航到具体的帮助内容页面
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => HelpDetailPage(category: category),
       ),
     );
   }

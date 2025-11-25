@@ -8,7 +8,7 @@ class PlayerService {
   /// 获取玩家详情
   static Future<Player> getPlayerById(String id) async {
     try {
-      final response = await _dio.get('/api/players/$id');
+      final response = await _dio.get('/players/$id');
       
       if (response.statusCode == 200) {
         final data = response.data;
@@ -27,7 +27,7 @@ class PlayerService {
   /// 根据用户ID获取玩家信息
   static Future<Player> getPlayerByUserId(String userId) async {
     try {
-      final response = await _dio.get('/api/players/user/$userId');
+      final response = await _dio.get('/players/user/$userId');
       
       if (response.statusCode == 200) {
         final data = response.data;
@@ -54,7 +54,7 @@ class PlayerService {
     Map<String, dynamic>? availableTime,
   }) async {
     try {
-      final response = await _dio.post('/api/players', data: {
+      final response = await _dio.post('/players', data: {
         'userId': userId,
         'realName': realName,
         'idCard': idCard,
@@ -97,7 +97,7 @@ class PlayerService {
       if (introduction != null) data['introduction'] = introduction;
       if (availableTime != null) data['availableTime'] = availableTime;
 
-      final response = await _dio.put('/api/players/$id', data: data);
+      final response = await _dio.put('/players/$id', data: data);
       
       if (response.statusCode == 200) {
         final responseData = response.data;
@@ -138,7 +138,7 @@ class PlayerService {
       }
 
       final response = await _dio.get(
-        '/api/players/search',
+        '/players/search',
         queryParameters: queryParams,
       );
       
@@ -169,7 +169,7 @@ class PlayerService {
       if (gameCategory != null) queryParams['gameCategory'] = gameCategory;
 
       final response = await _dio.get(
-        '/api/players/recommended',
+        '/players/recommended',
         queryParameters: queryParams,
       );
       
@@ -197,7 +197,7 @@ class PlayerService {
     String? reason,
   }) async {
     try {
-      final response = await _dio.post('/api/players/$id/review', data: {
+      final response = await _dio.post('/players/$id/review', data: {
         'certificationStatus': status.name,
         'reason': reason,
       });
@@ -217,7 +217,7 @@ class PlayerService {
   /// 获取玩家统计数据
   static Future<Map<String, dynamic>> getPlayerStats(String id) async {
     try {
-      final response = await _dio.get('/api/players/$id/stats');
+      final response = await _dio.get('/players/$id/stats');
       
       if (response.statusCode == 200) {
         final data = response.data;
@@ -236,7 +236,7 @@ class PlayerService {
   /// 获取玩家档案信息
   static Future<Map<String, dynamic>> getPlayerProfile(String playerId) async {
     try {
-      final response = await _dio.get('/api/players/$playerId/profile');
+      final response = await _dio.get('/players/$playerId/profile');
       
       if (response.statusCode == 200) {
         final data = response.data;
@@ -255,7 +255,7 @@ class PlayerService {
   /// 获取玩家服务列表
   static Future<List<Map<String, dynamic>>> getPlayerServices(String playerId) async {
     try {
-      final response = await _dio.get('/api/players/$playerId/services');
+      final response = await _dio.get('/players/$playerId/services');
       
       if (response.statusCode == 200) {
         final data = response.data;
@@ -274,7 +274,7 @@ class PlayerService {
   /// 获取玩家订单列表
   static Future<List<Map<String, dynamic>>> getPlayerOrders(String playerId) async {
     try {
-      final response = await _dio.get('/api/players/$playerId/orders');
+      final response = await _dio.get('/players/$playerId/orders');
       
       if (response.statusCode == 200) {
         final data = response.data;
@@ -287,6 +287,25 @@ class PlayerService {
       throw Exception('网络错误: ${e.message}');
     } catch (e) {
       throw Exception('获取玩家订单列表失败: $e');
+    }
+  }
+
+  /// 添加玩家服务
+  static Future<Map<String, dynamic>> addPlayerService(Map<String, dynamic> serviceData) async {
+    try {
+      final response = await _dio.post('/players/services', data: serviceData);
+      
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          return data;
+        }
+      }
+      throw Exception('添加玩家服务失败');
+    } on DioException catch (e) {
+      throw Exception('网络错误: ${e.message}');
+    } catch (e) {
+      throw Exception('添加玩家服务失败: $e');
     }
   }
 

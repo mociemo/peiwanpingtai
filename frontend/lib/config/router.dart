@@ -5,6 +5,7 @@ import '../pages/auth/login_page.dart';
 import '../pages/auth/register_page.dart';
 import '../pages/home/home_page.dart';
 import '../pages/profile/profile_page.dart';
+import '../pages/profile/profile_edit_page.dart';
 import '../pages/search/search_page.dart';
 import '../pages/notifications/notifications_page.dart';
 import '../pages/orders/create_order_page.dart';
@@ -25,6 +26,16 @@ import '../pages/community/create_post_page.dart';
 import '../pages/community/post_detail_page.dart';
 import '../pages/community/follow_list_page.dart';
 import '../pages/community/user_profile_page.dart';
+import '../pages/settings/settings_page.dart';
+import '../pages/settings/payment_settings_page.dart';
+import '../pages/settings/player_center_page.dart';
+import '../pages/settings/security_page.dart';
+import '../pages/help/help_center_page.dart';
+import '../pages/help/feedback_page.dart';
+import '../pages/activity/activity_list_page.dart';
+import '../pages/activity/activity_detail_page.dart';
+import '../pages/namecard/namecard_create_page.dart';
+import '../pages/namecard/namecard_edit_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -221,6 +232,82 @@ class AppRouter {
         path: '/profile/:userId',
         pageBuilder: (context, state) => MaterialPage<void>(
           child: UserProfilePage(userId: state.pathParameters['userId'] ?? ''),
+        ),
+      ),
+      
+      // 个人资料编辑
+      GoRoute(
+        path: '/profile/edit',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: ProfileEditPage(userInfo: state.extra as Map<String, dynamic>? ?? {}),
+        ),
+      ),
+      
+      // 设置相关页面
+      GoRoute(
+        path: '/settings',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: SettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/settings/payment',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: PaymentSettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/settings/player',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: PlayerCenterPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/settings/security',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: SecurityPage(),
+        ),
+      ),
+      
+      // 帮助相关页面
+      GoRoute(
+        path: '/help',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: HelpCenterPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/help/feedback',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: FeedbackPage(),
+        ),
+      ),
+      
+      // 活动相关页面
+      GoRoute(
+        path: '/activities',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: ActivityListPage(),
+        ),
+      ),
+      GoRoute(
+        path: '/activities/:activityId',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: ActivityDetailPage(activityId: int.tryParse(state.pathParameters['activityId'] ?? '0') ?? 0),
+        ),
+      ),
+      
+      // 名片相关页面
+      GoRoute(
+        path: '/namecard/create',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: NamecardCreatePage(),
+        ),
+      ),
+      GoRoute(
+        path: '/namecard/edit',
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: NamecardEditPage(playerInfo: state.extra as Map<String, dynamic>? ?? {}),
         ),
       ),
     ],

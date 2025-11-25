@@ -108,7 +108,8 @@ public class FollowController {
     }
     
     private Long getUserIdFromUsername(String username) {
-        User user = userService.findByUsername(username);
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("用户不存在"));
         return user.getId();
     }
 }

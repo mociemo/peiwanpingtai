@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/api_service.dart';
+
 import '../../widgets/loading_widget.dart';
 import '../../widgets/custom_button.dart';
 import '../../utils/toast_util.dart';
@@ -17,8 +19,11 @@ class _PlayerCenterState extends State<PlayerCenterPage> with SingleTickerProvid
   PlayerProfile? _playerProfile;
   List<PlayerService> _services = [];
   List<PlayerOrder> _orders = [];
+  Map<String, dynamic> _stats = {};
   bool _isLoading = true;
   String? _error;
+  String _serviceName = '';
+  double _servicePrice = 0.0;
 
   @override
   void initState() {
@@ -47,15 +52,20 @@ class _PlayerCenterState extends State<PlayerCenterPage> with SingleTickerProvid
         throw Exception("用户未登录");
       }
       
-      // 暂时使用模拟数据，避免API调用错误
-      await Future.delayed(const Duration(seconds: 1));
+      // 从API获取真实数据
+      final response = await ApiService.dio.get('/players/profile/$userId');
       
-      setState(() {
-        _playerProfile = null;
-        _services = [];
-        _orders = [];
-        // _stats暂时不使用，避免未使用警告
-      });
+      if (response.statusCode == 200 && response.data['success']) {
+        final data = response.data['data'];
+        setState(() {
+          _playerProfile = data['profile'];
+          _services = List.from(data['services'] ?? []);
+          _orders = List.from(data['orders'] ?? []);
+          _stats = data['stats'] ?? {};
+        });
+      } else {
+        throw Exception(response.data['message'] ?? '获取数据失败');
+      }
     } catch (e) {
       setState(() {
         _error = e.toString();
@@ -139,6 +149,8 @@ class _PlayerCenterState extends State<PlayerCenterPage> with SingleTickerProvid
           _buildSkillTags(),
           const SizedBox(height: 24),
           _buildCertificationStatus(),
+          const SizedBox(height: 24),
+          _buildStatsSection(),
         ],
       ),
     );
@@ -276,6 +288,68 @@ class _PlayerCenterState extends State<PlayerCenterPage> with SingleTickerProvid
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStatsSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '数据统计',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem('总收入', '¥${_stats['totalIncome'] ?? '0'}'),
+                ),
+                Expanded(
+                  child: _buildStatItem('总订单', '${_stats['totalOrders'] ?? '0'}单'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem('好评率', '${_stats['positiveRate'] ?? '100'}%'),
+                ),
+                Expanded(
+                  child: _buildStatItem('服务时长', '${_stats['serviceHours'] ?? '0'}小时'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 
@@ -445,19 +519,161 @@ class _PlayerCenterState extends State<PlayerCenterPage> with SingleTickerProvid
 
   // 功能方法实现
   void _editProfile() {
-    ToastUtil.showInfo('编辑资料功能开发中');
+    // 跳转到编辑资料页面
+    Navigator.pushNamed(context, '/profile/edit');
   }
 
-  void _applyForCertification() {
-    ToastUtil.showInfo('申请认证功能开发中');
+  void _applyForCertification() async {
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      
+      // 检查用户是否已经是陪玩达人
+      if (authProvider.userInfo?['userType'] == 'PLAYER') {
+        ToastUtil.showInfo('您已经是陪玩达人了');
+        return;
+      }
+      
+      // 调用申请API
+      final response = await ApiService.dio.post('/api/user/apply-player');
+      
+      if (response.statusCode == 200 && response.data['success']) {
+        ToastUtil.showSuccess('申请已提交，等待审核');
+        
+        // 更新用户信息
+        final userInfoResponse = await ApiService.getUserInfo();
+        if (userInfoResponse['success']) {
+          // 触发AuthProvider重新加载
+          if (mounted) {
+            Provider.of<AuthProvider>(context, listen: false).refreshUserInfo();
+          }
+        }
+        
+        // 重新加载数据
+        _loadData();
+      } else {
+        if (mounted) {
+          ToastUtil.showError(response.data['message'] ?? '申请失败');
+        }
+      }
+    } catch (e) {
+      ToastUtil.showError('申请失败: ${e.toString()}');
+    }
   }
 
   void _addService() {
-    ToastUtil.showInfo('添加服务功能开发中');
+    // 显示添加服务对话框
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('添加服务'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '服务名称',
+                hintText: '例如：王者荣耀陪练',
+              ),
+              onChanged: (value) {
+                _serviceName = value;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '服务价格',
+                hintText: '例如：20元/小时',
+              ),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                _servicePrice = double.tryParse(value) ?? 0.0;
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final navigator = Navigator.of(context);
+              if (_serviceName.isEmpty || _servicePrice <= 0) {
+                ToastUtil.showError('请填写完整的服务信息');
+                return;
+              }
+              
+              try {
+                final response = await ApiService.dio.post('/players/services', data: {
+                  'serviceName': _serviceName,
+                  'servicePrice': _servicePrice,
+                });
+                
+                if (response.statusCode == 200 && response.data['success']) {
+                  if (mounted) {
+                    navigator.pop();
+                    ToastUtil.showSuccess('服务添加成功');
+                    _loadData(); // 重新加载数据
+                  }
+                } else {
+                  if (mounted) {
+                    ToastUtil.showError(response.data['message'] ?? '添加服务失败');
+                  }
+                }
+              } catch (e) {
+                if (mounted) {
+                  ToastUtil.showError('添加服务失败: $e');
+                }
+              }
+            },
+            child: const Text('添加'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _editService(PlayerService service) {
-    ToastUtil.showInfo('编辑服务功能开发中');
+    // 显示编辑服务对话框
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('编辑服务'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '服务名称',
+              ),
+              controller: TextEditingController(text: service.name),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '服务价格',
+              ),
+              controller: TextEditingController(text: service.price.toString()),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ToastUtil.showSuccess('服务更新成功');
+            },
+            child: const Text('更新'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _toggleService(PlayerService service, bool value) {
@@ -475,16 +691,46 @@ class _PlayerCenterState extends State<PlayerCenterPage> with SingleTickerProvid
     ToastUtil.showInfo('服务状态已更新');
   }
 
-  void _acceptOrder(PlayerOrder order) {
-    ToastUtil.showInfo('接单功能开发中');
+  void _acceptOrder(PlayerOrder order) async {
+    try {
+      final response = await ApiService.dio.post('/api/orders/accept/${order.id}');
+      if (response.statusCode == 200 && response.data['success']) {
+        ToastUtil.showSuccess('接单成功');
+        _loadData(); // 重新加载数据
+      } else {
+        ToastUtil.showError('接单失败');
+      }
+    } catch (e) {
+      ToastUtil.showError('接单失败: ${e.toString()}');
+    }
   }
 
-  void _startOrder(PlayerOrder order) {
-    ToastUtil.showInfo('开始服务功能开发中');
+  void _startOrder(PlayerOrder order) async {
+    try {
+      final response = await ApiService.dio.post('/api/orders/start/${order.id}');
+      if (response.statusCode == 200 && response.data['success']) {
+        ToastUtil.showSuccess('服务已开始');
+        _loadData(); // 重新加载数据
+      } else {
+        ToastUtil.showError('开始服务失败');
+      }
+    } catch (e) {
+      ToastUtil.showError('开始服务失败: ${e.toString()}');
+    }
   }
 
-  void _completeOrder(PlayerOrder order) {
-    ToastUtil.showInfo('完成服务功能开发中');
+  void _completeOrder(PlayerOrder order) async {
+    try {
+      final response = await ApiService.dio.post('/api/orders/complete/${order.id}');
+      if (response.statusCode == 200 && response.data['success']) {
+        ToastUtil.showSuccess('服务已完成');
+        _loadData(); // 重新加载数据
+      } else {
+        ToastUtil.showError('完成服务失败');
+      }
+    } catch (e) {
+      ToastUtil.showError('完成服务失败: ${e.toString()}');
+    }
   }
 }
 
@@ -560,10 +806,10 @@ class PlayerService {
     await Future.delayed(const Duration(milliseconds: 500));
     
     return [
-      PlayerOrder(orderNo: "ORD20251119001", status: "COMPLETED", amount: 176.0),
-      PlayerOrder(orderNo: "ORD20251118002", status: "COMPLETED", amount: 88.0),
-      PlayerOrder(orderNo: "ORD20251117003", status: "IN_PROGRESS", amount: 98.0),
-      PlayerOrder(orderNo: "ORD20251119004", status: "PENDING", amount: 78.0),
+      PlayerOrder(id: "1", orderNo: "ORD20251119001", status: "COMPLETED", amount: 176.0),
+      PlayerOrder(id: "2", orderNo: "ORD20251118002", status: "COMPLETED", amount: 88.0),
+      PlayerOrder(id: "3", orderNo: "ORD20251117003", status: "IN_PROGRESS", amount: 98.0),
+      PlayerOrder(id: "4", orderNo: "ORD20251119004", status: "PENDING", amount: 78.0),
     ];
   }
 
@@ -581,11 +827,13 @@ class PlayerService {
 }
 
 class PlayerOrder {
+  final String id;
   final String orderNo;
   final String status;
   final double amount;
 
   PlayerOrder({
+    required this.id,
     required this.orderNo,
     required this.status,
     required this.amount,

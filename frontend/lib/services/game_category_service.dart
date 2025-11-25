@@ -1,147 +1,143 @@
-import 'package:dio/dio.dart';
-import 'api_service.dart';
-import '../models/game_category_model.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../models/game_category.dart';
+import '../config/api_config.dart';
+import '../utils/storage_utils.dart';
 
 class GameCategoryService {
-  static final Dio _dio = ApiService.dio;
-
-  /// 获取所有游戏分类
-  static Future<List<GameCategory>> getAllCategories() async {
+  static const String _baseUrl = ApiConfig.baseUrl;
+  
+  static Future<List<GameCategory>> getActiveCategories() async {
     try {
-      final response = await _dio.get('/api/game-categories');
-      
+      final token = await StorageUtils.getToken();
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/game-categories'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+
       if (response.statusCode == 200) {
-        final data = response.data;
-        if (data['success'] == true) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
           final List<dynamic> categoriesJson = data['data'];
-          return categoriesJson
-              .map((json) => GameCategory.fromJson(json))
-              .toList();
+          return categoriesJson.map((json) => GameCategory.fromJson(json)).toList();
         }
       }
-      throw Exception('获取游戏分类失败');
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
+      throw Exception('Failed to load game categories');
     } catch (e) {
       throw Exception('获取游戏分类失败: $e');
     }
   }
 
-  /// 获取启用的游戏分类
-  static Future<List<GameCategory>> getActiveCategories() async {
+  static Future<GameCategory?> getCategoryById(int id) async {
     try {
-      final response = await _dio.get('/api/game-categories/active');
-      
-      if (response.statusCode == 200) {
-        final data = response.data;
-        if (data['success'] == true) {
-          final List<dynamic> categoriesJson = data['data'];
-          return categoriesJson
-              .map((json) => GameCategory.fromJson(json))
-              .toList();
-        }
-      }
-      throw Exception('获取启用游戏分类失败');
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
-    } catch (e) {
-      throw Exception('获取启用游戏分类失败: $e');
-    }
-  }
+      final token = await StorageUtils.getToken();
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/game-categories/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
 
-  /// 根据ID获取游戏分类
-  static Future<GameCategory> getCategoryById(String id) async {
-    try {
-      final response = await _dio.get('/api/game-categories/$id');
-      
       if (response.statusCode == 200) {
-        final data = response.data;
-        if (data['success'] == true) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
           return GameCategory.fromJson(data['data']);
         }
       }
-      throw Exception('获取游戏分类详情失败');
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
+      return null;
     } catch (e) {
       throw Exception('获取游戏分类详情失败: $e');
     }
   }
 
-  /// 创建游戏分类（管理员功能）
-  static Future<GameCategory> createCategory({
-    required String name,
-    required String description,
-    String? icon,
-    int sortOrder = 0,
-  }) async {
+  static Future<List<GameCategory>> getCategoriesByStatus(String status) async {
     try {
-      final response = await _dio.post('/api/game-categories', data: {
-        'name': name,
-        'description': description,
-        'icon': icon,
-        'sortOrder': sortOrder,
-      });
-      
-      if (response.statusCode == 201) {
-        final data = response.data;
-        if (data['success'] == true) {
+      final token = await StorageUtils.getToken();
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/game-categories/status/$status'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
+          final List<dynamic> categoriesJson = data['data'];
+          return categoriesJson.map((json) => GameCategory.fromJson(json)).toList();
+        }
+      }
+      throw Exception('Failed to load game categories by status');
+    } catch (e) {
+      throw Exception('按状态获取游戏分类失败: $e');
+    }
+  }
+
+  static Future<GameCategory> createCategory(GameCategory category) async {
+    try {
+      final token = await StorageUtils.getToken();
+      final response = await http.post(
+        Uri.parse('$_baseUrl/api/game-categories'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(category.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
           return GameCategory.fromJson(data['data']);
         }
       }
-      throw Exception('创建游戏分类失败');
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
+      throw Exception('Failed to create game category');
     } catch (e) {
       throw Exception('创建游戏分类失败: $e');
     }
   }
 
-  /// 更新游戏分类（管理员功能）
-  static Future<GameCategory> updateCategory(
-    String id, {
-    String? name,
-    String? description,
-    String? icon,
-    int? sortOrder,
-    GameCategoryStatus? status,
-  }) async {
+  static Future<GameCategory> updateCategory(int id, GameCategory category) async {
     try {
-      final Map<String, dynamic> data = {};
-      if (name != null) data['name'] = name;
-      if (description != null) data['description'] = description;
-      if (icon != null) data['icon'] = icon;
-      if (sortOrder != null) data['sortOrder'] = sortOrder;
-      if (status != null) data['status'] = status.name;
+      final token = await StorageUtils.getToken();
+      final response = await http.put(
+        Uri.parse('$_baseUrl/api/game-categories/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(category.toJson()),
+      );
 
-      final response = await _dio.put('/api/game-categories/$id', data: data);
-      
       if (response.statusCode == 200) {
-        final responseData = response.data;
-        if (responseData['success'] == true) {
-          return GameCategory.fromJson(responseData['data']);
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['success'] == true && data['data'] != null) {
+          return GameCategory.fromJson(data['data']);
         }
       }
-      throw Exception('更新游戏分类失败');
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
+      throw Exception('Failed to update game category');
     } catch (e) {
       throw Exception('更新游戏分类失败: $e');
     }
   }
 
-  /// 删除游戏分类（管理员功能）
-  static Future<bool> deleteCategory(String id) async {
+  static Future<bool> deleteCategory(int id) async {
     try {
-      final response = await _dio.delete('/api/game-categories/$id');
-      
-      if (response.statusCode == 200) {
-        final data = response.data;
-        return data['success'] == true;
-      }
-      return false;
-    } on DioException catch (e) {
-      throw Exception('网络错误: ${e.message}');
+      final token = await StorageUtils.getToken();
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/api/game-categories/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return response.statusCode == 200;
     } catch (e) {
       throw Exception('删除游戏分类失败: $e');
     }

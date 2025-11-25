@@ -1,0 +1,12 @@
+# 极光推送配置
+jpush:
+  # 极光推送AppKey - 需要在极光推送官网申请
+  app-key: ${JPUSH_APP_KEY:your-jpush-app-key}
+  # 极光推送Master Secret - 需要在极光推送官网申请
+  master-secret: ${JPUSH_MASTER_SECRET:your-jpush-master-secret}
+  # 是否为生产环境
+  apns-production: ${JPUSH_APNS_PRODUCTION:false}
+  # 推送重试次数
+  retry-count: 3
+  # 推送超时时间（毫秒）
+  timeout: 10000

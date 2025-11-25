@@ -153,6 +153,7 @@ public class FollowService {
         return followRepository.findFollowerIdsByFollowingIdAndStatus(userId, FollowStatus.FOLLOWING);
     }
     
+    @SuppressWarnings("null")
     private FollowResponse convertToResponse(Follow follow) {
         FollowResponse response = new FollowResponse();
         response.setId(follow.getId());
@@ -162,7 +163,7 @@ public class FollowService {
         // 设置关注者信息
         userRepository.findById(follow.getFollowerId()).ifPresent(user -> {
             FollowResponse.UserInfo followerInfo = new FollowResponse.UserInfo();
-            followerInfo.setId(user.getId());
+            followerInfo.setId(user.getId() != null ? user.getId() : 0L);
             followerInfo.setUsername(user.getUsername());
             followerInfo.setAvatar(user.getAvatar());
             response.setFollower(followerInfo);
@@ -171,7 +172,7 @@ public class FollowService {
         // 设置被关注者信息
         userRepository.findById(follow.getFollowingId()).ifPresent(user -> {
             FollowResponse.UserInfo followingInfo = new FollowResponse.UserInfo();
-            followingInfo.setId(user.getId());
+            followingInfo.setId(user.getId() != null ? user.getId() : 0L);
             followingInfo.setUsername(user.getUsername());
             followingInfo.setAvatar(user.getAvatar());
             response.setFollowing(followingInfo);

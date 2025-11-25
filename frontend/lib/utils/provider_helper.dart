@@ -11,7 +11,7 @@ import '../providers/community_provider.dart';
 import '../providers/notification_provider.dart';
 import '../providers/search_provider.dart';
 
-/// Provider辅助工具类，简化Provider获取
+/// Provider辅助工具类，便捷获取Provider实例
 class ProviderHelper {
   /// 获取AuthProvider
   static AuthProvider getAuth(BuildContext context, {bool listen = false}) {
